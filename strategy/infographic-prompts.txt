@@ -1,160 +1,170 @@
 ================================================================================
-KRAFT WITH KUNAL — INFOGRAPHIC PROMPTS FOR GPT IMAGE MODEL
-For the three text-heavy landing-page sections (Problem · Stakes · The Plan).
-Paste one prompt at a time into ChatGPT's image model, share the output back,
-and we'll refine the prompt from there.
+KRAFT WITH KUNAL — SECTION INFOGRAPHIC PROMPTS  (v6 — PERSONA + INTEGRATED STORY)
+For the three story sections on the landing page:  §2 Problem · §3 Stakes · §4 Plan
+Each prompt below is COMPLETE and self-contained — copy one, paste, generate.
 ================================================================================
+
+THE APPROACH (read once)
+--------------------------------------------------------------------------------
+We use ONE consistent, relatable persona, photographed in a believable moment, with
+a tasteful on-brand INFOGRAPHIC element built INTO the scene — so the image alone
+tells that section's story even before the copy is read. This mirrors the reference
+funnel (suvidhi.innohealth.co.in): the same woman in each section + one clean data
+element (a "BLOOD TEST REPORT" card with a NORMAL→OPTIMAL slider; a SPIKE→CRASH
+glucose curve; a broken absorption chain by a supplement bottle).
+
+We do the same, but for our man and our brand. Keep the man IDENTICAL in all three
+images — same face, same warm expression, same build, same wardrobe, same grade.
 
 HOW TO USE
-- Paste PROMPT 1, 2, or 3 exactly as written (each is self-contained).
-- Each infographic is meant to sit BESIDE the section's copy (copy on one side,
-  image on the other on desktop; stacked on mobile). So it must read on our dark
-  site and not fight the words.
-- If the model garbles any text/letters in the image, reply to it with:
-  "Remove all text and letters — make it purely visual/iconographic." (We add the
-  real words in code; the image only needs to carry the meaning visually.)
-- Ask for a transparent OR dark background (both requested below) so it drops onto
-  our graphite page cleanly.
-
 --------------------------------------------------------------------------------
-OUR BRAND LOOK (this block is embedded in every prompt below — do not change it)
+1. Generate PROMPT 1 first — it LOCKS the man.
+2. For PROMPT 2 and 3, in the same chat, attach the Prompt-1 image and add:
+   "Use the SAME man as the attached image — identical face, warmth, build, wardrobe
+   and colour grade. Only change the scene and the infographic as described." Reuse
+   the same seed / character-reference if your tool supports it.
+3. Save as: public/infographics/problem.png · stakes.png · plan.png
+4. Short, correctly-spelled labels ON the infographic are welcome (the reference uses
+   them). If letters garble, reply: "Redraw the labels cleanly, exactly spelled: <words>."
+5. ASPECT: landscape 3:2 (≈1536×1024) or 4:3. Cinematic, with breathing room on the
+   side where the infographic sits (it appears to the RIGHT of the copy on desktop).
+
+WHO THE MAN IS (the fix from v5: warm & relatable, NOT a stern "uncle")
 --------------------------------------------------------------------------------
-- Mood: premium, executive, calm, masculine, high-end — "luxury-car commercial,"
-  not a fitness flyer. Editorial, restrained, expensive.
-- Background: deep graphite / near-black obsidian (#17181C to #1E2026), cool, matte.
-- The ONE accent: metallic brass-gold — highlight #E7CE93, core #C9A24B, deep #8A6D2B.
-  Used sparingly, like a single spotlight, for the most important lines/icons only.
-- Text/linework where light: warm off-white #F2EFEA; secondary detail muted slate.
-- Style: fine hairline line-art, thin elegant strokes, subtle brass glow, lots of
-  negative space, precise geometry. NOT cartoonish, NOT flat corporate clip-art,
-  NOT neon, NOT stock-photo, NO gradients-of-many-colors. One accent only: brass.
-- Aspect ratio: portrait 4:5 (works beside copy on desktop, stacks clean on mobile).
+He should feel like a genuinely likeable, warm, successful man you'd want to talk to —
+approachable and human, not stern, not intimidating, not a glossy model. Kind, gentle
+eyes; an easy, warm presence; the quiet confidence of someone who's done well but is
+real and down-to-earth. Tired in the tough sections, hopeful in the payoff — always
+warm. The FULL description is written into every prompt below so you don't have to
+assemble anything.
 
 ================================================================================
-PROMPT 1  (v2 — REFINED for a clearer, instantly-readable message)
-SECTION "THE PROBLEM" — a packed day leaves no room for his health
+PROMPT 1 — §2 "THE PROBLEM"   (his packed day always wins; no room for his health)
+--------------------------------------------------------------------------------
+STORY THIS IMAGE MUST CARRY (no reading needed): "He runs everything with discipline —
+except this. His day is so completely full of work that there's no slot left for his
+own health. The calendar always wins."
 ================================================================================
-THE ONE IDEA THIS IMAGE MUST SAY AT A GLANCE (no text needed):
-"A successful man's day is so completely full of work that there is no room left
-for his own health — the calendar always wins." The old version was too busy and
-the message wasn't obvious; make the metaphor SIMPLE and UNMISTAKABLE.
+A photorealistic, cinematic, premium advertising photograph — landscape 3:2.
 
-Create a premium editorial infographic, portrait 4:5, on deep graphite/obsidian
-near-black (#17181C to #1E2026), cool and matte, with a subtle brass-gold glow.
+THE MAN: A warm, likeable, successful Indian businessman, around 40 (reads 35–50). He
+is NOT a fitness model and NOT stern — he's a real, approachable, down-to-earth man
+with a genuinely kind, gentle face and soft, warm, tired eyes. Realistic mid-life
+build: medium/softer frame with a slight belly and a fuller, rounder friendly face —
+a man who eats well and sits in meetings, roughly 26–30% body fat, comfortable, not
+lean, not toned. Warm medium-brown skin, healthy and well-kept. Neat modern short
+black hair with just a light touch of grey at the temples (young and current, not
+heavily greyed). Clean or very light, tidy stubble — soft, not a heavy beard. Relaxed,
+warm micro-expression even when weary. Quiet-luxury smart-casual: a well-fitted, soft
+warm-charcoal or sand henley/linen shirt with sleeves pushed up, a simple premium
+watch, a subtle wedding band. He looks like someone you'd instantly like and trust.
 
-COMPOSITION (keep it to ONE clear central metaphor):
-A single large 24-hour ring / clock face at the centre, drawn in fine hairline
-strokes. Almost the ENTIRE ring is densely packed, segment after segment, with the
-work that fills an executive's day — small, refined line-icons inside the ring for
-meetings, a laptop, phone calls, a briefcase, travel/flight, and rushed meals (a cup
-of tea, a quick plate). These packed segments glow in metallic brass-gold. They leave
-only ONE razor-thin empty sliver of the ring. In that tiny leftover sliver sits a
-single small dumbbell (or running-shoe) icon — faded, dim muted-slate, and clearly
-squeezed to the very edge with no room to grow. The instant read: his day is full of
-everything except the one thing his body needs.
+THE SCENE: Late evening. He sits at an elegant executive desk, mid-work, composed and
+capable but softly weary — maybe resting his temple on two fingers, looking gently
+tired rather than frowning. Signs of a day with no time for himself: a half-finished
+cup of chai and two plain biscuits pushed aside (a skipped, rushed meal), a phone lit
+with notifications, papers, an open laptop. A gym bag sits UNTOUCHED and forgotten in
+the softly-lit corner.
 
-COLOUR: ONE accent only — metallic brass-gold (highlight #E7CE93, core #C9A24B, deep
-#8A6D2B) on the packed work ring; the crowded-out fitness icon in dim muted slate;
-any other detail in warm off-white #F2EFEA. Nothing else.
+THE INTEGRATED INFOGRAPHIC (the story element): Floating beside him as a tasteful
+glowing brass-gold holographic overlay, a 24-HOUR DAY RING that is COMPLETELY, densely
+packed — segment after segment filled with small work icons (meetings, calls, a
+briefcase, a flight, a laptop, a car), every hour booked, all glowing brass. ONE thin,
+dim, almost-invisible sliver is left, and squeezed into it is a small faded dumbbell
+icon in dull grey, crushed to the very edge with no room. A small clean label reads
+"24 HOURS"; a tiny muted tag by the sliver reads "HEALTH." Instant read: his whole day
+is full of everything except the one thing his body needs.
 
-OPTIONAL: a faint executive silhouette or a low city-skyline hairline at the base for
-context — keep it subtle, secondary to the ring.
-
-STYLE: premium, executive, calm, masculine, "luxury-car commercial." Generous negative
-space around the central ring, thin elegant line-art, subtle glow. NOT cartoonish, NOT
-neon, NOT a stock photo, NO multi-colour, NO clip-art, NOT cluttered. Purely visual and
-iconographic — NO readable words, letters or paragraphs anywhere (tiny hour ticks on the
-ring are the only marks allowed). Transparent or dark background so it drops onto a dark
-website beside body copy.
-
-IF STILL UNCLEAR, alternative metaphor to try instead (reply asking for this):
-a heavy old-fashioned balance-scale — a briefcase + a stack of calendar pages crushing
-one pan far down, a lone small dumbbell on the other pan lifted helplessly high — "work
-outweighs health." Same palette and style rules.
-
-================================================================================
-PROMPT 2  (v4 — REFINED: ONE literal metaphor, "these are getting worse" is obvious)
-SECTION "THE STAKES" — waiting isn't free; his health quietly worsens every year
-================================================================================
-THE ONE IDEA THIS IMAGE MUST SAY AT A GLANCE:
-"His health markers are drifting the WRONG way, year after year — waiting makes it worse."
-Both earlier versions were too abstract: a rising line read as "good," and the gauge grid
-didn't tell you WHAT was wrong or WHICH direction was bad. Fix by making it dead literal:
-show four named body-health markers, each with its OWN small down-trend, all pointing the
-same wrong way, over a left→right timeline of years. The viewer should instantly think
-"his numbers are sliding into the red."
-
-Create a premium editorial infographic, portrait 4:5, on deep graphite/obsidian near-black
-(#17181C to #1E2026), cool matte, subtle glow.
-
-COMPOSITION — one clean "health report" panel, read top-to-bottom as 4 stacked marker rows:
-Four horizontal rows, each a single health marker labelled ONLY by a clear medical line-icon
-on the left: (1) a blood-drop = blood sugar, (2) a heart = blood pressure, (3) a liver
-silhouette = fatty liver, (4) a small artery/droplet-cluster = cholesterol. In EACH row, a
-thin sparkline runs left→right across a subtle year-timeline and clearly BENDS THE WRONG WAY
-— for sugar/BP/cholesterol the line trends UP into a red danger band at the right end; keep
-all four visually consistent so the eye reads one unmistakable message: "everything is
-sliding toward the red." At the right end of every row, the line crosses a clearly marked
-RED/critical threshold band and ends in a small down-turned warning chevron. A faint vertical
-"NOW" marker sits near the right to imply "and it keeps going from here."
-KEY: the danger end (right side) must be visually LOUDER than the calm start (left side) —
-red-amber glow, thicker stroke — so "getting worse over time" is obvious without any words.
-
-COLOUR: mostly warm off-white #F2EFEA + muted slate hairlines for the calm early part; the
-ONE accent is brass-gold shading into a restrained warning RED-amber (#C9A24B → a controlled
-warning red), spent ONLY on the danger band + the worsening ends of the lines. Nothing else.
-
-STYLE: clinical yet premium — a private-doctor's one-page report, not a hospital poster.
-Executive, calm, serious, masculine, expensive. Generous negative space, thin elegant
-line-art, subtle glow. NOT cartoonish, NOT neon, NOT stock-photo, NO multi-colour, NO
-clip-art. Purely visual/iconographic — NO readable words or paragraphs (tiny axis ticks +
-the four medical icons are the only marks). Transparent or dark background so it drops onto
-a dark website beside copy.
-
-IF STILL UNCLEAR, simpler alternative to try instead (reply asking for this):
-a single large downhill road/path a small executive figure is walking DOWN, with year-markers
-along it and a red "danger" glow at the bottom — one line-art hill sloping the wrong way.
-Same palette + style rules.
+THE LOOK / GRADE: Premium, editorial, cinematic — a luxury-brand commercial, not a
+stock photo. An expensive, warm, masculine modern interior (dark home study / penthouse
+office) in deep graphite / near-black tones (#17181C–#1E2026) with warm brass-gold
+lamplight (#C9A24B / #E7CE93) as the single accent raking across the scene. Shallow
+depth of field, soft cinematic bokeh, fine film grain, restrained and expensive. The
+infographic glows in that same brass-gold and feels integrated into the real photo.
+ONE accent colour only — brass. No rainbow, no neon, no clip-art.
 
 ================================================================================
-PROMPT 3  (v3 — REFINED: simpler, sharper before→after contrast)
-SECTION "IT WAS THE PLAN, NOT YOU" — generic plans fail; the one that fits your week works
+PROMPT 2 — §3 "THE STAKES"   (his health markers drift the wrong way, year on year)
+--------------------------------------------------------------------------------
+STORY THIS IMAGE MUST CARRY: "His last check said it out loud — sugar borderline,
+cholesterol up, fatty liver, BP creeping. Waiting isn't free: each year it stays like
+this, the markers move the wrong way and the fix gets harder."
 ================================================================================
-THE ONE IDEA THIS IMAGE MUST SAY AT A GLANCE:
-"Every generic plan failed; the ONE plan built around your real week is the one that gets
-you there." Keep it SIMPLE and readable — a clear left→right before/after. (The earlier
-output was too busy/tangled to parse.)
+A photorealistic, cinematic, premium advertising photograph — landscape 3:2.
+USE THE SAME MAN as Prompt 1 (attach that image): identical warm, likeable face, gentle
+tired eyes, same softer mid-life build, same light stubble and lightly-greyed temples,
+same warm-charcoal/sand henley or linen shirt + watch, same warm-graphite grade.
 
-Create a premium editorial infographic (portrait 4:5, or landscape if it reads cleaner) on
-deep graphite/obsidian near-black (#17181C to #1E2026), cool matte, subtle glow.
+THE SCENE: The same man at his desk or private study, holding a printed medical lab
+report in one hand, his other hand resting gently on his chest/upper stomach. His
+expression is quietly, warmly concerned — a caring, human "oh… this is real" look, not
+a frown or anger. Warm brass lamplight, graphite room, cinematic and expensive.
 
-COMPOSITION — one clean left→right journey, NOT a busy tangle:
-LEFT / start: just 2–3 small, muted, CROSSED-OUT line-icons stacked simply — a generic
-dumbbell/gym with an ✕, a fad-diet chart with an ✕, a cookie-cutter template with an ✕ —
-dim slate, clearly "these didn't work." Thin BROKEN / dashed dead-end lines fray from them
-and stop, going nowhere.
-CENTRE→RIGHT: ONE clean, confident, unbroken GLOWING BRASS-GOLD path begins where they
-failed and weaves smoothly THROUGH a small, evenly-spaced row of real-week icons (a
-briefcase/meeting, a plane for travel, a family-dinner plate, a clock) — showing the plan
-fits AROUND his real life — and arrives at a single upright, LIT human silhouette at the
-far right (the transformed man), softly glowing. The contrast IS the message: broken grey
-dead-ends on the left vs one smooth gold line that threads the real week and reaches him.
+THE INTEGRATED INFOGRAPHIC (the story element): Standing on the desk in front of him
+(like the reference's report card) is a premium glowing "HEALTH REPORT" card / floating
+holographic panel showing FOUR body-health markers as stacked rows, each with a small
+medical line-icon and a NORMAL → DANGER slider:
+   • BLOOD SUGAR     — needle pushed past NORMAL into a warning-red zone
+   • CHOLESTEROL     — needle drifting into the red
+   • BLOOD PRESSURE  — creeping toward the red
+   • FATTY LIVER     — flagged in the red
+Beside the markers, a small multi-year trend line bends the WRONG way — sloping up into
+red across "YEAR 1 · YEAR 2 · YEAR 3" — ending in a small down-turned warning chevron
+with a subtle "NOW" marker. Labels: "NORMAL" (calm off-white) on the left, "HIGH /
+DANGER" (restrained warning red) on the right. The danger end must glow LOUDER than the
+calm start so "getting worse over time" is unmistakable at a glance. Everything else
+stays brass/off-white; red is spent ONLY on the danger zone.
 
-COLOUR: the ONE gold path + the end silhouette glow in metallic brass-gold (#E7CE93 /
-#C9A24B / #8A6D2B); everything failed/neutral stays warm off-white #F2EFEA + muted slate.
-Nothing else.
-
-STYLE: premium, executive, calm, masculine, "luxury-car commercial." Lots of negative
-space, thin elegant line-art, subtle glow, UNCLUTTERED (far fewer elements than a busy
-diagram). NOT cartoonish, NOT neon, NOT stock-photo, NO multi-colour, NO clip-art. Purely
-visual/iconographic — NO readable words or paragraphs. Transparent or dark background so it
-drops onto a dark website beside body copy.
+THE LOOK / GRADE: Identical to Prompt 1 — premium, editorial, cinematic, warm-graphite
+interior, brass-gold as the single accent (PLUS a restrained warning red used ONLY in
+the danger zone). Clinical yet luxurious — a private doctor's report, not a hospital
+poster. Shallow depth of field, film grain, expensive. Same man, same warmth.
 
 ================================================================================
-NOTES FOR REFINEMENT (after you see the outputs)
-- If too busy → ask for "simpler, fewer elements, more negative space."
-- If not premium enough → "thinner strokes, more restraint, single brass accent only."
-- If colour leaks in → "strictly monochrome off-white + one brass-gold accent, nothing else."
-- Once we lock a look, we can request all 3 in the SAME style for consistency, and I'll
-  wire them beside each section (desktop: image beside copy; mobile: image above copy).
+PROMPT 3 — §4 "THE PLAN"   (generic plans failed; the plan built around HIS week works)
+--------------------------------------------------------------------------------
+STORY THIS IMAGE MUST CARRY: "It was never his discipline — it was the plan. The gym
+near the office, the fad diet, the foreign trainer who never planned for a week with a
+board meeting, a flight and a family dinner in it. The ONE plan built around his real
+week is the one that works."
+================================================================================
+A photorealistic, cinematic, premium advertising photograph — landscape 3:2.
+USE THE SAME MAN as Prompts 1 & 2 (attach an earlier image): identical warm, likeable
+face and build, same light stubble and lightly-greyed temples, same warm-charcoal/sand
+henley or linen shirt + watch, same warm-graphite grade. This is the payoff beat, so he
+looks reassured and quietly hopeful — a warm, easy half-smile, at ease, NOT defeated.
+
+THE SCENE: The same man standing composed and confident in his real executive world —
+e.g. relaxed in a warm graphite office or at the head of a table, adjusting his cuff or
+mid-stride — calm, capable and warm. The "it wasn't you" moment: he looks reassured.
+
+THE INTEGRATED INFOGRAPHIC (the story element) — a clear LEFT → RIGHT contrast:
+On the LEFT: three faded, dim, CROSSED-OUT generic plans as small grey icons, each with
+a broken/dashed dead-end line going nowhere — a generic gym/dumbbell ✕, a fad-diet plate
+✕, a rigid one-size template ✕. Small muted tag: "GENERIC PLANS."
+On the RIGHT: ONE clean, confident, unbroken GLOWING BRASS-GOLD path begins where they
+failed and weaves smoothly THROUGH a small, evenly-spaced row of HIS real-week icons —
+a boardroom/meeting, an aeroplane (travel), a family-dinner plate, a hotel, a clock —
+showing the plan fits AROUND his real life — and arrives at the man himself, standing a
+little stronger and lighter, softly lit in brass. A small tag along the gold line reads
+"BUILT AROUND YOUR WEEK." The contrast IS the message: broken grey dead-ends vs one
+smooth gold line that threads his real week and reaches him.
+
+THE LOOK / GRADE: Identical to Prompts 1 & 2 — premium, editorial, cinematic,
+warm-graphite interior, brass-gold as the single accent, uncluttered with generous
+negative space. Shallow depth of field, film grain, expensive. Same warm, relatable man.
+
+================================================================================
+CONSISTENCY CHECKLIST (before accepting the 3 images)
+--------------------------------------------------------------------------------
+[ ] Same man in all three — warm, likeable, gentle face (NOT stern/"uncle"), light
+    stubble, lightly-greyed temples, same softer mid-life build (NOT a model).
+[ ] Same wardrobe (warm-charcoal/sand henley or linen + watch) and same warm-graphite
+    grade in all three.
+[ ] Each infographic tells THAT section's story alone, no copy needed:
+       Problem → packed 24-hour ring, health crushed to a dim sliver.
+       Stakes  → four markers sliding NORMAL → red over the years.
+       Plan    → crossed-out generic plans vs one gold path through his real week.
+[ ] ONE brass accent (+ restrained red only in the Stakes danger zone). No rainbow.
+[ ] Labels short, correctly spelled, elegant — or removed if garbled.
 ================================================================================

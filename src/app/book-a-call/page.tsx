@@ -56,10 +56,10 @@ export default function BookACallPage() {
         {/* Calendar */}
         <section id="calendar" className="section" style={{ paddingTop: 0 }}>
           <div className="wrap" style={{ maxWidth: 820 }}>
-            <Reveal className="section-head" >
+            {/* <Reveal className="section-head" >
               <h2 className="display" style={{ fontSize: "clamp(22px,2.8vw,32px)" }}>Pick a slot</h2>
               <p className="deck">Times shown in your local zone. Choose the one you&rsquo;ll keep — it&rsquo;s held for you the moment you book.</p>
-            </Reveal>
+            </Reveal> */}
             <Reveal><CalendarEmbed /></Reveal>
             <div className="trust-cards">
               {trust.map(([h, p]) => (
