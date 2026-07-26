@@ -1,36 +1,41 @@
 import { faqs } from "@/lib/content";
 import { Reveal } from "./Reveal";
+import { SdpHead } from "./sdp";
 import { Plus } from "./icons";
 
-/* Native <details name> accordion — single-open, and FAIL-OPEN: works with no JS.
-   The "most asked" objection is open by default (C8). */
+/* Beat 11 — FAQ / Even-If. Objection-set → SDP rotate-to-× FAQ. Built on native
+   <details> (single-open via name) so it is FAIL-OPEN with no JS; the "most
+   asked" legitimacy objection opens by default. */
 export function EvenIf() {
   return (
-    <section id="even-if" className="section">
-      <div className="wrap">
-        <Reveal className="section-head">
-          <div className="eyebrow">Even if…</div>
-          <h2 className="display">The honest answers to <span className="lit">what&rsquo;s stopping you</span>.</h2>
+    <section id="faq" className="sdp-section sdp-light-alt">
+      <div className="sdp-wrap">
+        <Reveal className="sdp-center">
+          <SdpHead
+            eyebrow="Before you book"
+            title={<>The Honest Answers To <em>What&rsquo;s Stopping You</em>.</>}
+          />
         </Reveal>
 
-        <Reveal className="faq">
-          {faqs.map((f, i) => (
-            <details className="faq-row" key={f.q} name="faq" open={f.mostAsked}>
-              <summary className="faq-q">
-                <span className="qidx">Q.{String(i + 1).padStart(2, "0")}</span>
-                <span className="qtext">
-                  {f.q}
-                  {f.mostAsked && (
-                    <span className="faq-tag"><span className="d" />Most asked</span>
-                  )}
-                </span>
-                <span className="faq-ic"><Plus size={14} /></span>
-              </summary>
-              <div className="faq-a">
-                <p>{f.a}</p>
-              </div>
-            </details>
-          ))}
+        <Reveal>
+          <div style={{ maxWidth: "var(--sdp-cw)", margin: "0 auto" }}>
+            {faqs.map((f) => (
+              <details className="sdp-q" key={f.q} name="faq" open={f.mostAsked}>
+                <summary className="sdp-q-head">
+                  <span>
+                    {f.q}
+                    {f.mostAsked && (
+                      <span className="sdp-q-tag"><span className="d" />Most asked</span>
+                    )}
+                  </span>
+                  <span className="ic"><Plus size={14} /></span>
+                </summary>
+                <div className="sdp-q-body">
+                  <p>{f.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
         </Reveal>
       </div>
     </section>

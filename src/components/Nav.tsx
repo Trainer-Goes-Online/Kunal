@@ -1,25 +1,18 @@
 import Image from "next/image";
 import { site } from "@/lib/site";
-import { Arrow } from "./icons";
+import { ArrowGlyph } from "./sdp";
 
 export function Nav() {
   return (
-    <nav className="nav">
-      <div className="nav-inner">
-        <a className="brand" href="#top">
-          <Image
-            src="/logo-mark.png"
-            alt="Kraft With Kunal"
-            width={44}
-            height={34}
-            className="brand-logo"
-            priority
-          />
-          <span className="brand-name">{site.brand}</span>
+    <nav className="sdp-nav">
+      <div className="sdp-nav-inner">
+        <a className="sdp-brand" href="#top">
+          <Image src="/logo-mark.png" alt="Kraft With Kunal" width={44} height={32} priority />
+          {site.brand}
         </a>
-        <a className="btn btn--ghost" href={site.checkoutUrl}>
+        <a className="sdp-nav-cta" href={site.checkoutUrl}>
           Book your assessment
-          <Arrow size={16} />
+          <ArrowGlyph size={14} />
         </a>
       </div>
     </nav>

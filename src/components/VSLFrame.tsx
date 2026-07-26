@@ -16,9 +16,10 @@ function withAutoplay(url: string) {
 }
 
 /**
- * Hero VSL focal frame. Poster + brass play disc; on play it swaps to the video
- * (Vimeo/YouTube iframe or native <video>) and fires the GA4 `video_play` event
- * (hero-only, once per browser). C12: decorative overlays yield to the player.
+ * Hero VSL focal frame (SDP-consistent, brass-on-light). Poster + brass play
+ * disc; on play it swaps to the video and fires GA4 `video_play` once.
+ * NOTE: the SDP skin file omits a VSL block, so `.sdp-vsl*` is a token-only
+ * composition addition (flagged for the structure library).
  */
 export function VSLFrame() {
   const [playing, setPlaying] = useState(false);
@@ -33,7 +34,7 @@ export function VSLFrame() {
 
   if (playing && hasVideo) {
     return (
-      <div className="vsl vsl--playing">
+      <div className="sdp-vsl">
         {isEmbed(url) ? (
           <iframe
             src={withAutoplay(url)}
@@ -44,18 +45,18 @@ export function VSLFrame() {
           />
         ) : (
           <video src={url} poster={site.vslPoster || undefined} controls autoPlay playsInline
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         )}
       </div>
     );
   }
 
   return (
-    <div className="vsl">
-      {site.vslPoster && <img className="vsl-poster" src={site.vslPoster} alt="" />}
-      <span className="vsl-badge">{hasVideo ? "Watch — 5 min" : "Film coming soon"}</span>
-      <button className="vsl-play" onClick={play} aria-label={hasVideo ? "Play the film" : "Film coming soon"}>
-        <span className="vsl-disc">
+    <div className="sdp-vsl">
+      {site.vslPoster && <img className="sdp-vsl-poster" src={site.vslPoster} alt="" />}
+      <span className="sdp-vsl-badge">{hasVideo ? "Watch — 5 min" : "Film coming soon"}</span>
+      <button className="sdp-vsl-play" onClick={play} aria-label={hasVideo ? "Play the film" : "Film coming soon"}>
+        <span className="sdp-vsl-disc">
           <PlayTriangle size={28} />
         </span>
       </button>

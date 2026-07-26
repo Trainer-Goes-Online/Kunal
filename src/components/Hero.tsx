@@ -1,60 +1,111 @@
-import { CTAButton, EyebrowPill, Lit } from "./ui";
 import { Reveal } from "./Reveal";
 import { VSLFrame } from "./VSLFrame";
-import { RupeeMark, Coach, CalendarIcon } from "./icons";
+import { ArrowGlyph } from "./sdp";
+import { site } from "@/lib/site";
+import { heroStats, features, outcomes } from "@/lib/content";
+import { CalendarIcon, Coach, Check } from "./icons";
 
-const trust = [
-  { icon: <RupeeMark />, label: "For ₹25L+ earners" },
-  { icon: <Coach />, label: "Coached 1:1 by Kunal" },
-  { icon: <CalendarIcon />, label: "Around your calendar" },
-];
-
+/* Hero — mirrors the SDP hero, brass-on-light, centred throughout.
+   No logo. No pill: a dash eyebrow following the formula (ICP + the problem).
+   Pre-video pills = program FEATURES. Post-video sequence, in this order:
+   CTA > 3 icon pointers > offer urgency > one line > credibility table > outcome pills. */
 export function Hero() {
   return (
-    <header id="top" className="section stage grain" style={{ paddingTop: "clamp(40px,6vw,72px)" }}>
-      <div className="wrap" style={{ textAlign: "center", maxWidth: 940 }}>
+    <header id="top" className="sdp-hero sdp-section">
+      <div className="sdp-wrap sdp-hero-inner">
         <Reveal>
-          <EyebrowPill>For men earning ₹25L+ · 35–50</EyebrowPill>
+          <span className="sdp-eyebrow-pill">
+            <span className="glowdot" aria-hidden />
+            For successful men 35 to 50 whose body stopped keeping up
+          </span>
         </Reveal>
 
         <Reveal delay={1}>
-          <h1 className="display" style={{ fontSize: "clamp(32px,5.4vw,60px)", margin: "26px auto 0", maxWidth: "18ch" }}>
-            You built the career. Now build the body that <Lit>matches it</Lit>.
+          <h1 className="sdp-h1">
+            <span className="sdp-h1-l1">You built the career.</span>
+            <span className="sdp-h1-l2">Now build the body that matches it.</span>
           </h1>
         </Reveal>
 
         <Reveal delay={2}>
-          <p style={{ maxWidth: "52ch", margin: "22px auto 0", fontSize: "clamp(16px,1.9vw,19px)", color: "var(--ink-2)", lineHeight: 1.6 }}>
-            You hit every target you set — the income, the title, the standing in every room.
-            Every number went up. <em>Except the one you see in the mirror.</em>
+          <p className="sdp-sub">
+            In six months: 15 to 20kg down, real muscle on the frame, and blood work moving the
+            right way, through <span className="sdp-mech-name">The High-Performer Protocol</span>, a plan built
+            around the life that made you successful, not a gym-rat&rsquo;s week.
           </p>
         </Reveal>
 
+        {/* pre-video pills = program FEATURES */}
         <Reveal delay={2}>
-          <p style={{ margin: "18px auto 30px", fontFamily: "var(--f-display)", fontStyle: "italic", fontSize: "clamp(18px,2.2vw,22px)", color: "var(--ink)" }}>
-            In six months: a body that matches the life you built.
+          <div className="sdp-pills">
+            {features.map((f) => (
+              <span className="sdp-marker-chip" key={f}>
+                <span className="sdp-marker-dot" aria-hidden />
+                {f}
+              </span>
+            ))}
+          </div>
+        </Reveal>
+
+        <Reveal delay={3}>
+          <div className="sdp-watch">Watch the short video below ↓</div>
+          <VSLFrame />
+        </Reveal>
+
+        {/* 1 · CTA */}
+        <Reveal delay={2}>
+          <a className="sdp-cta sdp-hero-cta" href={site.checkoutUrl}>
+            <span className="sdp-cta-main">
+              Book Your Assessment
+              <span className="arrow"><ArrowGlyph /></span>
+            </span>
+            <span className="cta-sub">{site.assessmentFee} to apply</span>
+          </a>
+        </Reveal>
+
+        {/* 2 · three pointers with icons */}
+        <Reveal delay={2}>
+          <div className="sdp-hero-pointers">
+            <span className="pt"><span className="ico"><CalendarIcon size={18} /></span>Built for travel weeks &amp; board meetings</span>
+            <span className="pt"><span className="ico"><Coach size={18} /></span>Coached 1:1 by Kunal</span>
+            <span className="pt"><span className="ico"><Check size={18} /></span>A diagnosis, never a template</span>
+          </div>
+        </Reveal>
+
+        {/* 3 · offer urgency */}
+        <Reveal delay={2}>
+          <div className="sdp-capacity">
+            <span className="dot" aria-hidden />
+            Only {site.monthlySlots} assessments open each month.
+          </div>
+        </Reveal>
+
+        {/* 4 · one line */}
+        <Reveal delay={2}>
+          <p className="sdp-oneline" style={{ textAlign: "center" }}>
+            A diagnostic session, not a pitch. If you&rsquo;re not the right fit, Kunal tells you honestly.
           </p>
         </Reveal>
 
-        <Reveal delay={3} className="measure" >
-          <div style={{ maxWidth: 900, margin: "0 auto" }}>
-            <VSLFrame />
-          </div>
-        </Reveal>
-
+        {/* 5 · credibility table */}
         <Reveal delay={2}>
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 34 }}>
-            <CTAButton micro={<>You pay, then you pick your time · No hard sell</>} />
+          <div className="sdp-stats">
+            {heroStats.map((s) => (
+              <div className="sdp-stat" key={s.k}>
+                <div className="k">{s.k}</div>
+                <div className="v">{s.v}</div>
+              </div>
+            ))}
           </div>
         </Reveal>
 
-        <Reveal>
-          <div className="trust-row" style={{ maxWidth: 640, margin: "26px auto 0" }}>
-            {trust.map((t, i) => (
-              <span className="item" key={t.label}>
-                {i > 0 && <span className="tsep" aria-hidden>·</span>}
-                <span className="ic" style={{ color: "var(--accent)" }}>{t.icon}</span>
-                {t.label}
+        {/* 6 · outcomes in pills (from the program) */}
+        <Reveal delay={2}>
+          <div className="sdp-pills sdp-pills-outcomes">
+            {outcomes.map((o) => (
+              <span className="sdp-marker-chip" key={o}>
+                <span className="sdp-marker-dot" aria-hidden />
+                {o}
               </span>
             ))}
           </div>

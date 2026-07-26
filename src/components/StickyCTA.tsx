@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { site, CTA_LABEL } from "@/lib/site";
-import { Arrow } from "./icons";
+import { site } from "@/lib/site";
+import { ArrowGlyph } from "./sdp";
 
-/**
- * R8 sticky bar — hidden until past the hero, hides again at the final CTA so it
- * never duplicates a visible CTA. Pure enhancement; absent entirely without JS.
- */
+/* Beat 13 — Sticky CTA. Page-chrome: hidden until past the hero, hides again at
+   the final CTA so it never doubles a visible CTA. Pure enhancement (absent
+   without JS). SDP sweeping dark glass, calm brass capacity tag. */
 export function StickyCTA() {
   const [visible, setVisible] = useState(false);
 
@@ -32,12 +31,18 @@ export function StickyCTA() {
   }, []);
 
   return (
-    <a className={`sticky-cta ${visible ? "in" : ""}`} href={site.checkoutUrl} aria-hidden={!visible}>
-      <span className="label label--long">In six months, a body that matches the life you built.</span>
-      <span className="go">
-        {CTA_LABEL}
-        <Arrow size={16} />
-      </span>
-    </a>
+    <div className={`sdp-stuck ${visible ? "on" : ""}`} aria-hidden={!visible}>
+      <div className="sdp-stuck-inner">
+        <span className="sdp-stuck-label">Kraft With Kunal · a body that matches the life you built.</span>
+        <span className="sdp-stuck-tag">
+          <span className="dot" aria-hidden />
+          {site.monthlySlots} assessments / month
+        </span>
+        <a className="sdp-stuck-go" href={site.checkoutUrl}>
+          Book · {site.assessmentFee}
+          <ArrowGlyph size={14} />
+        </a>
+      </div>
+    </div>
   );
 }

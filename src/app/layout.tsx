@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
-import { Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Bebas_Neue, Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@/components/Analytics";
 import { CtaTracker } from "@/components/CtaTracker";
 import { siteOrigin } from "@/lib/config";
+
+// DISPLAY (condensed all-caps) for the SDP brass-on-light LP.
+const bebas = Bebas_Neue({
+  variable: "--font-bebas",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
 
 const newsreader = Newsreader({
   variable: "--font-newsreader",
@@ -39,7 +47,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
-      className={`${newsreader.variable} ${interTight.variable} ${jetbrains.variable}`}
+      className={`${bebas.variable} ${newsreader.variable} ${interTight.variable} ${jetbrains.variable}`}
     >
       <body>
         <Analytics />

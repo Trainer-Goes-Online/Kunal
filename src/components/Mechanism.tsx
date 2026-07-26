@@ -1,102 +1,51 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import { phases } from "@/lib/content";
 import { Reveal } from "./Reveal";
+import { SdpHead, CtaLockup } from "./sdp";
 
-/**
- * R9 scroll-linked journey spine — the page's ONE signature moment.
- * FAIL-OPEN: server-renders fully visible/lit. JS only "arms" it (mutes, then
- * lights per scroll) when motion is allowed. prefers-reduced-motion → left lit.
- */
-function JourneySpine() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    el.classList.add("armed");
-    const nodes = Array.from(el.querySelectorAll<HTMLElement>(".phase"));
-    let raf = 0;
-
-    const update = () => {
-      raf = 0;
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      // fill 0→1 as the section travels through the lower-middle of the viewport
-      const fill = Math.max(0, Math.min(1, (vh * 0.62 - rect.top) / (rect.height * 0.9)));
-      el.style.setProperty("--fill", fill.toFixed(3));
-      const n = nodes.length;
-      nodes.forEach((node, i) => {
-        node.classList.toggle("lit", fill >= (i + 0.5) / n);
-      });
-    };
-
-    const onScroll = () => {
-      if (!raf) raf = window.requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  return (
-    <div className="spine" ref={ref}>
-      <div className="spine-rail" aria-hidden>
-        <div className="spine-fill" />
-      </div>
-      {phases.map((p) => (
-        <div className="phase" key={p.n}>
-          <div className="phase-num">{p.n}</div>
-          <span className="phase-dot" aria-hidden />
-          <div className="phase-body">
-            <div className="phase-label">{p.label}</div>
-            <h3>{p.title}</h3>
-            <p>{p.body}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
+/* Beat 6 — The Mechanism. Sequence of N named phases → numbered PILLAR ledger
+   (the SDP mechanism builder-pick: "the N principles of our method", not
+   old-vs-new compare). Four cards, each an SDP pillar tile. */
 export function Mechanism() {
   return (
-    <section id="mechanism" className="section">
-      <div className="wrap">
-        <Reveal className="section-head">
-          <div className="eyebrow">The mechanism · Holistic Lifestyle Integration</div>
-          <h2 className="display">One system. Four phases you can <span className="lit">feel</span>.</h2>
-          <p className="deck">
-            The High-Performer Protocol. You feel each phase end and the next begin — built around
-            your calendar, not a gym-rat&rsquo;s.
+    <section id="mechanism" className="sdp-section sdp-light">
+      <div className="sdp-wrap">
+        <Reveal className="sdp-center">
+          <SdpHead
+            eyebrow="The mechanism"
+            title={<>One System. Four Phases. You Feel Each One <em>End</em>.</>}
+            sub="The High-Performer Protocol: structure that fits the life that made you successful, not a gym-rat's week."
+          />
+        </Reveal>
+
+        <div className="sdp-pillars">
+          {phases.map((p, i) => (
+            <Reveal className="sdp-card sdp-pillar" key={p.n} delay={((i % 2) + 1) as 1 | 2}>
+              <span className="sdp-pillar-num">{p.n}</span>
+              <div className="sdp-pillar-body">
+                <div className="sdp-pillar-label">{p.label}</div>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal>
+          <p className="sdp-mech-reframe">
+            It was never your discipline, you have more of that than most. It was <em>the plan</em>,
+            every one built for a man with a simple life. This isn&rsquo;t about willpower. It&rsquo;s about
+            structure that fits the life that made you successful.
           </p>
         </Reveal>
 
-        <JourneySpine />
-
-        <Reveal className="lengths">
-          <div className="length">
-            <div className="lname">90-Day Reset</div>
-            <div className="lmeta">Phases 1–2</div>
-          </div>
-          <div className="or">or</div>
-          <div className="length">
-            <div className="lname">6-Month Transformation</div>
-            <div className="lmeta">All four phases</div>
-          </div>
-        </Reveal>
-        <p className="lengths-note">
+        <p className="sdp-lengths-note">
+          One system, two lengths: a <strong>90-Day Reset</strong> and a <strong>6-Month Transformation</strong>.
           Same engine, same coach, same standard. The length is the only real choice you make.
         </p>
+
+        <Reveal>
+          <CtaLockup />
+        </Reveal>
       </div>
     </section>
   );

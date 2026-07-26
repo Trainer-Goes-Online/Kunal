@@ -1,34 +1,45 @@
+import { cases } from "@/lib/content";
 import { Reveal } from "./Reveal";
-import { Lit } from "./ui";
-import { VideoTestimonials } from "./np/VideoTestimonials";
-import { BeforeAfterCarousel } from "./np/BeforeAfterCarousel";
+import { SdpHead, CtaLockup } from "./sdp";
 
+/* Beat 4 — The Proof / case files (SDP order: proof block before founder +
+   mechanism). Proof-set → SDP case-file cards, the narrative layer beneath the
+   Transformations marquee. Figures carry a "being confirmed" flag, never asserted. */
 export function Proof() {
   return (
-    <section id="proof" className="section section--alt">
-      <div className="wrap">
-        <Reveal className="section-head">
-          <div className="eyebrow">Proof</div>
-          <h2 className="display">Men who looked exactly like you — <Lit>before they started</Lit>.</h2>
-          <p className="deck">
-            Busy, successful, out of time — and they did it while running the business, not sacrificing it.
-          </p>
+    <section id="proof" className="sdp-section sdp-light">
+      <div className="sdp-wrap">
+        <Reveal className="sdp-center">
+          <SdpHead
+            eyebrow="The proof"
+            title={<>Men Who Looked Exactly Like You, <em>Before They Started</em>.</>}
+            sub="This could be your story too. Full case files walked through with you on the assessment call."
+          />
         </Reveal>
 
-        {/* Sub 1 — video testimonials */}
-        <VideoTestimonials />
+        <div className="sdp-cases">
+          {cases.map((c, i) => (
+            <Reveal className="sdp-card sdp-case" key={c.meta} delay={((i % 3) + 1) as 1 | 2 | 3}>
+              <div className="sdp-case-media">
+                <span className="ph">Before / after</span>
+              </div>
+              <div className="sdp-case-body">
+                <div className="sdp-case-meta">{c.meta}</div>
+                <div className="sdp-case-delta">{c.delta}</div>
+                <p className="sdp-case-note">{c.note}</p>
+                <div className="sdp-case-flag">{c.flag}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
 
-        {/* Sub 2 — before/after transformation cards */}
-        <Reveal className="section-head vtest-cap">
-          <div className="eyebrow">The transformations</div>
-          <h2 className="display" style={{ fontSize: "clamp(24px,3vw,36px)" }}>Real clients. Real numbers.</h2>
-          <p className="deck">Swipe through a few of them.</p>
-        </Reveal>
-        <BeforeAfterCarousel />
-
-        <p className="lengths-note" style={{ marginTop: 32 }}>
-          Full case files walked through with you on the assessment call.
+        <p className="sdp-proof-note">
+          Client figures shown are being confirmed with each man before publish.
         </p>
+
+        <Reveal>
+          <CtaLockup />
+        </Reveal>
       </div>
     </section>
   );
