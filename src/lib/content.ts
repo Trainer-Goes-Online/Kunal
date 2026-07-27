@@ -120,10 +120,16 @@ export const phases = [
 ] as const;
 
 /* ---- Beat 3 : Transformations marquee (before/after at a glance) ---- */
-export const transformations = [
-  { who: "The lawyer", from: "94kg", to: "~68kg", tag: "about 25kg down" },
-  { who: "The banker", from: "135kg", to: "85kg", tag: "50kg down" },
-  { who: "Kunal", from: "108kg", to: "71kg", tag: "built it on himself" },
+/* The real before/after cards from the main branch. Each card is self-contained
+   (client name + before/after photos + short story), so the marquee shows them as
+   image-only tiles — no separate caption to contradict what's printed on the card. */
+export const baCards = [
+  "/transformations/ba-1.jpg",
+  "/transformations/ba-2.jpg",
+  "/transformations/ba-3.jpg",
+  "/transformations/ba-4.jpg",
+  "/transformations/ba-5.jpg",
+  "/transformations/ba-6.jpg",
 ] as const;
 
 /* ---- Beat 4 : The Proof / case files ---- */

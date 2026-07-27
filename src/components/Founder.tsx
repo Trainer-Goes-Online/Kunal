@@ -18,7 +18,7 @@ export function Founder() {
         <div className="sdp-founder">
           <Reveal className="sdp-founder-photo">
             <Image
-              src="/kunal-portrait.jpg"
+              src="/kunal-coach.jpg"
               alt="Kunal Chalke"
               fill
               sizes="(max-width: 820px) 100vw, 40vw"

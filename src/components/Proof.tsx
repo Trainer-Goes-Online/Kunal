@@ -1,6 +1,7 @@
 import { cases } from "@/lib/content";
 import { Reveal } from "./Reveal";
 import { SdpHead, CtaLockup } from "./sdp";
+import { VideoTestimonials } from "./np/VideoTestimonials";
 
 /* Beat 4 — The Proof / case files (SDP order: proof block before founder +
    mechanism). Proof-set → SDP case-file cards, the narrative layer beneath the
@@ -15,6 +16,11 @@ export function Proof() {
             title={<>Men Who Looked Exactly Like You, <em>Before They Started</em>.</>}
             sub="This could be your story too. Full case files walked through with you on the assessment call."
           />
+        </Reveal>
+
+        {/* Client video testimonials (from the main branch) — above the case files */}
+        <Reveal className="sdp-videos">
+          <VideoTestimonials />
         </Reveal>
 
         <div className="sdp-cases">

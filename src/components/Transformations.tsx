@@ -1,25 +1,23 @@
+/* eslint-disable @next/next/no-img-element */
 import { Reveal } from "./Reveal";
 import { SdpHead } from "./sdp";
-import { transformations } from "@/lib/content";
+import { baCards } from "@/lib/content";
 
-/* Beat 3 — Transformations. Proof-at-a-glance → SDP before/after marquee (the
-   number-glance layer; the narrative lives in the case cards below, so the two
-   proof beats stay varied). Photos are placeholders until Kunal shares them;
-   the marquee reads on the deltas alone until then. Figures being confirmed. */
+/* Beat 3 — Transformations. The real before/after cards from the main branch, in a
+   continuous SDP marquee. Each card is self-contained (name + photos + story), so
+   tiles are image-only — no overlaid caption that could contradict the card. */
 export function Transformations() {
-  const row = transformations.map((t) => (
-    <div className="sdp-ba-tile" key={t.who}>
-      <div className="sdp-ba-media">
-        <span className="ba-tag before">Before</span>
-        <span className="ba-tag after">After</span>
-      </div>
-      <div className="sdp-ba-meta">
-        <span className="who">{t.who}</span>
-        <span className="delta">{t.from} → {t.to}</span>
-        <span className="note">{t.tag}</span>
-      </div>
-    </div>
-  ));
+  const row = (
+    <>
+      {baCards.map((src) => (
+        <div className="sdp-ba-tile sdp-ba-tile--card" key={src}>
+          <div className="sdp-ba-media sdp-ba-media--img">
+            <img src={src} alt="Client transformation, before and after" loading="lazy" />
+          </div>
+        </div>
+      ))}
+    </>
+  );
 
   return (
     <section id="transformations" className="sdp-section sdp-light-alt">
@@ -31,7 +29,7 @@ export function Transformations() {
           />
         </Reveal>
       </div>
-      <div className="sdp-marquee" aria-label="Client transformations (figures being confirmed)">
+      <div className="sdp-marquee" aria-label="Client transformations">
         <div className="sdp-marquee-track">
           {row}{row}
         </div>
