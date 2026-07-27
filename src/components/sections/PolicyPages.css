@@ -1,0 +1,541 @@
+/* ================================================================
+   POLICY PAGES — /privacy · /terms · /refund
+   One stylesheet for all three, ported from SDP's policy design onto the
+   existing brass `.sdp-root` tokens. Every class namespaced `.pol-…`;
+   no token redefined, no shared stylesheet touched.
+
+   SDP source (identical across the three routes bar three extras):
+     _reference/sdp/app/new-privacy-policy/privacy.css
+       :78-153  .hero / .eyebrow / .hero-sub / .hero-meta   -> .pol-hero*
+       :158-201 .legal / .legal-grid / .toc                 -> .pol-legal / .pol-toc
+       :203-283 .legal-intro / .legal-section / ul.l-list   -> .pol-intro / .pol-sec / .pol-list
+       :285-314 .callout                                    -> .pol-callout
+       :319-374 .contact / .contact-icon / .home-link        -> .pol-contact*
+       :421-435 responsive + reduced-motion
+     _reference/sdp/app/new-terms-and-conditions/terms.css:308-330  .options-grid/.option-card
+     _reference/sdp/app/new-refund-policy/refund.css:333-410        .plan-grid/.plan-card, .step-list/.step-item
+
+   Hue map (SDP -> brass): #3B82F6 -> var(--brand); #60A5FA -> var(--brand-bright);
+   #1E40AF -> var(--brand-deep); rgba(59,130,246,.NN) -> rgba(var(--brand-rgb),.NN);
+   #FAFBFD/#F1F5F9 -> var(--bg)/var(--bg-alt); #E2E8F0 -> var(--border);
+   rgba(15,23,42,.NN) -> rgba(var(--ink-rgb),.NN); #0A0F1E/#111827/#1F2937 ->
+   var(--bg-dark)/var(--bg-dark-alt)/var(--bg-dark-elev).
+
+   OMITTED from SDP: the announcement marquee and the hero eyebrow pill — both
+   would need new copy, and this pass is design-only. The existing back-link and
+   "Last updated" line become the hero chrome instead.
+
+   Reveal is applied to hero chrome + TOC only, never to legal body text: a
+   policy must paint in full even if the observer never runs.
+================================================================ */
+
+/* ── Hero — SDP privacy.css:78-153 ───────────────────────────────── */
+.sdp-root .pol-hero {
+  padding: 72px 0 60px;
+  background: var(--hero-stage);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.sdp-root .pol-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(var(--brand-rgb), .10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--brand-rgb), .10) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 35%, #000 35%, transparent 75%);
+          mask-image: radial-gradient(ellipse at 50% 35%, #000 35%, transparent 75%);
+  opacity: .7;
+  pointer-events: none;
+}
+.sdp-root .pol-hero::after {
+  content: "";
+  position: absolute;
+  top: -160px;
+  left: 50%;
+  width: 680px;
+  height: 680px;
+  max-width: 140vw;
+  transform: translateX(-50%);
+  background: var(--hero-bloom);
+  filter: blur(8px);
+  pointer-events: none;
+}
+.sdp-root .pol-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 22px;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 420px) { .sdp-root .pol-wrap { padding: 0 15px; } }
+
+/* Back-link — existing copy, restyled as the hero's top chrome. */
+.sdp-root .pol-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(var(--brand-rgb), .10);
+  border: 1px solid rgba(var(--brand-rgb), .28);
+  font-family: var(--fb);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brand-deep);
+  text-decoration: none;
+  transition: background .2s, border-color .2s, gap .2s;
+}
+.sdp-root .pol-back:hover {
+  background: rgba(var(--brand-rgb), .16);
+  border-color: var(--brand);
+  gap: 12px;
+}
+
+.sdp-root h1.pol-h1 {
+  font-family: var(--fh);
+  font-size: clamp(40px, 6.4vw, 72px);
+  letter-spacing: .02em;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0 0 18px;
+  text-wrap: balance;
+}
+.sdp-root h1.pol-h1 em { font-style: normal; color: var(--brand); }
+
+/* "Last updated: …" — SDP's `.hero-meta` pill. */
+.sdp-root .pol-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: var(--fb);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  box-shadow: 0 6px 18px rgba(var(--ink-rgb), .06);
+}
+.sdp-root .pol-meta b { color: var(--ink); font-weight: 700; }
+.sdp-root .pol-meta .pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex: 0 0 6px;
+}
+
+/* ── Two-column legal layout — SDP :158-201 ──────────────────────── */
+.sdp-root .pol-legal {
+  padding: 64px 0 88px;
+  background: var(--bg);
+  position: relative;
+}
+.sdp-root .pol-grid {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+
+.sdp-root .pol-toc {
+  position: sticky;
+  top: 24px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 16px;
+  font-family: var(--fb);
+  font-size: 13px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+.sdp-root .pol-toc-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--brand-deep);
+  padding: 4px 6px 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.sdp-root .pol-toc-label::before {
+  content: "";
+  width: 14px;
+  height: 2px;
+  background: var(--brand);
+  flex: 0 0 14px;
+}
+.sdp-root .pol-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sdp-root .pol-toc a {
+  display: block;
+  padding: 8px 10px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  border-radius: 8px;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color .2s, background .2s, padding-left .2s;
+}
+.sdp-root .pol-toc a:hover,
+.sdp-root .pol-toc a:focus-visible {
+  color: var(--brand-deep);
+  background: rgba(var(--brand-rgb), .08);
+  padding-left: 14px;
+  outline: none;
+}
+
+.sdp-root .pol-body { min-width: 0; }
+
+/* Intro paragraph, lifted into SDP's `.legal-intro` slab — SDP :203-213 */
+.sdp-root .pol-intro {
+  background: linear-gradient(135deg, rgba(var(--brand-rgb), .06), rgba(var(--brand-rgb), .02));
+  border: 1px solid rgba(var(--brand-rgb), .18);
+  border-left: 3px solid var(--brand);
+  border-radius: 0 14px 14px 0;
+  padding: 20px 22px;
+  margin: 0 0 36px;
+  font-family: var(--fb);
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+.sdp-root .pol-intro strong { color: var(--ink); }
+
+/* ── Sections — SDP :215-260 ─────────────────────────────────────── */
+.sdp-root .pol-sec {
+  padding: 0 0 36px;
+  margin-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 24px;
+}
+.sdp-root .pol-sec:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+.sdp-root h2.pol-sec-h {
+  font-family: var(--fh);
+  font-size: 28px;
+  color: var(--ink);
+  letter-spacing: .03em;
+  line-height: 1.1;
+  margin: 0 0 14px;
+  position: relative;
+}
+.sdp-root h2.pol-sec-h::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 24px;
+  background: linear-gradient(180deg, var(--brand), var(--brand-bright));
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 14px;
+  transform: translateY(-3px);
+}
+/* Anchored section lights its rule — the CSS-only stand-in for SDP's JS
+   TOC-active state, so the page needs no per-page client JS. */
+.sdp-root .pol-sec:target > h2.pol-sec-h::before {
+  box-shadow: 0 0 0 3px rgba(var(--brand-rgb), .18);
+}
+.sdp-root .pol-sec h3 {
+  font-family: var(--fh);
+  font-size: 19px;
+  color: var(--ink);
+  letter-spacing: .03em;
+  margin: 22px 0 10px;
+}
+.sdp-root .pol-sec p {
+  color: var(--ink-soft);
+  font-family: var(--fb);
+  font-size: 14.5px;
+  line-height: 1.78;
+  margin: 0 0 14px;
+}
+.sdp-root .pol-sec p:last-child { margin-bottom: 0; }
+.sdp-root .pol-sec p strong { color: var(--ink); font-weight: 700; }
+.sdp-root .pol-sec a,
+.sdp-root .pol-intro a {
+  color: var(--brand-deep);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(var(--brand-rgb), .35);
+  transition: border-color .2s, color .2s;
+}
+.sdp-root .pol-sec a:hover,
+.sdp-root .pol-intro a:hover { color: var(--brand); border-bottom-color: var(--brand); }
+
+/* Bullet list as cards — SDP :262-283 */
+.sdp-root ul.pol-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0 18px;
+  padding: 0;
+}
+.sdp-root ul.pol-list li {
+  position: relative;
+  padding: 10px 16px 10px 38px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--fb);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.sdp-root ul.pol-list li::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  top: 19px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  box-shadow: 0 0 0 3px rgba(var(--brand-rgb), .16);
+}
+.sdp-root ul.pol-list li:hover {
+  border-color: rgba(var(--brand-rgb), .4);
+  transform: translateX(2px);
+  box-shadow: 0 8px 22px rgba(var(--brand-rgb), .10);
+}
+.sdp-root ul.pol-list li strong { color: var(--ink); }
+
+/* Dark pull-quote slab — SDP :285-314 */
+.sdp-root .pol-callout {
+  background: var(--grad-guarantee);
+  color: var(--ink-dark);
+  border: 1px solid rgba(var(--brand-rgb), .3);
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin: 22px 0;
+  position: relative;
+  overflow: hidden;
+}
+.sdp-root .pol-callout::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-bright), var(--brand));
+  background-size: 200% 100%;
+  animation: polBarSweep 5s linear infinite;
+}
+@keyframes polBarSweep {
+  0%   { background-position: 0 0; }
+  100% { background-position: 200% 0; }
+}
+.sdp-root .pol-callout p { color: var(--ink-dark-soft); font-size: 13.5px; line-height: 1.7; }
+.sdp-root .pol-callout p strong { color: var(--ink-dark); }
+
+/* ── Refund: numbered step list — SDP refund.css:382-410 ─────────── */
+.sdp-root .pol-steps {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 8px;
+  padding: 0;
+  counter-reset: polstep;
+}
+.sdp-root .pol-steps li {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-family: var(--fb);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  transition: transform .25s, border-color .25s, box-shadow .25s;
+}
+.sdp-root .pol-steps li:hover {
+  transform: translateX(2px);
+  border-color: rgba(var(--brand-rgb), .4);
+  box-shadow: 0 8px 22px rgba(var(--brand-rgb), .10);
+}
+.sdp-root .pol-steps li::before {
+  counter-increment: polstep;
+  content: counter(polstep);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(var(--brand-rgb), .18), rgba(var(--brand-rgb), .06));
+  border: 1px solid rgba(var(--brand-rgb), .3);
+  display: grid;
+  place-items: center;
+  font-family: var(--fh);
+  font-size: 18px;
+  color: var(--brand-deep);
+}
+.sdp-root .pol-steps li strong { color: var(--ink); }
+
+/* ── Terms / Refund: two-up cards — terms.css:308-330, refund.css:333-360 ── */
+.sdp-root .pol-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0 20px;
+  list-style: none;
+  padding: 0;
+}
+.sdp-root .pol-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .25s, transform .25s, box-shadow .25s;
+}
+.sdp-root .pol-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-bright));
+}
+.sdp-root .pol-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(var(--brand-rgb), .4);
+  box-shadow: 0 12px 28px rgba(var(--brand-rgb), .14);
+}
+.sdp-root .pol-card-label {
+  display: block;
+  font-family: var(--fb);
+  font-size: 10.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--brand-deep);
+  margin-bottom: 6px;
+}
+.sdp-root .pol-card p { margin: 0; font-size: 14px; line-height: 1.7; }
+@media (max-width: 640px) {
+  .sdp-root .pol-cards { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ── Dark contact band — SDP :319-374 ────────────────────────────── */
+.sdp-root .pol-contact {
+  background: var(--bg-dark);
+  color: var(--ink-dark);
+  text-align: center;
+  padding: 72px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+.sdp-root .pol-contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(var(--brand-rgb), .06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--brand-rgb), .06) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 75%);
+          mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 75%);
+  pointer-events: none;
+}
+.sdp-root .pol-contact-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(var(--brand-rgb), .22), rgba(var(--brand-rgb), .08));
+  border: 1px solid rgba(var(--brand-rgb), .35);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  color: var(--brand-bright);
+  transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .35s;
+}
+.sdp-root .pol-contact:hover .pol-contact-icon {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 26px rgba(var(--brand-rgb), .28);
+}
+.sdp-root .pol-contact-icon svg {
+  width: 28px; height: 28px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.sdp-root h2.pol-contact-h {
+  font-family: var(--fh);
+  font-size: clamp(24px, 3.4vw, 34px);
+  letter-spacing: .04em;
+  color: var(--ink-dark);
+  margin: 0 0 10px;
+}
+.sdp-root h2.pol-contact-h em { font-style: normal; color: var(--brand-bright); }
+.sdp-root .pol-contact p {
+  color: var(--ink-dark-soft);
+  font-family: var(--fb);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 22px;
+}
+.sdp-root .pol-contact p a {
+  color: var(--brand-bright);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(var(--brand-rgb), .5);
+  font-weight: 600;
+}
+.sdp-root .pol-contact p a:hover { color: #fff; border-bottom-color: #fff; }
+.sdp-root .pol-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-family: var(--fb);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--brand-bright);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s, gap .2s;
+}
+.sdp-root .pol-home-link:hover { color: #fff; border-bottom-color: currentColor; gap: 9px; }
+
+/* ── Responsive — SDP :421-432 ───────────────────────────────────── */
+@media (max-width: 960px) {
+  .sdp-root .pol-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .sdp-root .pol-toc { position: static; max-height: none; }
+}
+@media (max-width: 640px) {
+  .sdp-root .pol-hero { padding: 56px 0 44px; }
+  .sdp-root h1.pol-h1 { font-size: 36px; }
+  .sdp-root .pol-legal { padding: 48px 0 64px; }
+  .sdp-root h2.pol-sec-h { font-size: 24px; }
+  .sdp-root .pol-sec h3 { font-size: 17px; }
+  .sdp-root .pol-contact { padding: 56px 0 60px; }
+  .sdp-root .pol-steps li { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; padding: 12px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sdp-root .pol-callout::before { animation: none; }
+}

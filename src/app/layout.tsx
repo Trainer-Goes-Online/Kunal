@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "./sections.css";
 import { Analytics } from "@/components/Analytics";
 import { CtaTracker } from "@/components/CtaTracker";
 import { siteOrigin } from "@/lib/config";

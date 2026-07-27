@@ -29,18 +29,16 @@ export const site = {
   /** Real capacity for the calm scarcity line. Confirm the true number with Kunal. */
   monthlySlots: process.env.NEXT_PUBLIC_MONTHLY_ASSESSMENT_SLOTS ?? "8",
 
-  /** Four client video testimonials (CDN URLs). Empty => "testimonial coming" placeholder. */
+  /** Three client video testimonials (CDN URLs). Empty => "testimonial coming" placeholder. */
   testimonialVideos: [
     process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_1 ?? "",
     process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_2 ?? "",
     process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_3 ?? "",
-    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_4 ?? "",
   ],
   testimonialPosters: [
     process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_1 ?? "",
     process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_2 ?? "",
     process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_3 ?? "",
-    process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_4 ?? "",
   ],
 } as const;
 

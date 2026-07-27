@@ -719,15 +719,18 @@ h2.sdp-h2{ text-align:center; font-size:clamp(28px,4.4vw,52px); letter-spacing:.
 @keyframes sdpMarkerPulse{ 0%,100%{opacity:1;} 50%{opacity:.55;} }
 
 /* PRIMARY CTA */
-.sdp-cta{ display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; min-width:min(690px,100%); padding:17px 48px 15px;
-  background:var(--grad-cta); color:var(--cta-ink); border-radius:999px; font-family:var(--fh); font-size:18px; letter-spacing:.06em; line-height:1.2; text-align:center; text-decoration:none;
+.sdp-cta{ display:inline-flex; align-items:center; justify-content:center; max-width:min(600px,100%); padding:14px 30px;
+  background:var(--grad-cta); color:var(--cta-ink); border-radius:999px; font-family:var(--fh); font-size:17px; letter-spacing:.06em; line-height:1.15; text-align:center; text-decoration:none;
   position:relative; overflow:hidden; box-shadow:var(--glow-cta), var(--inset-hi); transition:transform .2s, filter .2s, box-shadow .2s; }
 .sdp-cta::after{ content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; background:linear-gradient(120deg,transparent,rgba(255,255,255,.45),transparent); transform:skewX(-20deg); transition:left .9s; }
 .sdp-cta:hover{ transform:translateY(-2px); filter:brightness(1.05); box-shadow:var(--glow-cta-hover), inset 0 1px 0 rgba(255,255,255,.3); }
 .sdp-cta:hover::after{ left:120%; }
-.sdp-cta .arrow{ width:26px; height:26px; border-radius:50%; background:rgba(var(--ink-rgb),.16); display:grid; place-items:center; }
-.sdp-cta .cta-sub{ font-family:var(--fb); font-size:11px; font-weight:500; letter-spacing:.05em; color:rgba(var(--ink-rgb),.72); text-transform:uppercase; }
-.sdp-cta-main{ display:inline-flex; align-items:center; gap:12px; }
+.sdp-cta .arrow{ flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:rgba(var(--ink-rgb),.16); display:grid; place-items:center; }
+.sdp-cta-main{ display:inline-flex; align-items:center; justify-content:center; gap:11px; min-width:0; }
+.sdp-cta .cta-label{ min-width:0; white-space:normal; }  /* one line on desktop (pill fits), wraps on narrow screens */
+@media (max-width:640px){
+  .sdp-cta{ font-size:14px; padding:12px 20px; max-width:min(330px,100%); }  /* wraps to ~2 lines like SDP mobile */
+}
 
 /* Below-CTA stack: risk badges → calm brass capacity → italic note (NO red timer) */
 .sdp-risk-strip{ display:flex; justify-content:center; flex-wrap:wrap; gap:16px; margin:14px auto 0; max-width:560px; }

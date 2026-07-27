@@ -41,15 +41,14 @@ export function CtaLockup() {
     <div className="sdp-lockup">
       <a className="sdp-cta" href={site.checkoutUrl}>
         <span className="sdp-cta-main">
-          Book Your Assessment
+          <span className="cta-label">Click Here To Get Your Personalised Diagnosis + Fitness Roadmap</span>
           <span className="arrow"><ArrowGlyph /></span>
         </span>
-        <span className="cta-sub">{site.assessmentFee} to apply</span>
       </a>
 
-      <p className="sdp-cta-roadmap">
+      {/* <p className="sdp-cta-roadmap">
         Kunal&rsquo;s eyes on your case, and your personalised body and health roadmap.
-      </p>
+      </p> */}
 
       <div className="sdp-risk-strip">
         <span className="sdp-risk-badge"><span className="sdp-risk-icon-gold"><Check size={15} /></span>90-Day or 6-Month</span>

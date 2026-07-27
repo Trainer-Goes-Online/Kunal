@@ -1,65 +1,63 @@
-"use client";
-
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
 import { site } from "@/lib/site";
-import { PlayTriangle } from "./icons";
-import { trackGa4EventOnce } from "@/lib/ga4";
-
-const isEmbed = (url: string) => /vimeo\.com|youtube\.com|youtu\.be/.test(url);
-
-function withAutoplay(url: string) {
-  const sep = url.includes("?") ? "&" : "?";
-  if (/vimeo\.com/.test(url)) return `${url}${sep}autoplay=1&title=0&byline=0&portrait=0`;
-  if (/youtube|youtu\.be/.test(url)) return `${url}${sep}autoplay=1&rel=0`;
-  return url;
-}
 
 /**
- * Hero VSL focal frame (SDP-consistent, brass-on-light). Poster + brass play
- * disc; on play it swaps to the video and fires GA4 `video_play` once.
- * NOTE: the SDP skin file omits a VSL block, so `.sdp-vsl*` is a token-only
- * composition addition (flagged for the structure library).
+ * S04 · Hero VSL — SERVER component, structural port of SDP `VSLVideo`
+ * (_reference/sdp/components/landing/LandingPage.tsx:368-488).
+ *
+ * SDP boots a Vimeo Player instance client-side; here the whole behaviour is
+ * delegated: we emit the SDP markup plus `data-vimeo-id` / `data-vimeo-thumb`
+ * and ClientBehaviors pre-boots the player near the viewport, then plays with
+ * sound (and toggles `.playing`) on click / Enter.
+ *
+ * Fail-open: poster + play disc are real HTML, and a <noscript> iframe lets the
+ * film actually play with JS disabled.
  */
+
+/** Hero VSL — Vimeo id per MASTER-HANDOFF §6 "known facts" (SDP ships 1209777174). */
+const VSL_VIMEO_ID = "1210701586";
+
 export function VSLFrame() {
-  const [playing, setPlaying] = useState(false);
-  const url = site.vslVideoUrl;
-  const hasVideo = Boolean(url);
+  return (
+    <div className="s04-video-frame" data-sdp-reveal style={{ "--d": ".22s" } as React.CSSProperties}>
+      <div
+        className="sdp-video has-video"
+        id="sdp-vsl"
+        role="button"
+        tabIndex={0}
+        aria-label="Play the film"
+        data-vimeo-id={VSL_VIMEO_ID}
+        data-vimeo-thumb={site.vslPoster}
+      >
+        <div className="sdp-video-host" />
 
-  function play() {
-    if (!hasVideo) return;
-    trackGa4EventOnce("video_play");
-    setPlaying(true);
-  }
+        <div className="sdp-video-thumb on">
+          <img
+            src={site.vslPoster}
+            alt=""
+            width={640}
+            height={360}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
 
-  if (playing && hasVideo) {
-    return (
-      <div className="sdp-vsl">
-        {isEmbed(url) ? (
+        <div className="sdp-play">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </div>
+
+        <noscript>
           <iframe
-            src={withAutoplay(url)}
+            className="s04-video-noscript"
+            src={`https://player.vimeo.com/video/${VSL_VIMEO_ID}?title=0&byline=0&portrait=0`}
             title="Kraft With Kunal — the film"
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
           />
-        ) : (
-          <video src={url} poster={site.vslPoster || undefined} controls autoPlay playsInline
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        )}
+        </noscript>
       </div>
-    );
-  }
-
-  return (
-    <div className="sdp-vsl">
-      {site.vslPoster && <img className="sdp-vsl-poster" src={site.vslPoster} alt="" />}
-      <span className="sdp-vsl-badge">{hasVideo ? "Watch — 5 min" : "Film coming soon"}</span>
-      <button className="sdp-vsl-play" onClick={play} aria-label={hasVideo ? "Play the film" : "Film coming soon"}>
-        <span className="sdp-vsl-disc">
-          <PlayTriangle size={28} />
-        </span>
-      </button>
     </div>
   );
 }
