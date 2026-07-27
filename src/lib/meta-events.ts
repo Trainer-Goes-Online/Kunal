@@ -38,6 +38,7 @@ export async function sendAddToCartEvent(a: {
   clientIp?: string;
   clientUserAgent?: string;
 }): Promise<void> {
+  const eventTime = Math.floor(Date.now() / 1000);
   const eventId = a.fbp ? sha256(`${a.fbp}|atc`) : `${crypto.randomBytes(8).toString("hex")}_atc`;
   const userData: Record<string, unknown> = {};
   if (a.fbc) userData.fbc = a.fbc;
@@ -45,10 +46,8 @@ export async function sendAddToCartEvent(a: {
   if (a.clientIp) userData.client_ip_address = a.clientIp;
   if (a.clientUserAgent) userData.client_user_agent = a.clientUserAgent;
 
-  await postEvent(a.pixelId, a.accessToken, {
-    event_name: "AddToCart",
-    event_time: Math.floor(Date.now() / 1000),
-    event_id: eventId,
+  const common = {
+    event_time: eventTime,
     action_source: "website",
     event_source_url: a.eventSourceUrl,
     user_data: userData,
@@ -59,7 +58,16 @@ export async function sendAddToCartEvent(a: {
       content_name: brand.productName,
       content_type: "product",
     },
-  });
+  };
+
+  // Standard AddToCart (authoritative — throws to the route on failure).
+  await postEvent(a.pixelId, a.accessToken, { ...common, event_name: "AddToCart", event_id: eventId });
+  // Custom mirror "atc_event" — distinct event_id so Meta does NOT dedupe it against AddToCart.
+  try {
+    await postEvent(a.pixelId, a.accessToken, { ...common, event_name: "atc_event", event_id: `${eventId}_custom` });
+  } catch (err) {
+    console.error("[atc] custom atc_event failed:", err);
+  }
 }
 
 /** InitiateCheckout — pay-button click on a filled form. Full hashed PII. */
@@ -80,6 +88,7 @@ export async function sendInitiateCheckoutEvent(a: {
   clientIp?: string;
   clientUserAgent?: string;
 }): Promise<void> {
+  const eventTime = Math.floor(Date.now() / 1000);
   const eventId = sha256(`${a.email.trim().toLowerCase()}|ic`);
   const userData: Record<string, unknown> = {
     em: [hashNorm(a.email)],
@@ -95,10 +104,8 @@ export async function sendInitiateCheckoutEvent(a: {
   if (a.clientIp) userData.client_ip_address = a.clientIp;
   if (a.clientUserAgent) userData.client_user_agent = a.clientUserAgent;
 
-  await postEvent(a.pixelId, a.accessToken, {
-    event_name: "InitiateCheckout",
-    event_time: Math.floor(Date.now() / 1000),
-    event_id: eventId,
+  const common = {
+    event_time: eventTime,
     action_source: "website",
     event_source_url: a.eventSourceUrl,
     user_data: userData,
@@ -109,5 +116,14 @@ export async function sendInitiateCheckoutEvent(a: {
       content_name: brand.productName,
       content_type: "product",
     },
-  });
+  };
+
+  // Standard InitiateCheckout (authoritative — throws to the route on failure).
+  await postEvent(a.pixelId, a.accessToken, { ...common, event_name: "InitiateCheckout", event_id: eventId });
+  // Custom mirror "ic_event" — distinct event_id so Meta does NOT dedupe it against InitiateCheckout.
+  try {
+    await postEvent(a.pixelId, a.accessToken, { ...common, event_name: "ic_event", event_id: `${eventId}_custom` });
+  } catch (err) {
+    console.error("[ic] custom ic_event failed:", err);
+  }
 }

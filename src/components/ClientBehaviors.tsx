@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { trackGa4EventOnce } from "@/lib/ga4";
 
 /**
  * ClientBehaviors — the SINGLE delegated client file for the landing page.
@@ -124,6 +125,7 @@ export function ClientBehaviors() {
       mount.innerHTML = ""; mount.appendChild(iframe);
       host.classList.add("playing");
       host.querySelectorAll<HTMLElement>(".sdp-video-thumb,.sdp-play").forEach((el) => (el.style.display = "none"));
+      trackGa4EventOnce("video_play"); // GA4 hero-VSL play (once per browser) — restored post-rebuild
     };
     on(document, "click", (e) => {
       const host = (e.target as HTMLElement).closest<HTMLElement>(".sdp-video[data-vimeo-id]");
