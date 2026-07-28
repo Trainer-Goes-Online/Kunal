@@ -37,6 +37,119 @@ export function ClientBehaviors() {
       cleanups.push(() => io.disconnect());
     }
 
+    /* ---- 1b. Mechanism timeline spine ----
+       Drives `--fill` (0→1) on each [data-timeline] from how far the viewport's
+       reading line has travelled through the section, so the brass rail grows as
+       the phase cards assemble. rAF-throttled; reduced motion pins it filled. */
+    const timelines = Array.from(document.querySelectorAll<HTMLElement>("[data-timeline]"));
+    if (timelines.length) {
+      if (reduced) {
+        timelines.forEach((el) => el.style.setProperty("--fill", "1"));
+      } else {
+        let tlRaf = 0;
+        const syncTimelines = () => {
+          tlRaf = 0;
+          const line = window.innerHeight * 0.62; // rail leads the cards slightly
+          timelines.forEach((el) => {
+            const r = el.getBoundingClientRect();
+            if (r.height === 0) return;
+            const p = Math.min(1, Math.max(0, (line - r.top) / r.height));
+            el.style.setProperty("--fill", p.toFixed(3));
+          });
+        };
+        const onTlScroll = () => { if (!tlRaf) tlRaf = requestAnimationFrame(syncTimelines); };
+        on(window, "scroll", onTlScroll, { passive: true });
+        on(window, "resize", onTlScroll);
+        syncTimelines();
+        cleanups.push(() => { if (tlRaf) cancelAnimationFrame(tlRaf); });
+      }
+    }
+
+    /* ---- 1c. Scroll progress bar ----
+       Writes --scroll-progress (0→1) on the fixed hairline. rAF-throttled and
+       driven by scaleX, so it never causes layout. */
+    const scrollbar = document.querySelector<HTMLElement>("[data-scrollbar]");
+    if (scrollbar) {
+      let sbRaf = 0;
+      const syncScrollbar = () => {
+        sbRaf = 0;
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - window.innerHeight;
+        const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        scrollbar.style.setProperty("--scroll-progress", p.toFixed(4));
+      };
+      const onSbScroll = () => { if (!sbRaf) sbRaf = requestAnimationFrame(syncScrollbar); };
+      on(window, "scroll", onSbScroll, { passive: true });
+      on(window, "resize", onSbScroll);
+      syncScrollbar();
+      cleanups.push(() => { if (sbRaf) cancelAnimationFrame(sbRaf); });
+    }
+
+    /* ---- 1d. Credential lightbox (S07) ----
+       The certificates are the proof; sending someone to Google Drive to read
+       one loses them. The card image opens the asset in place instead, with
+       prev/next across the set. Press cards keep a real outbound link, but on
+       their TITLE only — that link is markup, not JS. */
+    const credbox = document.querySelector<HTMLElement>("[data-credbox]");
+    const credImg = credbox?.querySelector<HTMLImageElement>("[data-credbox-img]") ?? null;
+    const credCap = credbox?.querySelector<HTMLElement>("[data-credbox-cap]") ?? null;
+    // Original set only — the marquee clone would double every entry.
+    const credCards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-carousel-set] [data-cred-idx]")
+    ).reduce<Array<{ src: string; cap: string }>>((acc, el) => {
+      const i = parseInt(el.getAttribute("data-cred-idx") || "-1", 10);
+      if (i < 0 || acc[i]) return acc;
+      const style = el.getAttribute("style") || "";
+      const m = /url\("([^"]+)"\)/.exec(style);
+      const cap = el.closest(".s07-cred-card")?.querySelector(".s07-cred-title")?.textContent || "";
+      if (m) acc[i] = { src: m[1], cap: cap.trim() };
+      return acc;
+    }, []);
+    let credIdx = 0;
+    const showCred = (i: number) => {
+      const n = credCards.length;
+      if (!credImg || n === 0) return;
+      const dir = i < credIdx ? -1 : 1;
+      let j = ((i % n) + n) % n;
+      // skip past any card whose asset hasn't been delivered yet
+      for (let guard = 0; guard < n && !credCards[j]; guard++) {
+        j = (((j + dir) % n) + n) % n;
+      }
+      const rec = credCards[j];
+      if (!rec) return;
+      credIdx = j;
+      credImg.src = rec.src;
+      credImg.alt = rec.cap;
+      if (credCap) credCap.textContent = rec.cap;
+    };
+    const closeCredbox = () => {
+      if (!credbox) return;
+      credbox.classList.remove("on");
+      credbox.hidden = true;
+      credbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    };
+    if (credbox) {
+      on(document, "click", (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLElement>("[data-cred-idx]");
+        if (!btn) return;
+        const i = parseInt(btn.getAttribute("data-cred-idx") || "0", 10);
+        if (!credCards[i]) return; // asset not delivered yet
+        credIdx = i;
+        showCred(i);
+        credbox.hidden = false;
+        credbox.classList.add("on");
+        credbox.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      });
+      on(credbox, "click", (e) => {
+        const t = e.target as HTMLElement;
+        if (t.closest("[data-credbox-close]") || t === credbox) { closeCredbox(); return; }
+        const nav = t.closest<HTMLElement>("[data-credbox-nav]");
+        if (nav) showCred(credIdx + parseInt(nav.getAttribute("data-credbox-nav") || "1", 10));
+      });
+    }
+
     /* ---- 4/5. Video modal + before/after lightbox openers (declared first; carousels call them) ---- */
     const vmodal = document.querySelector<HTMLElement>("[data-vmodal]");
     const vcontent = vmodal?.querySelector<HTMLElement>("[data-vmodal-content]") ?? null;
@@ -94,11 +207,17 @@ export function ClientBehaviors() {
       if (nav) showL(lidx + parseInt(nav.getAttribute("data-lbox-nav") || "1", 10));
     });
 
-    /* ---- 4b. Testimonial tiles (S06) — a static 2x2 grid, not a rail, so the
-       tap-to-open lives here rather than inside a carousel's drag guard. ---- */
-    const openTileFrom = (el: HTMLElement | null | undefined) => {
+    /* ---- 4b. Testimonial tiles (S06) ----
+       CLICKS on in-rail tiles are handled by the carousel's own capture handler
+       below, which first has to decide whether the press was a drag; so this
+       document-level opener skips them. KEYBOARD activation has no drag to
+       disambiguate and the carousel handler never sees it, so Enter/Space is
+       allowed through for rail tiles too — otherwise the rail would be
+       mouse-only. */
+    const openTileFrom = (el: HTMLElement | null | undefined, allowInRail = false) => {
       const tile = el?.closest<HTMLElement>("[data-tslide-src]");
-      if (!tile || tile.closest("[data-carousel]")) return false; // in-rail tiles: handled below
+      if (!tile) return false;
+      if (!allowInRail && tile.closest("[data-carousel]")) return false;
       const src = tile.getAttribute("data-tslide-src");
       if (!src) return false;
       openVideoModal(src);
@@ -108,7 +227,7 @@ export function ClientBehaviors() {
     on(document, "keydown", (e) => {
       const ke = e as KeyboardEvent;
       if (ke.key !== "Enter" && ke.key !== " ") return;
-      if (openTileFrom(ke.target as HTMLElement)) ke.preventDefault();
+      if (openTileFrom(ke.target as HTMLElement, true)) ke.preventDefault();
     });
 
     /* ---- 2. Vimeo VSL (delegated) ---- */
@@ -148,6 +267,10 @@ export function ClientBehaviors() {
       const clone = origSet.cloneNode(true) as HTMLElement;
       clone.removeAttribute("data-carousel-set");
       clone.setAttribute("aria-hidden", "true");
+      // The clone is aria-hidden, so nothing inside it may stay tabbable —
+      // a focusable node inside aria-hidden is an accessibility violation and
+      // would trap keyboard users on duplicate tiles.
+      clone.querySelectorAll<HTMLElement>("[tabindex]").forEach((n) => (n.tabIndex = -1));
       track.appendChild(clone);
 
       const gap = () => parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || "0") || 0;
@@ -229,6 +352,11 @@ export function ClientBehaviors() {
     on(document, "keydown", (e) => {
       const ke = e as KeyboardEvent;
       if (vmodal && !vmodal.hidden && ke.key === "Escape") closeVideoModal();
+      if (credbox && !credbox.hidden) {
+        if (ke.key === "Escape") closeCredbox();
+        else if (ke.key === "ArrowRight") showCred(credIdx + 1);
+        else if (ke.key === "ArrowLeft") showCred(credIdx - 1);
+      }
       if (lbox && !lbox.hidden) {
         if (ke.key === "Escape") closeLightbox();
         else if (ke.key === "ArrowRight") showL(lidx + 1);

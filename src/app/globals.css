@@ -736,7 +736,8 @@ h2.sdp-h2{ text-align:center; font-size:clamp(28px,4.4vw,52px); letter-spacing:.
 .sdp-risk-strip{ display:flex; justify-content:center; flex-wrap:wrap; gap:16px; margin:14px auto 0; max-width:560px; }
 .sdp-risk-badge{ display:inline-flex; align-items:center; gap:6px; font-family:var(--fb); font-size:12.5px; font-weight:600; color:var(--ink-soft); }
 .sdp-risk-icon-green{ color:var(--success); display:inline-flex; } .sdp-risk-icon-gold{ color:var(--gold); display:inline-flex; } .sdp-risk-icon-blue{ color:var(--brand-deep); display:inline-flex; }
-.sdp-cta-note{ display:block; margin:14px auto 0; max-width:760px; font-style:italic; font-size:13px; color:var(--muted); text-align:center; }
+/* `.sdp-cta-note` (the "diagnostic session, not a pitch" line) removed with its
+   markup at the client's request. */
 
 /* Announcement bar — accent gradient scrolling marquee */
 .sdp-announce{ background:var(--grad-announce); color:#fff; overflow:hidden; }
@@ -853,11 +854,10 @@ h2.sdp-h2{ text-align:center; font-size:clamp(28px,4.4vw,52px); letter-spacing:.
 /* CTA lockup */
 .sdp-lockup{ display:flex; flex-direction:column; align-items:center; text-align:center; margin:32px auto 0; }
 .sdp-cta-roadmap{ margin:14px auto 0; max-width:44ch; font-style:italic; font-size:13.5px; color:var(--ink-soft); }
-.sdp-capacity{ display:inline-flex; align-items:center; gap:9px; margin:14px auto 0; padding:8px 16px; border-radius:999px;
-  background:var(--brand-soft); border:1px solid var(--brand-ring); color:var(--brand-deep);
-  font-family:var(--fb); font-size:12.5px; font-weight:700; letter-spacing:.05em; }
-.sdp-capacity .dot{ width:8px; height:8px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 4px var(--brand-soft); animation:sdpMarkerPulse 2.4s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce){ .sdp-capacity .dot,.sdp-marker-dot,.sdp-callout::before,.sdp-vsl-disc::after,.sdp-stuck::before,.sdp-announce-track{ animation:none; } }
+/* `.sdp-capacity` (the "Only N assessments open each month" pill) removed with
+   its markup at the client's request. The reduced-motion rule below is shared,
+   so only the `.sdp-capacity .dot` selector was dropped from it. */
+@media (prefers-reduced-motion: reduce){ .sdp-marker-dot,.sdp-callout::before,.sdp-vsl-disc::after,.sdp-stuck::before,.sdp-announce-track{ animation:none; } }
 
 /* For-You-If one-sided ✓ list (beat 2) */
 .sdp-who-list{ list-style:none; margin:0 auto; padding:0; max-width:640px; display:grid; grid-template-columns:1fr; gap:14px; }
@@ -986,7 +986,6 @@ h2.sdp-h2{ text-align:center; font-size:clamp(28px,4.4vw,52px); letter-spacing:.
 /* CTA lockup readability on dark bands (founder / guarantee / footer) */
 .sdp-dark .sdp-risk-badge,.sdp-dark-alt .sdp-risk-badge{ color:var(--ink-dark-soft); }
 .sdp-dark .sdp-cta-roadmap,.sdp-dark-alt .sdp-cta-roadmap{ color:var(--ink-dark-soft); }
-.sdp-dark .sdp-cta-note,.sdp-dark-alt .sdp-cta-note{ color:var(--muted-dark); }
 .sdp-dark .sdp-risk-icon-blue,.sdp-dark-alt .sdp-risk-icon-blue{ color:var(--brand-bright); }
 
 /* sticky bar contents */

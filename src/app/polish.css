@@ -1,0 +1,480 @@
+/* =====================================================================
+   POLISH PASS — client review round 2.
+
+   Loaded LAST (layout.tsx: globals → sections → polish) so these rules win
+   over the foundation and the per-section blocks at equal specificity,
+   by source order. Everything here is an override or an addition; nothing
+   in the earlier sheets was deleted to make room.
+   ===================================================================== */
+
+/* ---- responsive line-break utilities ----------------------------------
+   `<br className="brk-desktop">` forces a split only on wide screens;
+   `brk-mobile` only on narrow. Each is inert at the other size. */
+.brk-desktop { display: none; }
+.brk-mobile  { display: none; }
+@media (min-width: 901px) { .brk-desktop { display: inline; } }
+@media (max-width: 760px) { .brk-mobile  { display: inline; } }
+
+/* ---- 1. SCROLL PROGRESS BAR ------------------------------------------
+   Fixed hairline across the very top of the viewport. `--scroll-progress`
+   (0 → 1) is written by ClientBehaviors on scroll; the fill is a scaleX so
+   it stays on the compositor and never triggers layout. */
+.sdp-scrollbar {
+  /* above the sticky nav (40) and the trust strip, below the overlays */
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 3px; z-index: 1000;
+  background: rgba(0, 0, 0, .10);
+  pointer-events: none;
+}
+.sdp-scrollbar-fill {
+  display: block; height: 100%; width: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--scroll-progress, 0));
+  background: linear-gradient(90deg, var(--brand-deep), var(--brand) 45%, var(--brand-bright));
+  box-shadow: 0 0 10px rgba(var(--brand-rgb), .6);
+  will-change: transform;
+}
+
+/* ---- 2. HEADING ACCENT UNDERLINE -------------------------------------
+   A brushed lens under every <em> in a section H2: tapered to nothing at the
+   ends, thickest and strongest at the centre. Static — the travelling
+   highlight that was here read as noisy and has been removed.
+
+   Painted as a BACKGROUND on the <em> rather than a ::after, so that
+   box-decoration-break:clone gives each line its own stroke when the accent
+   phrase wraps, which it does on mobile in four of these headings.
+
+   Vertical padding on an inline box does NOT grow the line box, so the stroke
+   hangs into whatever space the line-height leaves. The heading line-height is
+   opened up below to guarantee that clearance; without it the stroke collides
+   with the line underneath on any wrapped accent phrase. */
+.sdp-root h2.sdp-h2 {
+  line-height: 1.3;
+}
+.sdp-root h2.sdp-h2 em {
+  --u-core: var(--brand-deep);
+  --u-mid:  var(--brand);
+  position: relative;
+  padding-bottom: .12em;
+  background-image:
+    radial-gradient(ellipse 50% 50% at 50% 50%,
+      var(--u-core) 0%,
+      var(--u-core) 34%,
+      var(--u-mid) 66%,
+      rgba(var(--brand-rgb), 0) 92%);
+  background-repeat: no-repeat;
+  background-size: 100% .22em;
+  background-position: 0 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.sdp-root .sdp-dark h2.sdp-h2 em,
+.sdp-root .sdp-dark-alt h2.sdp-h2 em {
+  --u-core: var(--brand-bright);
+  --u-mid:  var(--brand);
+}
+/* Narrow screens wrap these headings most, and the type is smaller there, so
+   the stroke needs proportionally more room under each line. */
+@media (max-width: 760px) {
+  .sdp-root h2.sdp-h2 { line-height: 1.38; }
+  .sdp-root h2.sdp-h2 em { padding-bottom: .1em; background-size: 100% .2em; }
+}
+
+/* ---- 3. CTA: CONSTANT SHINE ------------------------------------------
+   globals.css swept the highlight only on :hover, so a CTA sitting still read
+   as flat. It now sweeps on a loop; hover keeps its lift and brightness. */
+.sdp-root .sdp-cta { position: relative; overflow: hidden; }
+.sdp-root .sdp-cta::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%;
+  width: 45%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .55), transparent);
+  transform: skewX(-20deg);
+  transition: none;
+  animation: sdpCtaSheen 3.4s cubic-bezier(.4, 0, .25, 1) infinite;
+  pointer-events: none;
+}
+/* neutralise the old hover-driven sweep so the two don't fight */
+.sdp-root .sdp-cta:hover::after { left: -60%; }
+@keyframes sdpCtaSheen {
+  0%   { left: -60%; }
+  55%  { left: 130%; }
+  100% { left: 130%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sdp-root .sdp-cta::after { animation: none; }
+}
+
+/* ---- 10. TRUST BANNER: readable figures on the brass bar --------------
+   Bold brass-bright text on a brass gradient had almost no contrast and read
+   as blended into the background. Each figure is now a dark graphite chip
+   (the number) next to a solid-white label. */
+.sdp-root .s01-trust-banner-copy { gap: 10px; }
+.sdp-root .s01-tb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.sdp-root .s01-tb-num {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 5px;
+  background: #181510;
+  color: var(--brand-bright);
+  font-weight: 800;
+  letter-spacing: .06em;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .28);
+}
+.sdp-root .s01-tb-label {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+}
+.sdp-root .s01-trust-banner-sep { color: rgba(255, 255, 255, .55); opacity: 1; }
+@media (max-width: 560px) {
+  .sdp-root .s01-tb-num { padding: 2px 7px; }
+  .sdp-root .s01-trust-banner-copy { gap: 6px 10px; }
+  /* the two figures stack here, so the divider would orphan at a line end */
+  .sdp-root .s01-trust-banner-sep { display: none; }
+}
+
+/* ---- 4. HERO: highlight box, 2x2 pills, bigger click cue -------------- */
+
+/* Emphasis runs in the hero, all in the client's specified brass-deep.
+   The H1 takes the colour ONLY — it already carries the display face's own
+   weight, and forcing 800 on top of it read as heavy-handed. The two
+   paragraphs below take colour plus a restrained 600. */
+.sdp-root .s04-hero .sdp-h1 .s04-h1-kilos { color: #8a6d2b; }
+.sdp-root .s04-hero-sub strong,
+.sdp-root .s04-hero-lead strong {
+  color: #8a6d2b;
+  font-weight: 600;
+}
+
+/* Let the browser distribute the lines instead of hard-coding them: `balance`
+   evens the line lengths at whatever width the phone happens to be, which a
+   fixed <br> cannot do. */
+.sdp-root .s04-hero-lead,
+.sdp-root .s04-hero-sub { text-wrap: balance; }
+
+/* solid, darker highlight on the kilo range — never split across two lines */
+.sdp-root .s04-hero-lead mark { white-space: nowrap; }
+.sdp-root .s04-hero-lead mark {
+  background: linear-gradient(180deg, var(--brand), var(--brand-deep));
+  color: #fff;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(var(--brand-rgb), .3);
+}
+
+/* outcome pills as a 2x2 block at every size */
+.sdp-root .s04-hero-markers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 10px auto 16px;
+  max-width: 620px;
+}
+.sdp-root .s04-hero-markers .sdp-marker-chip {
+  justify-content: center;
+  width: 100%;
+}
+
+/* the "watch below" cue: a real pointer, bigger and quicker */
+.sdp-root .s04-above-vsl { display: inline-flex; align-items: center; gap: 10px; }
+.sdp-root .s04-above-vsl-arrow {
+  display: inline-grid; place-items: center;
+  width: 26px; height: 26px; flex: 0 0 26px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #1b1608;
+  animation: sdpCueBob .85s cubic-bezier(.45, 0, .35, 1) infinite,
+             sdpCueRing 1.7s ease-out infinite;
+}
+.sdp-root .s04-above-vsl-arrow svg { width: 16px; height: 16px; }
+@keyframes sdpCueBob {
+  0%, 100% { transform: translateY(-3px); }
+  50%      { transform: translateY(4px); }
+}
+@keyframes sdpCueRing {
+  0%   { box-shadow: 0 0 0 0  rgba(var(--brand-rgb), .5); }
+  70%  { box-shadow: 0 0 0 12px rgba(var(--brand-rgb), 0); }
+  100% { box-shadow: 0 0 0 0  rgba(var(--brand-rgb), 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sdp-root .s04-above-vsl-arrow { animation: none; }
+}
+
+/* ---- 5. FOUR COSTS: compact and equal ---------------------------------
+   The staggered second column made the four tiles read as different sizes.
+   Flat grid, equal rows, tighter internals. */
+.sdp-root .s09-cost-grid { gap: 16px; align-items: stretch; }
+.sdp-root .s09-cost-grid > li:nth-child(even) { margin-top: 0; }
+.sdp-root .s09-cost      { padding: 20px 20px 18px; border-radius: 14px; }
+.sdp-root .s09-cost-gauge{ width: 50px; height: 50px; margin-bottom: 12px; }
+.sdp-root .s09-cost-arc  { width: 50px; height: 50px; }
+.sdp-root .s09-cost-ico svg { width: 20px; height: 20px; }
+.sdp-root .s09-cost-ghost{ top: 0; right: 12px; font-size: 58px; }
+.sdp-root .s09-cost-k    { font-size: 10.5px; }
+.sdp-root .s09-cost-v    { font-size: 13px; margin-top: 8px; }
+
+/* ---- 6. RAILS BOXED TO THE PAGE GRID ---------------------------------
+   Testimonials, before/after and the credential rail were full-bleed. They
+   now sit inside the same column as the rest of the page (the `.sdp-wrap`
+   is added in the components); the edge mask tightens to match. */
+.sdp-root .s06-tcar-wrap,
+.sdp-root .s06-bacar-wrap { border-radius: 18px; }
+.sdp-root .s06-tcar,
+.sdp-root .s06-bacar,
+.sdp-root .s07-credrail {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+}
+.sdp-root .s06-tcar-prev { left: -6px; }
+.sdp-root .s06-tcar-next { right: -6px; }
+
+/* ---- 11. MOBILE RAILS: gutters, and arrows that live in them ----------
+   Both rails share an identical container, so the edge-touching was never a
+   centring bug: the clip box spanned the whole column and a marquee card is
+   always sitting at that boundary.
+
+   Padding on the RAIL cannot fix it — `overflow:hidden` clips at the padding
+   box, so it would not inset the clipped content. Padding on the WRAP does,
+   because it shrinks the rail's own box, which is where the clip happens.
+
+   The nav arrows were absolutely positioned at -6px / clamp(8px,3vw,28px)
+   relative to the wrap, which hung them off the screen edges. They now sit
+   centred inside the 46px gutter (46 - 38 = 8, so 4px each side), clear of
+   both the cards and the viewport edge.
+
+   Applied to BOTH rails so the video and image carousels stay identical. */
+@media (max-width: 860px) {
+  .sdp-root .s06-tcar-wrap,
+  .sdp-root .s06-bacar-wrap {
+    padding-left: 46px;
+    padding-right: 46px;
+  }
+  /* one card dominates, with slivers either side, at the image rail's ratio */
+  .sdp-root .s06-tslide {
+    flex: 0 0 min(300px, calc(100vw - 160px));
+    width: min(300px, calc(100vw - 160px));
+  }
+  .sdp-root .s06-ba-card { width: min(300px, calc(100vw - 160px)); }
+
+  .sdp-root .s06-bacar-nav { width: 38px; height: 38px; }
+  .sdp-root .s06-tcar-prev,
+  .sdp-root .s06-bacar-prev { left: 4px; }
+  .sdp-root .s06-tcar-next,
+  .sdp-root .s06-bacar-next { right: 4px; }
+}
+
+/* ---- 14. STICKY CTA: always two lines on a phone ---------------------
+   The label was pinned at 18px, so on a narrow phone it broke to three lines
+   and the bar grew. The size now scales with the viewport, which keeps it at
+   two lines from the smallest phone up to the point the desktop layout takes
+   over — no per-device breakpoints needed. */
+@media (max-width: 640px) {
+  .sdp-root .s13-stuck .sdp-cta .sdp-cta-main {
+    font-size: clamp(11.5px, 4vw, 18px);
+    line-height: 1.12;
+  }
+  .sdp-root .s13-stuck .sdp-cta { padding: 9px 14px 8px; }
+  .sdp-root .s13-stuck .sdp-cta .arrow { width: 20px; height: 20px; flex: 0 0 20px; }
+}
+
+/* ---- 15. CTA BADGES: 2 up, then 1 centred (mobile) --------------------
+   Flex-wrap was stacking all three one per row because each was too wide to
+   pair. An explicit two-column grid with the third badge spanning both makes
+   the 2 + 1 arrangement deterministic at every width, and the type scales so
+   the first two actually fit side by side down to the smallest phone. */
+@media (max-width: 640px) {
+  .sdp-root .sdp-risk-strip {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: center;
+    align-items: center;
+    gap: 8px clamp(10px, 3.5vw, 18px);
+    max-width: 100%;
+  }
+  .sdp-root .sdp-risk-strip > :nth-child(3) {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+  .sdp-root .sdp-risk-badge {
+    font-size: clamp(9.5px, 3vw, 12.5px);
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .sdp-root .sdp-risk-badge svg { width: 13px; height: 13px; }
+}
+
+/* ---- 16. HERO TYPE STEP-DOWN (mobile only) ---------------------------
+   Client-specified sizes: 12px for the two paragraphs under the H1, 10px for
+   the outcome pills. Desktop is untouched. */
+@media (max-width: 640px) {
+  .sdp-root .s04-hero-sub,
+  .sdp-root .s04-hero-lead { font-size: 12px; }
+  .sdp-root .s04-hero-markers .sdp-marker-chip {
+    font-size: 10px;
+    padding: 7px 9px;
+    gap: 5px;
+  }
+  .sdp-root .s04-hero-markers .sdp-marker-dot { width: 5px; height: 5px; }
+}
+
+/* ---- 12. MOBILE HERO SPACING -----------------------------------------
+   More air between the "watch the short video below" cue and the player, so
+   the cue reads as a label for the video rather than sitting on top of it.
+   Mobile only — the desktop rhythm is untouched. */
+@media (max-width: 640px) {
+  .sdp-root .s04-above-vsl { margin: 8px auto 18px; }
+  .sdp-root .s04-video-frame { margin: 0 auto 8px; }
+}
+
+/* ---- 13. TRUST BANNER ON ONE LINE (mobile) ---------------------------
+   The two figures wrapped onto two rows on a phone. They now hold a single
+   line: type and tracking step down, the chips tighten, and nothing is
+   allowed to break mid-figure. The divider comes back now that they sit
+   side by side. */
+@media (max-width: 560px) {
+  .sdp-root .s01-trust-banner { padding: 7px 8px; }
+  .sdp-root .s01-trust-banner-copy {
+    flex-wrap: nowrap;
+    gap: 5px;
+    font-size: 9px;
+    letter-spacing: .02em;
+  }
+  .sdp-root .s01-tb-item { gap: 4px; flex-shrink: 0; }
+  .sdp-root .s01-tb-num {
+    padding: 2px 5px;
+    font-size: 9px;
+    letter-spacing: .02em;
+  }
+  .sdp-root .s01-tb-label {
+    font-size: 9px;
+    letter-spacing: .03em;
+    white-space: nowrap;
+  }
+  .sdp-root .s01-trust-banner-sep { display: inline; margin: 0 1px; }
+  .sdp-root .s01-trust-banner-dot { width: 5px; height: 5px; flex: 0 0 5px; }
+}
+@media (max-width: 360px) {
+  .sdp-root .s01-trust-banner-copy,
+  .sdp-root .s01-tb-num,
+  .sdp-root .s01-tb-label { font-size: 8px; }
+  .sdp-root .s01-trust-banner-sep { display: none; }
+}
+
+/* ---- 8. TRUST-STRIP AVATARS: face crop from the 9:16 video frame ------
+   The source is each testimonial's opening frame, so it is a tall phone
+   video, not a headshot — and the three clips are framed differently (one
+   close-up, two standing mid-shots). The per-clip zoom + anchor therefore
+   comes from `content.ts` → testimonialAvatarCrop as an inline style; this
+   rule only supplies the fallback for a clip with no entry. */
+.sdp-root .s02-trust-strip-avatar {
+  background-size: cover;
+  background-position: center 40%;
+}
+
+/* NOTE: the `.p01-guarantee` flex-to-block fix lives in P01Checkout.css, not
+   here. Route-level CSS imported by /checkout is emitted AFTER this sheet, so
+   an override at equal specificity would lose. */
+
+/* ---- 9. CHECKOUT LEGAL FOOTER ----------------------------------------
+   The three policies are real routes and now link out. The one sentence
+   that sets a buyer expectation ("confirmed only after payment") is lifted
+   out of the fine print. */
+.sdp-root .p01-legal-em {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  background: rgba(var(--brand-rgb), .12);
+  border: 1px solid rgba(var(--brand-rgb), .3);
+  color: var(--brand-deep);
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+/* ---- 7. CREDENTIAL CARD: image opens a lightbox, title links out ------ */
+.sdp-root .s07-cred-card { cursor: default; }
+.sdp-root .s07-cred-img {
+  display: block; width: 100%;
+  padding: 0; border: 0; margin: 0;
+  -webkit-appearance: none; appearance: none;
+  cursor: zoom-in;
+  font: inherit; color: inherit;
+}
+.sdp-root .s07-cred-img.is-pending { cursor: default; display: grid; place-items: center; }
+.sdp-root .s07-cred-img:focus-visible { outline: 2px solid var(--brand); outline-offset: -3px; }
+
+.sdp-root .s07-cred-title--link {
+  color: var(--ink-dark);
+  text-decoration: none;
+  transition: color .2s;
+}
+.sdp-root .s07-cred-title--link:hover { color: var(--brand); text-decoration: underline; }
+.sdp-root .s07-cred-ext {
+  display: inline-flex; vertical-align: -2px; margin-left: 5px;
+  width: 13px; height: 13px; color: var(--brand);
+}
+.sdp-root .s07-cred-ext svg { width: 13px; height: 13px; }
+
+.sdp-root .s07-credbox {
+  /* above the sticky CTA (999) and in the same band as the other two overlays
+     (before/after lightbox 10000, video modal 10002) */
+  position: fixed; inset: 0; z-index: 10004;
+  background: rgba(10, 9, 7, .9);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  display: grid; place-items: center;
+  padding: 24px;
+  opacity: 0; transition: opacity .25s;
+}
+.sdp-root .s07-credbox.on { opacity: 1; }
+.sdp-root .s07-credbox-inner { position: relative; max-width: min(1000px, 92vw); }
+.sdp-root .s07-credbox-img {
+  display: block;
+  max-width: 100%; max-height: 78vh;
+  width: auto; height: auto;
+  border-radius: 12px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  background: #fff;
+}
+.sdp-root .s07-credbox-cap {
+  margin-top: 14px; text-align: center;
+  font-family: var(--fb); font-size: 12.5px; letter-spacing: .06em;
+  color: var(--ink-dark-soft);
+}
+.sdp-root .s07-credbox-close,
+.sdp-root .s07-credbox-nav {
+  position: absolute; z-index: 2;
+  display: grid; place-items: center;
+  border-radius: 50%; cursor: pointer;
+  background: rgba(255, 255, 255, .94);
+  border: 1px solid rgba(0, 0, 0, .08);
+  color: #181510;
+  padding: 0;
+  -webkit-appearance: none; appearance: none;
+  transition: background .2s, transform .2s;
+}
+.sdp-root .s07-credbox-close { width: 40px; height: 40px; top: -18px; right: -18px; }
+.sdp-root .s07-credbox-nav {
+  width: 46px; height: 46px;
+  top: calc(50% - 30px);
+  transform: translateY(-50%);
+}
+.sdp-root .s07-credbox-prev { left: -60px; }
+.sdp-root .s07-credbox-next { right: -60px; }
+.sdp-root .s07-credbox-close svg { width: 18px; height: 18px; }
+.sdp-root .s07-credbox-nav svg   { width: 20px; height: 20px; }
+.sdp-root .s07-credbox-close:hover { background: var(--brand); transform: scale(1.06); }
+.sdp-root .s07-credbox-nav:hover   { background: var(--brand); }
+@media (max-width: 820px) {
+  .sdp-root .s07-credbox-prev  { left: -6px; }
+  .sdp-root .s07-credbox-next  { right: -6px; }
+  .sdp-root .s07-credbox-close { top: -16px; right: -6px; }
+  .sdp-root .s07-credbox-nav   { width: 38px; height: 38px; }
+}

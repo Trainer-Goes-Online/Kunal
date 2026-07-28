@@ -30,15 +30,15 @@
  *   ₹299 = `site.assessmentFee`; capacity = `site.monthlySlots`;
  *   transformations masthead = the shipped Transformations.tsx copy.
  *
- * GAPS: SDP's why-card stat row asserts "550+ Coached / 8 Yrs" — neither is
- * confirmed for Kraft (§6 Q1), so that stat renders as a visible <Gap q={1}>.
+ * FIGURES: SDP's why-card stat row asserts "550+ Coached / 8 Yrs". Kraft's third
+ * stat now carries the landing page's own confirmed track record
+ * (`site.successStories` high-performers coached), so the two pages cannot drift.
  * SDP's "fewer than 30 new clients a quarter" is likewise not Kraft's number;
  * the confirmed `site.monthlySlots` capacity is used instead. SDP's six value
  * cards become Kraft's six CONFIRMED items (3 covers + 3 trust) — no filler.
  */
 import { site } from "@/lib/site";
 import { baCards } from "@/lib/content";
-import { Gap } from "@/components/shared/Gap";
 import { Colophon } from "@/components/Colophon";
 import { CalendarEmbed } from "@/components/np/CalendarEmbed";
 
@@ -106,7 +106,7 @@ function Hero({ firstName }: { firstName: string }) {
 
         <p className="p02-hero-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
           Your <strong>{site.assessmentFee} assessment fee</strong> is received.{" "}
-          <mark>Pick the time you&rsquo;ll actually keep</mark> — Kunal reviews your details
+          <mark>Pick the time you&rsquo;ll actually keep</mark>. Kunal reviews your details
           before you speak, so the hour is spent on you.
         </p>
 
@@ -160,7 +160,7 @@ function CalendarSection({ firstName, email }: { firstName: string; email: strin
           {CAL_ITEMS.map(([h, p]) => (
             <div className="p02-cal-itm" key={h}>
               <Tick />
-              <span><strong>{h}</strong> — {p}</span>
+              <span><strong>{h}</strong>: {p}</span>
             </div>
           ))}
         </div>
@@ -175,7 +175,7 @@ function CalendarSection({ firstName, email }: { firstName: string; email: strin
 const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
   {
     title: "An Honest Read On What’s Stalling You",
-    body: "Not a generic diagnosis — Kunal looks at your training history, your markers, and your real week, and tells you where the block actually is.",
+    body: "Not a generic diagnosis. Kunal looks at your training history, your markers, and your real week, and tells you where the block actually is.",
     icon: (
       <>
         <circle cx="12" cy="12" r="10" />
@@ -187,7 +187,7 @@ const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
   },
   {
     title: "The Real Pattern In Your Week",
-    body: "The meetings, the travel, the late dinners, the “kal se” that never comes. He finds the pattern the last plan ignored — because that pattern is what beat every plan before it.",
+    body: "The meetings, the travel, the late dinners, the “kal se” that never comes. He finds the pattern the last plan ignored, because that pattern is what beat every plan before it.",
     icon: (
       <>
         <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -198,7 +198,7 @@ const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    title: "Whether The Protocol Fits — Straight",
+    title: "Whether The Protocol Fits, Straight",
     body: "If it fits your life right now, he’ll tell you. If it doesn’t, he’ll tell you that too. You leave knowing where you stand, either way.",
     icon: (
       <>
@@ -209,7 +209,7 @@ const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
   },
   {
     title: "1:1 With Kunal",
-    body: "Not a team member. He runs every assessment himself — that’s the whole point of keeping the numbers small.",
+    body: "Not a team member. He runs every assessment himself. That’s the whole point of keeping the numbers small.",
     icon: <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />,
   },
   {
@@ -224,7 +224,7 @@ const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
   },
   {
     title: "Free Reschedule",
-    body: "Up to 24 hours before, no questions — straight from your calendar invite. Just don’t leave the slot empty; someone else is on the list.",
+    body: "Up to 24 hours before, no questions, straight from your calendar invite. Just don’t leave the slot empty; someone else is on the list.",
     icon: (
       <>
         <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
@@ -245,7 +245,7 @@ function IncludedSection() {
           A Real Diagnostic. <em>Not A Pitch.</em>
         </h2>
         <p className="sdp-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
-          What your assessment covers — an honest read on your body, your week, and whether
+          What your assessment covers: an honest read on your body, your week, and whether
           the Protocol is the right fit.
         </p>
 
@@ -295,7 +295,7 @@ function WhyCard() {
 
           <p>
             Here&rsquo;s the quiet trap: plenty of men pay, then leave the booking for
-            &ldquo;later&rdquo; — and later is exactly the calendar that&rsquo;s kept them stuck
+            &ldquo;later&rdquo;, and later is exactly the calendar that&rsquo;s kept them stuck
             for years.
           </p>
           <p>
@@ -314,8 +314,10 @@ function WhyCard() {
               <div className="p02-stat-l">Run By Kunal, 1:1</div>
             </div>
             <div className="p02-why-stat">
-              <div className="p02-stat-n"><Gap q={1}>clients coached / years</Gap></div>
-              <div className="p02-stat-l">Track Record</div>
+              {/* Same confirmed figure the landing page runs on (site.successStories),
+                  so the two pages can never quote different track records. */}
+              <div className="p02-stat-n">{site.successStories}</div>
+              <div className="p02-stat-l">High-Performers Coached</div>
             </div>
           </div>
 
@@ -349,7 +351,7 @@ function TransformationsSection() {
           Real Men. Real Numbers. <em>Results That Held</em>.
         </h2>
         <p className="sdp-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
-          Founders, GMs, engineers, corporate leaders — 35 to 50, with the same calendar
+          Founders, GMs, engineers, corporate leaders, 35 to 50, with the same calendar
           pressure as yours.
         </p>
       </div>
@@ -421,7 +423,7 @@ const FAQS: { q: string; a: React.ReactNode; open?: boolean }[] = [
     q: "Is the call directly with Kunal?",
     a: (
       <>
-        Yes — every assessment is Kunal himself, not a team member.{" "}
+        Yes. Every assessment is Kunal himself, not a team member.{" "}
         <strong>That&rsquo;s the whole point of keeping the numbers small.</strong>
       </>
     ),
@@ -432,7 +434,7 @@ const FAQS: { q: string; a: React.ReactNode; open?: boolean }[] = [
     a: (
       <>
         Reschedule freely up to 24 hours before, straight from your calendar invite. Just
-        don&rsquo;t leave the slot empty — someone else is on the list.
+        don&rsquo;t leave the slot empty; someone else is on the list.
       </>
     ),
   },
@@ -508,7 +510,7 @@ function StickyStrip() {
         <div className="p02-stuck-meta">
           <span className="p02-pulse" aria-hidden />
           <div className="p02-stuck-text">
-            <div className="p02-stuck-h"><em>One step left</em> — pick your slot</div>
+            <div className="p02-stuck-h"><em>One step left</em>: pick your slot</div>
             <div className="p02-stuck-s">1:1 with Kunal · Fee already paid · Free reschedule</div>
           </div>
         </div>

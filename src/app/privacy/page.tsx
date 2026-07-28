@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Kraft With Kunal",
+  title: "Privacy Policy | Kraft With Kunal",
   robots: { index: false, follow: false },
 };
 
@@ -27,16 +28,17 @@ export default function PrivacyPage() {
         heading: "Contact",
         body: (
           <p>
-            Questions about your privacy? Email <a href="mailto:business@trainergoesonline.com">business@trainergoesonline.com</a>.
+            Questions about your privacy? Email{" "}
+            <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.
           </p>
         ),
       }}
     >
       <LegalSection id="what" heading="What we collect">
         <ul className="pol-list">
-          <li><strong>Details you give us</strong> — your name, email address, phone number, and city, submitted through the assessment form.</li>
-          <li><strong>Payment information</strong> — processed securely by our payment provider. We do not store your full card or bank details on our servers.</li>
-          <li><strong>Usage data</strong> — basic, anonymised analytics about how the site is used, to improve it.</li>
+          <li><strong>Details you give us</strong>: your name, email address, phone number, and city, submitted through the assessment form.</li>
+          <li><strong>Payment information</strong>: processed securely by our payment provider. We do not store your full card or bank details on our servers.</li>
+          <li><strong>Usage data</strong>: basic, anonymised analytics about how the site is used, to improve it.</li>
         </ul>
       </LegalSection>
 
@@ -51,7 +53,7 @@ export default function PrivacyPage() {
       <LegalSection id="share" heading="Who we share it with">
         <p>
           We never sell your details. We share the minimum necessary with trusted service providers who help
-          us operate — a payment processor (to take the assessment fee), a scheduling tool (to book your call),
+          us operate: a payment processor (to take the assessment fee), a scheduling tool (to book your call),
           and communication tools (email/WhatsApp). Each processes your data only to provide their service.
         </p>
       </LegalSection>

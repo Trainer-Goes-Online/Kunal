@@ -31,6 +31,7 @@
   min-width:0; text-align:center;
 }
 .sdp-root .s01-trust-banner b{ color:var(--brand-bright); font-weight:800; }
+.sdp-root .s01-trust-banner-sep{ opacity:.5; font-weight:400; }
 .sdp-root .s01-trust-banner-dot{
   width:7px; height:7px; border-radius:50%;
   background:var(--brand-bright);
@@ -104,7 +105,9 @@
 }
 .sdp-root .s02-trust-strip-item b{ color:var(--ink); font-weight:800; }
 /* Reserved for when the rating lands (§6 Q2) — SDP's ★★★★★ run. */
-.sdp-root .s02-trust-strip-stars{ color:var(--star); letter-spacing:.04em; font-size:13px; }
+.sdp-root .s02-trust-strip-stars{ color:var(--star); letter-spacing:.04em; font-size:13px;
+  display:inline-flex; align-items:center; gap:1px; }
+.sdp-root .s02-trust-strip-stars svg{ width:13px; height:13px; }
 .sdp-root .s02-trust-strip-check{
   display:inline-flex; align-items:center; justify-content:center;
   width:18px; height:18px; flex:0 0 18px; color:var(--success);
@@ -241,6 +244,83 @@
   padding:2px 6px; border-radius:4px; font-weight:600;
 }
 
+/* ---- Hero lead-in above the outcome chips (funnel md: "200+ ... have used
+       the High-Performer Protocol to lose 8-12 kilos and achieve:") ---- */
+.sdp-root .s04-hero-lead{
+  font-size:14px; color:var(--ink-soft);
+  max-width:660px; margin:0 auto 12px; line-height:1.65;
+}
+.sdp-root .s04-hero-lead mark{
+  background:rgba(var(--brand-rgb),.15); color:var(--brand-deep);
+  padding:2px 6px; border-radius:4px; font-weight:700;
+}
+
+/* ================================================================
+   S04b — OFFER COUNTDOWN (funnel md: "OFFER ENDS IN : TIMER OF 5 HOURS")
+   Built to the client's supplied reference: bare uppercase label on the page
+   ground, then a red block of four tabular cells (DAYS/HRS/MIN/SEC), each a
+   white numeral over a small caption, split by dot separators.
+   Client component; see OfferTimer.tsx.
+================================================================ */
+.sdp-root .s04-timer{
+  --timer-red:#E5342A;
+  display:inline-flex; align-items:center; justify-content:center;
+  flex-wrap:wrap; gap:16px;
+  margin:20px auto 6px;
+}
+.sdp-root .s04-timer-label{
+  font-family:var(--fb); font-size:12px; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-soft);
+  white-space:nowrap;
+}
+
+.sdp-root .s04-timer-clock{
+  display:inline-flex; align-items:center;
+  background:var(--timer-red);
+  border-radius:9px;
+  padding:7px 16px;
+}
+.sdp-root .s04-timer-group{ display:inline-flex; align-items:center; }
+
+.sdp-root .s04-timer-cell{
+  display:inline-flex; flex-direction:column; align-items:center;
+  min-width:36px;
+}
+.sdp-root .s04-timer-cell b{
+  font-family:var(--fh); font-size:26px; line-height:1;
+  letter-spacing:.03em; color:#fff;
+  font-variant-numeric:tabular-nums;
+}
+.sdp-root .s04-timer-cell i{
+  font-style:normal; margin-top:4px;
+  font-family:var(--fb); font-size:8.5px; font-weight:700;
+  letter-spacing:.12em; text-transform:uppercase;
+  color:rgba(255,255,255,.86);
+}
+
+/* dot divider, pulled up so it sits on the numeral row, not the captions */
+.sdp-root .s04-timer-sep{
+  align-self:flex-start;
+  margin:11px 9px 0;
+  width:3px; height:3px; flex:0 0 3px;
+  border-radius:50%;
+  background:rgba(255,255,255,.92);
+}
+
+/* window elapsed → the timer renders nothing (no fake rollover, and no
+   fallback line now that the capacity pill is gone), so `.is-closed` no
+   longer exists in the markup. */
+
+@media (max-width:560px){
+  .sdp-root .s04-timer{ gap:10px; }
+  .sdp-root .s04-timer-label{ font-size:11px; letter-spacing:.12em; }
+  .sdp-root .s04-timer-clock{ padding:6px 12px; border-radius:8px; }
+  .sdp-root .s04-timer-cell{ min-width:30px; }
+  .sdp-root .s04-timer-cell b{ font-size:22px; }
+  .sdp-root .s04-timer-sep{ margin:9px 6px 0; }
+}
+
 /* ---- Chip row (landing.css:469-474) — SDP's blood-marker row ---- */
 .sdp-root .s04-hero-markers{
   display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
@@ -371,36 +451,8 @@
   letter-spacing:.1em; text-transform:uppercase; font-weight:700; line-height:1.3;
 }
 
-/* ---- Trust strip (landing.css:639-661 + hover 2694-2700) ---- */
-.sdp-root .s04-trust{
-  display:flex; align-items:center; justify-content:center;
-  flex-wrap:wrap; gap:18px;
-  max-width:780px; margin:24px auto 0; padding:0 8px;
-}
-.sdp-root .s04-trust-item{
-  display:inline-flex; align-items:center; gap:8px; min-width:0;
-  font-family:var(--fb); font-size:12px; font-weight:600;
-  color:var(--ink-soft); letter-spacing:.04em;
-  transition:transform .25s;
-}
-.sdp-root .s04-trust-icon{
-  width:28px; height:28px; border-radius:50%;
-  background:rgba(var(--brand-rgb),.12);
-  border:1px solid rgba(var(--brand-rgb),.25);
-  color:var(--brand-deep); display:grid; place-items:center; flex-shrink:0;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s, background .3s;
-}
-.sdp-root .s04-trust-icon svg{
-  width:14px; height:14px;
-  stroke:var(--brand-deep); fill:none;
-  stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
-}
-.sdp-root .s04-trust-item:hover{ transform:translateY(-2px); }
-.sdp-root .s04-trust-item:hover .s04-trust-icon{
-  transform:scale(1.12) rotate(-6deg);
-  background:rgba(var(--brand-rgb),.22);
-  box-shadow:0 6px 18px rgba(var(--brand-rgb),.28);
-}
+/* The four-item icon trust strip that closed the hero (`.s04-trust*`) was
+   removed at the client's request; its rules went with it. */
 
 /* ---- Responsive (SDP: 960 / 768 / 640 / 420) ---- */
 @media (max-width:960px){
@@ -444,13 +496,6 @@
   }
   .sdp-root .s04-cred-num{ font-size:20px; }
   .sdp-root .s04-cred-lbl{ font-size:9.5px; }
-  .sdp-root .s04-trust{
-    display:grid; grid-template-columns:repeat(2,1fr);
-    gap:10px 12px; padding:0; justify-content:center;
-    max-width:360px; margin:24px auto 0;
-  }
-  .sdp-root .s04-trust-item{ flex-shrink:0; white-space:normal; font-size:11px; justify-content:flex-start; }
-  .sdp-root .s04-trust-icon{ width:22px; height:22px; }
 }
 
 @media (max-width:420px){                                  /* landing.css:2644-2645 */
@@ -585,20 +630,33 @@
 /* SDP `.sdp-proof` = padding:80px 0 + overflow:hidden, both already supplied by
    `.sdp-section`; only the 640 pad-down (landing.css:2355) is bespoke, below. */
 
-/* ---------------- Testimonials: static one-row portrait grid ----------------
-   Deliberate deviation from SDP's second marquee: SDP has a dozen testimonials
-   and needs a rail; we have exactly THREE, all phone-shot portrait. So they sit
-   still, all three in one frame on desktop, at their native 9/16 — and stack one
-   per row under 860px.
+/* ---------------- Testimonials: infinite auto-scrolling portrait rail --------
+   Restores SDP's second marquee. The three phone-shot portrait clips repeat
+   inside one set (see Proof.tsx REPEATS) so the set is wider than the viewport
+   and the wrap seam never shows. Motion, drag, prev/next and tap-to-open are all
+   the shared engine in ClientBehaviors, keyed `data-carousel="tcar"`.
    Card chrome is SDP's `.sdp-tslide` (landing.css:1164-1179), unchanged. */
-.sdp-root .s06-tgrid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:24px;
-  max-width:960px;
-  margin:34px auto 30px;
+/* `auto` on the inline axis, not 0 — this element also carries `.sdp-wrap`,
+   whose `margin:0 auto` is what centres it inside the page column. A `0` here
+   silently won and pinned the whole rail to the left on wide screens. */
+.sdp-root .s06-tcar-wrap{ position:relative; margin:34px auto 30px; }
+.sdp-root .s06-tcar{
+  overflow:hidden;
+  cursor:grab;
+  padding:6px 0 10px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
 }
+.sdp-root .s06-tcar.dragging{ cursor:grabbing; }
+.sdp-root .s06-tcar-track{ display:flex; gap:24px; width:max-content; will-change:transform; }
+.sdp-root .s06-tcar-set{ display:flex; gap:24px; }
+
+/* nav buttons reuse the before/after rail's chrome, positioned for this rail */
+.sdp-root .s06-tcar-prev{ left:12px; }
+.sdp-root .s06-tcar-next{ right:12px; }
+
 .sdp-root .s06-tslide{
+  flex:0 0 300px; width:300px;
   min-width:0;
   background:#fff;
   border:1px solid var(--border);
@@ -675,14 +733,28 @@
 .sdp-root .s06-tslide-body{ padding:18px 20px 22px; }
 /* SDP body type (landing.css:1224-1240) — held for the confirmed copy (Q8). */
 .sdp-root .s06-tslide-name{
+  display:block;
   font-family:var(--fh); font-size:22px;
   color:var(--ink); letter-spacing:.04em;
   margin-bottom:2px;
 }
 .sdp-root .s06-tslide-role{
+  display:block;
   font-size:11.5px; letter-spacing:.08em;
   text-transform:uppercase; color:var(--brand-deep);
-  font-weight:700; margin-bottom:10px;
+  font-weight:700;
+}
+/* Vimeo tiles cannot self-thumbnail cross-origin — branded plate until a
+   NEXT_PUBLIC_TESTIMONIAL_POSTER_n is supplied. */
+.sdp-root .s06-tslide-vthumb--plate{
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(var(--brand-rgb),.22), transparent 70%),
+    linear-gradient(160deg, #201C15, #17140F);
+}
+.sdp-root .s06-tslide-vthumb--plate::after{
+  content:""; position:absolute; inset:14px;
+  border:1px dashed rgba(var(--brand-rgb),.22);
+  border-radius:10px;
 }
 .sdp-root .s06-tslide-quote{
   font-size:13.5px; color:var(--ink-soft);
@@ -933,8 +1005,13 @@
   .sdp-root .s06-lbox-next{ right:14px; }
 }
 @media (max-width:860px){
-  /* One testimonial per row — a 9/16 card under ~250px wide reads as a sliver. */
-  .sdp-root .s06-tgrid{ grid-template-columns:minmax(0,1fr); max-width:330px; gap:20px; }
+  /* Narrower rail cards, but never under ~250px — a 9/16 tile below that reads
+     as a sliver. Gaps shrink with them so the loop stays dense. */
+  .sdp-root .s06-tslide{ flex-basis:262px; width:262px; }
+  .sdp-root .s06-tcar-track,
+  .sdp-root .s06-tcar-set{ gap:18px; }
+  .sdp-root .s06-tcar-prev{ left:6px; }
+  .sdp-root .s06-tcar-next{ right:6px; }
 }
 @media (max-width:960px){
   .sdp-root .s06-ba-card{ width:280px; }
@@ -1139,6 +1216,156 @@
   .sdp-root .s07-founder-card:hover{ transform:none; }
 }
 
+/* ================================================================
+   S06b — ELITE-ATHLETE AUTHORITY (dark band)
+   Photo frame + name/role + the shared-standard paragraph. The frame paints
+   its image as a background so a not-yet-delivered asset degrades to a brass
+   plate instead of a broken-image glyph.
+================================================================ */
+.sdp-root .s6b-grid{
+  display:grid; grid-template-columns:minmax(0,380px) minmax(0,1fr);
+  gap:40px; align-items:center;
+  max-width:1000px; margin:34px auto 0;
+}
+.sdp-root .s6b-photo{ margin:0; }
+/* 3/4 portrait: the supplied shot of Kunal + Yashasvi is a tall phone frame,
+   so a landscape crop would cut both heads off. Anchored top for the same
+   reason — the loss is at the feet, not the faces. */
+.sdp-root .s6b-photo-frame{
+  position:relative;
+  aspect-ratio:3/4;
+  border-radius:18px;
+  border:1px solid var(--border-dark-strong);
+  background-color:var(--bg-dark-elev);
+  background-size:cover; background-position:center top; background-repeat:no-repeat;
+  box-shadow:0 18px 44px rgba(0,0,0,.42);
+  overflow:hidden;
+  display:grid; place-items:center;
+}
+.sdp-root .s6b-photo-frame::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45));
+  pointer-events:none;
+}
+/* shown only while `eliteAthlete.photoReady` is false (asset not delivered) */
+.sdp-root .s6b-photo-frame.is-pending::after{ display:none; }
+.sdp-root .s6b-photo-plate{
+  font-family:var(--fb); font-size:11px; font-weight:800;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:rgba(var(--brand-rgb),.55);
+  border:1px dashed rgba(var(--brand-rgb),.35);
+  border-radius:100px; padding:8px 16px;
+  text-align:center;
+}
+.sdp-root .s6b-name{
+  font-family:var(--fh); font-size:30px; letter-spacing:.04em;
+  color:var(--ink-dark); line-height:1.1;
+}
+.sdp-root .s6b-role{
+  margin-top:6px;
+  font-family:var(--fb); font-size:11px; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--brand);
+  font-style:normal;
+}
+.sdp-root .s6b-copy{
+  margin:18px 0 0;
+  font-size:15px; line-height:1.75;
+  color:var(--ink-dark-soft);
+  padding-left:18px;
+  border-left:2px solid rgba(var(--brand-rgb),.4);
+}
+@media (max-width:860px){
+  .sdp-root .s6b-grid{ grid-template-columns:1fr; gap:24px; max-width:520px; }
+  .sdp-root .s6b-name{ font-size:26px; }
+  .sdp-root .s6b-copy{ font-size:14px; }
+}
+
+/* ================================================================
+   S07b — PRESS + CERTIFICATION RAIL
+   Slow left-to-right marquee driven by the shared engine in
+   ClientBehaviors (`data-carousel="credcar"` → dir +1). Fail-open: with JS
+   off it is a plain, hand-scrollable strip and every card is a real link.
+================================================================ */
+.sdp-root .s07-cred-head{
+  text-align:center;
+  font-family:var(--fb); font-size:11px; font-weight:800;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--brand);
+  margin:44px 0 20px;
+}
+.sdp-root .s07-credrail{
+  overflow:hidden;
+  cursor:grab;
+  padding:4px 0 6px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.sdp-root .s07-credrail.dragging{ cursor:grabbing; }
+.sdp-root .s07-credrail-track{ display:flex; gap:18px; width:max-content; will-change:transform; }
+.sdp-root .s07-credrail-set{ display:flex; gap:18px; }
+
+.sdp-root .s07-cred-card{
+  flex:0 0 268px; width:268px;
+  display:flex; flex-direction:column;
+  border-radius:14px;
+  border:1px solid var(--border-dark-strong);
+  background:var(--bg-dark-alt);
+  overflow:hidden;
+  text-decoration:none;
+  transition:border-color .25s, transform .25s, box-shadow .25s;
+}
+/* 4/3 frame: the press screenshots are portrait and the certificates are
+   near-landscape, so this is the ratio that crops least across the set.
+   background-position comes per-card from `credentials[].focus`. */
+.sdp-root .s07-cred-img{
+  position:relative;
+  display:grid; place-items:center;
+  aspect-ratio:4/3;
+  background-color:#fff;
+  background-size:cover; background-position:center;
+  background-repeat:no-repeat;
+  border-bottom:1px solid var(--border-dark);
+}
+.sdp-root .s07-cred-img.is-pending{ background-color:var(--bg-dark-elev); }
+/* shown only while `credentials[].ready` is false (asset not delivered) */
+.sdp-root .s07-cred-plate{
+  font-family:var(--fb); font-size:10px; font-weight:800;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:rgba(var(--brand-rgb),.5);
+  border:1px dashed rgba(var(--brand-rgb),.3);
+  border-radius:100px; padding:6px 12px;
+  text-align:center; max-width:80%;
+}
+.sdp-root .s07-cred-meta{ display:block; padding:14px 16px 16px; }
+.sdp-root .s07-cred-kind{
+  display:block;
+  font-family:var(--fb); font-size:9.5px; font-weight:800;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--brand);
+  margin-bottom:6px;
+}
+.sdp-root .s07-cred-title{
+  display:block;
+  font-size:13.5px; line-height:1.5; font-weight:600;
+  color:var(--ink-dark);
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+.sdp-root .s07-cred-src{
+  display:block; margin-top:8px;
+  font-size:11.5px; color:var(--muted-dark);
+}
+@media (hover:hover){
+  .sdp-root .s07-cred-card:hover{
+    border-color:var(--brand);
+    transform:translateY(-3px);
+    box-shadow:0 14px 32px rgba(0,0,0,.4);
+  }
+}
+@media (max-width:560px){
+  .sdp-root .s07-cred-card{ flex:0 0 228px; width:228px; }
+}
+
 /* ---- Mechanism ---- */
 /* ================================================================
    S08 — MECHANISM (light-alt band)
@@ -1165,65 +1392,254 @@
   color:var(--muted); font-style:italic;
 }
 
-/* --- pillar grid (landing.css:966-969) --- */
-.sdp-root .s08-pillars{
-  display:grid; grid-template-columns:1fr 1fr;
-  gap:18px; max-width:1000px; margin:0 auto 36px;
+/* ================================================================
+   S08 TIMELINE — the four phases as a scroll-assembled spine.
+   Replaces SDP's flat 2x2 pillar grid (the old `.s08-pillar*` rules).
+
+   Motion model, all keyed to the `.vis` class the shared observer adds:
+     rail   fills 0->1 from --fill, set by ClientBehaviors on scroll
+     node   ring pops (overshoot ease) + glyph scribes itself
+     stub   the connector draws out from the spine toward the card
+     card   "legos" in: slides from its own side, un-tilts, settles
+   Children stagger off the parent's own --d so the whole block assembles
+   in one read rather than four separate fades.
+================================================================ */
+.sdp-root .s08-tl{
+  position:relative;
+  list-style:none;
+  max-width:1040px;
+  margin:0 auto 40px;
+  padding:6px 0 2px;
 }
 
-/* --- pillar card (landing.css:970-982) --- */
-.sdp-root .s08-pillar{
-  min-width:0;
+/* --- the spine --- */
+.sdp-root .s08-tl-rail{
+  position:absolute; top:0; bottom:0; left:50%;
+  width:2px; margin-left:-1px;
+  background:linear-gradient(180deg,transparent,var(--border) 6%,var(--border) 94%,transparent);
+  border-radius:2px;
+}
+.sdp-root .s08-tl-rail-fill{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg,var(--brand-bright),var(--brand) 45%,var(--brand-deep));
+  transform-origin:top;
+  transform:scaleY(var(--fill,0));
+  transition:transform .18s linear;
+  box-shadow:0 0 14px rgba(var(--brand-rgb),.45);
+}
+
+/* --- one phase row --- */
+.sdp-root .s08-tl-item{
+  position:relative;
+  width:50%;
+  padding:0 0 34px;
+  perspective:1100px;
+  /* the row itself must not move: it anchors the node onto the spine.
+     The shared [data-sdp-reveal] transform is neutralised here and the
+     motion is handed to the children below. */
+  opacity:1; transform:none;
+}
+.sdp-root .s08-tl-item.is-left{  padding-right:56px; text-align:right; }
+.sdp-root .s08-tl-item.is-right{ margin-left:50%; padding-left:56px; text-align:left; }
+.sdp-root .s08-tl-item:last-child{ padding-bottom:6px; }
+
+/* --- stage grouping label ("Your 12-week programme" / "If you continue") --- */
+.sdp-root .s08-tl-stage{
+  position:absolute; top:-6px; left:50%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  background:var(--bg-alt);
+  padding:3px 14px;
+  font-family:var(--fb); font-size:10px; font-weight:800;
+  letter-spacing:.16em; text-transform:uppercase;
+  color:var(--brand-deep);
+  border:1px solid rgba(var(--brand-rgb),.28);
+  border-radius:100px;
+  margin:0;
+  opacity:0;
+  transition:opacity .5s ease var(--d,0s);
+}
+.sdp-root .s08-tl-item.is-left  .s08-tl-stage{ left:auto; right:-1px; transform:translateX(50%); }
+.sdp-root .s08-tl-item.is-right .s08-tl-stage{ left:-1px; transform:translateX(-50%); }
+.sdp-root .s08-tl-item.vis .s08-tl-stage{ opacity:1; }
+.sdp-root .s08-tl-item:not(:first-child) .s08-tl-stage{ top:-14px; }
+/* rows that open a stage need headroom for the pill */
+.sdp-root .s08-tl-item:has(.s08-tl-stage):not(:first-child){ padding-top:26px; }
+
+/* --- node on the spine: ring + glyph --- */
+.sdp-root .s08-tl-node{
+  position:absolute; top:34px; left:100%;
+  width:52px; height:52px; margin-left:-26px;
+  display:grid; place-items:center;
+  z-index:2;
+}
+.sdp-root .s08-tl-item.is-right .s08-tl-node{ left:0; }
+.sdp-root .s08-tl-item:has(.s08-tl-stage):not(:first-child) .s08-tl-node{ top:60px; }
+
+.sdp-root .s08-tl-node-ring{
+  position:absolute; inset:0;
+  border-radius:50%;
+  background:var(--bg-alt);
+  border:2px solid var(--brand);
+  box-shadow:0 0 0 6px var(--bg-alt), 0 6px 18px rgba(var(--brand-rgb),.22);
+  transform:scale(.3) rotate(-90deg);
+  opacity:0;
+  transition:transform .6s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+  transition-delay:var(--d,0s);
+}
+.sdp-root .s08-tl-item.vis .s08-tl-node-ring{ transform:scale(1) rotate(0deg); opacity:1; }
+
+.sdp-root .s08-tl-node-ico{
+  position:relative; z-index:1;
+  display:grid; place-items:center;
+  color:var(--brand-deep);
+  opacity:0;
+  transition:opacity .3s ease calc(var(--d,0s) + .18s);
+}
+.sdp-root .s08-tl-item.vis .s08-tl-node-ico{ opacity:1; }
+
+/* the glyph scribes itself once the ring has landed */
+.sdp-root .glyph--draw [pathLength],
+.sdp-root .glyph--draw path,
+.sdp-root .glyph--draw circle,
+.sdp-root .glyph--draw rect,
+.sdp-root .glyph--draw polyline{
+  stroke-dasharray:1; stroke-dashoffset:1;
+  transition:stroke-dashoffset .75s cubic-bezier(.4,0,.2,1) calc(var(--d,0s) + .22s);
+}
+.sdp-root .vis .glyph--draw path,
+.sdp-root .vis .glyph--draw circle,
+.sdp-root .vis .glyph--draw rect,
+.sdp-root .vis .glyph--draw polyline{ stroke-dashoffset:0; }
+
+/* --- connector stub, spine -> card --- */
+.sdp-root .s08-tl-stub{
+  position:absolute; top:59px;
+  width:30px; height:2px;
+  background:linear-gradient(90deg,var(--brand),rgba(var(--brand-rgb),.15));
+  transform:scaleX(0);
+  transition:transform .45s cubic-bezier(.2,.8,.2,1) calc(var(--d,0s) + .1s);
+}
+/* sits in the gap between the card edge and the node ring:
+   item padding (56px) minus the node radius (26px) = 30px of runway */
+.sdp-root .s08-tl-item.is-left  .s08-tl-stub{ right:26px; transform-origin:right; background:linear-gradient(270deg,var(--brand),rgba(var(--brand-rgb),.15)); }
+.sdp-root .s08-tl-item.is-right .s08-tl-stub{ left:26px;  transform-origin:left; }
+.sdp-root .s08-tl-item:has(.s08-tl-stage):not(:first-child) .s08-tl-stub{ top:85px; }
+.sdp-root .s08-tl-item.vis .s08-tl-stub{ transform:scaleX(1); }
+
+/* --- the card: the lego block --- */
+.sdp-root .s08-tl-card{
   background:#fff;
   border:1px solid var(--border);
-  border-radius:14px; padding:26px;
-  position:relative;
-  transition:border-color .2s, transform .2s, box-shadow .2s;
+  border-radius:16px;
+  padding:24px 26px;
   box-shadow:0 2px 12px rgba(15,23,42,.04);
+  transform-style:preserve-3d;
+  opacity:0;
+  transition:opacity .5s ease, transform .68s cubic-bezier(.34,1.4,.5,1),
+             border-color .2s, box-shadow .2s;
+  transition-delay:var(--d,0s);
 }
-.sdp-root .s08-pillar:hover{
-  border-color:var(--brand);
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(var(--brand-rgb),.12);
-}
+/* Pre-reveal resting states are scoped with :not(.vis) so they can never win
+   against the settled state on source order — the mobile block below restates
+   the left-hand start position, and without :not() it would out-order this. */
+.sdp-root .s08-tl-item.is-left:not(.vis)  .s08-tl-card{ transform:translate3d(38px,18px,0) rotateY(9deg) scale(.94); transform-origin:right center; }
+.sdp-root .s08-tl-item.is-right:not(.vis) .s08-tl-card{ transform:translate3d(-38px,18px,0) rotateY(-9deg) scale(.94); transform-origin:left center; }
+.sdp-root .s08-tl-item.vis .s08-tl-card{ opacity:1; transform:translate3d(0,0,0) rotateY(0) scale(1); }
 
-/* --- number badge (landing.css:983-991 + hover tilt 2720-2725) --- */
-.sdp-root .s08-pillar-num{
+.sdp-root .s08-tl-card-head{
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:10px;
+}
+.sdp-root .s08-tl-item.is-left .s08-tl-card-head{ flex-direction:row-reverse; }
+
+.sdp-root .s08-tl-num{
   display:inline-flex; align-items:center; justify-content:center;
-  width:46px; height:46px; border-radius:10px;
-  background:linear-gradient(135deg,rgba(var(--brand-rgb),.14),rgba(var(--brand-rgb),.06));
+  min-width:38px; height:32px; padding:0 8px;
+  border-radius:9px;
+  background:linear-gradient(135deg,rgba(var(--brand-rgb),.16),rgba(var(--brand-rgb),.06));
   border:1px solid rgba(var(--brand-rgb),.3);
-  font-family:var(--fh); font-size:22px;
+  font-family:var(--fh); font-size:18px; letter-spacing:.04em;
   color:var(--brand-deep);
-  margin-bottom:14px; letter-spacing:.04em;
   transition:transform .35s cubic-bezier(.34,1.56,.64,1), background .35s;
 }
-.sdp-root .s08-pillar:hover .s08-pillar-num{
-  transform:rotate(-6deg) scale(1.06);
-  background:linear-gradient(135deg,rgba(var(--brand-rgb),.24),rgba(var(--brand-rgb),.10));
-}
-
-/* --- phase label (DEVIATION: SDP's pillars are unlabelled principles; Kraft's
-       are dated phases, so the week-range from content.ts `phases[].label`
-       renders as a micro-label. Type copied from the existing
-       globals.css `.sdp-pillar-label` (L901) so it matches the system.) --- */
-.sdp-root .s08-pillar-label{
+.sdp-root .s08-tl-label{
   font-family:var(--fb); font-size:10.5px; font-weight:700;
   letter-spacing:.14em; text-transform:uppercase;
   color:var(--brand-deep);
-  margin-bottom:6px;
 }
-
-/* --- title / desc (landing.css:992-1001) --- */
-.sdp-root .s08-pillar-title{
+.sdp-root .s08-tl-title{
   font-family:var(--fh);
   font-size:23px; color:var(--ink);
-  letter-spacing:.04em; margin-bottom:8px;
-  line-height:1.15;
+  letter-spacing:.04em; line-height:1.15;
+  margin:0 0 8px;
 }
-.sdp-root .s08-pillar-desc{
+.sdp-root .s08-tl-desc{
   font-size:13.5px; color:var(--ink-soft);
   line-height:1.7; margin:0;
+}
+
+@media (hover:hover){
+  .sdp-root .s08-tl-item.vis .s08-tl-card:hover{
+    border-color:var(--brand);
+    box-shadow:0 10px 28px rgba(var(--brand-rgb),.14);
+    transform:translate3d(0,-3px,0);
+  }
+  .sdp-root .s08-tl-item.vis .s08-tl-card:hover .s08-tl-num{
+    transform:rotate(-6deg) scale(1.06);
+    background:linear-gradient(135deg,rgba(var(--brand-rgb),.26),rgba(var(--brand-rgb),.10));
+  }
+}
+
+/* --- single-column: rail to the left, every card to its right --- */
+@media (max-width:900px){
+  .sdp-root .s08-tl-rail{ left:24px; margin-left:0; }
+  .sdp-root .s08-tl-item,
+  .sdp-root .s08-tl-item.is-left,
+  .sdp-root .s08-tl-item.is-right{
+    width:100%; margin-left:0;
+    padding-left:74px; padding-right:0;
+    text-align:left;
+  }
+  .sdp-root .s08-tl-item.is-left .s08-tl-node,
+  .sdp-root .s08-tl-item.is-right .s08-tl-node{ left:24px; }
+  .sdp-root .s08-tl-item.is-left .s08-tl-stub,
+  .sdp-root .s08-tl-item.is-right .s08-tl-stub{
+    left:46px; right:auto; width:28px; transform-origin:left;
+    background:linear-gradient(90deg,var(--brand),rgba(var(--brand-rgb),.15));
+  }
+  .sdp-root .s08-tl-item.is-left .s08-tl-stage,
+  .sdp-root .s08-tl-item.is-right .s08-tl-stage{
+    left:24px; right:auto; transform:translateX(-2px);
+  }
+  .sdp-root .s08-tl-item.is-left .s08-tl-card-head{ flex-direction:row; }
+  /* cards now enter from the left on both sides, since both sit right of the rail */
+  .sdp-root .s08-tl-item.is-left:not(.vis) .s08-tl-card{ transform:translate3d(-30px,16px,0) rotateY(-8deg) scale(.94); transform-origin:left center; }
+}
+@media (max-width:560px){
+  .sdp-root .s08-tl-item,
+  .sdp-root .s08-tl-item.is-left,
+  .sdp-root .s08-tl-item.is-right{ padding-left:60px; }
+  .sdp-root .s08-tl-node{ width:44px; height:44px; margin-left:-22px; }
+  .sdp-root .s08-tl-card{ padding:20px; }
+  .sdp-root .s08-tl-title{ font-size:20px; }
+  .sdp-root .s08-tl-desc{ font-size:13px; }
+}
+
+/* --- reduced motion: no assembly, no scribe, no tilt --- */
+@media (prefers-reduced-motion: reduce){
+  .sdp-root .s08-tl-card,
+  .sdp-root .s08-tl-item.is-left .s08-tl-card,
+  .sdp-root .s08-tl-item.is-right .s08-tl-card{ opacity:1; transform:none; transition:none; }
+  .sdp-root .s08-tl-node-ring{ opacity:1; transform:none; transition:none; }
+  .sdp-root .s08-tl-node-ico,
+  .sdp-root .s08-tl-stage{ opacity:1; transition:none; }
+  .sdp-root .s08-tl-stub{ transform:scaleX(1); transition:none; }
+  .sdp-root .s08-tl-rail-fill{ transform:scaleY(1); transition:none; }
+  .sdp-root .glyph--draw path,
+  .sdp-root .glyph--draw circle,
+  .sdp-root .glyph--draw rect,
+  .sdp-root .glyph--draw polyline{ stroke-dashoffset:0; transition:none; }
 }
 
 /* --- lengths note (DEVIATION: no SDP counterpart; Beat 6 copy requires it.
@@ -1245,21 +1661,8 @@
 
 /* --- responsive: collapse at 960 (landing.css:2329), pad-down at 640
        (2353), type-down at 640 (2451-2452) --- */
-@media (max-width:960px){
-  .sdp-root .s08-pillars{ grid-template-columns:1fr; }
-}
 @media (max-width:640px){
   .sdp-root .s08-mech{ padding:48px 0; }
-  .sdp-root .s08-pillar-title{ font-size:20px; }
-  .sdp-root .s08-pillar-desc{ font-size:13px; }
-}
-
-/* --- touch devices: kill hover-lift (landing.css:2805-2820) --- */
-@media (hover: none){
-  .sdp-root .s08-pillar:hover,
-  .sdp-root .s08-pillar:hover .s08-pillar-num{
-    transform:none;
-  }
 }
 
 /* ---- Programme ---- */
@@ -1322,6 +1725,19 @@
   color: var(--brand-deep);
   /* SDP :2727 — lift + glow on card hover */
   transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), background .35s, box-shadow .35s;
+  /* now holds a drawn glyph plus the ledger number pinned to its corner */
+  position: relative;
+}
+.sdp-root .s09-icon-n {
+  position: absolute; top: -7px; right: -7px;
+  min-width: 20px; height: 20px; padding: 0 5px;
+  display: grid; place-items: center;
+  border-radius: 6px;
+  background: var(--brand);
+  color: #1b1608;
+  font-family: var(--fb); font-size: 10px; font-weight: 800;
+  letter-spacing: .06em;
+  box-shadow: 0 2px 8px rgba(var(--brand-rgb), .35);
 }
 .sdp-root .s09-item:hover .s09-icon {
   transform: translateY(-3px) scale(1.06);
@@ -1357,34 +1773,142 @@
 }
 .sdp-root .s09-note strong { color: var(--ink); }
 
-.sdp-root .s09-costs {
+/* ================================================================
+   S09b — THE FOUR ERASED COSTS, as gauge tiles.
+   Replaces the flat 2x2 cost cards. Per tile: a ring that scribes a full
+   circle, a glyph that draws inside it, a ghost numeral behind, and a brass
+   wipe that sweeps the face as the copy lands. Alternate tiles scribe the
+   opposite way; the second column is offset so the set reads as composed
+   rather than tabular. All keyed to `.vis` — no client JS.
+================================================================ */
+.sdp-root .s09-costs { max-width: 1100px; margin: 44px auto 0; }
+
+.sdp-root .s09-costs-head {
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 0 26px;
+}
+.sdp-root .s09-costs-head h3 {
+  font-family: var(--fb);
+  font-size: 11px; font-weight: 800;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--brand-deep);
+  white-space: nowrap; margin: 0;
+}
+.sdp-root .s09-costs-rule {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+.sdp-root .s09-cost-grid {
+  list-style: none; margin: 0; padding: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  max-width: 1100px;
-  margin: 32px auto 0;
+  gap: 20px;
 }
+/* offset the right-hand column so the four don't read as a spreadsheet */
+.sdp-root .s09-cost-grid > li:nth-child(even) { margin-top: 34px; }
+
 .sdp-root .s09-cost {
+  position: relative;
   min-width: 0;
+  overflow: hidden;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 22px 24px;
+  border-radius: 16px;
+  padding: 26px 26px 24px;
   box-shadow: 0 2px 12px rgba(15, 23, 42, .04);
+  transition: border-color .25s, box-shadow .25s, transform .25s;
 }
+
+/* ghost numeral behind the tile */
+.sdp-root .s09-cost-ghost {
+  position: absolute; top: 2px; right: 14px;
+  font-family: var(--fh);
+  font-size: 76px; line-height: 1;
+  color: rgba(var(--brand-rgb), .09);
+  pointer-events: none; user-select: none;
+  transition: color .25s;
+}
+
+/* --- the gauge: scribing ring + drawn glyph --- */
+.sdp-root .s09-cost-gauge {
+  position: relative; display: grid; place-items: center;
+  width: 64px; height: 64px; margin-bottom: 16px;
+}
+.sdp-root .s09-cost-arc {
+  position: absolute; inset: 0;
+  width: 64px; height: 64px;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+.sdp-root .s09-cost-gauge.is-ccw .s09-cost-arc { transform: rotate(-90deg) scaleX(-1); }
+.sdp-root .s09-cost-arc-track {
+  fill: none; stroke: var(--border); stroke-width: 2;
+}
+.sdp-root .s09-cost-arc-run {
+  fill: none;
+  stroke: var(--brand); stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 1; stroke-dashoffset: 1;
+  transition: stroke-dashoffset .95s cubic-bezier(.35, 0, .2, 1);
+  transition-delay: var(--d, 0s);
+  filter: drop-shadow(0 0 5px rgba(var(--brand-rgb), .4));
+}
+.sdp-root .s09-cost.vis .s09-cost-arc-run { stroke-dashoffset: 0; }
+
+.sdp-root .s09-cost-ico {
+  position: relative; z-index: 1;
+  display: grid; place-items: center;
+  color: var(--brand-deep);
+  opacity: 0; transform: scale(.7);
+  transition: opacity .35s ease, transform .55s cubic-bezier(.34, 1.56, .64, 1);
+  transition-delay: calc(var(--d, 0s) + .2s);
+}
+.sdp-root .s09-cost.vis .s09-cost-ico { opacity: 1; transform: scale(1); }
+
 .sdp-root .s09-cost-k {
+  display: block;
   font-family: var(--fb);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
+  font-size: 11px; font-weight: 800;
+  letter-spacing: .16em; text-transform: uppercase;
   color: var(--brand-deep);
 }
 .sdp-root .s09-cost-v {
-  margin-top: 9px;
-  font-size: 13.5px;
-  line-height: 1.7;
+  margin: 10px 0 0;
+  font-size: 13.5px; line-height: 1.7;
   color: var(--ink-soft);
+}
+
+/* --- the brass wipe across the face --- */
+.sdp-root .s09-cost-wipe {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(100deg,
+    transparent 0%,
+    rgba(var(--brand-rgb), .16) 42%,
+    rgba(var(--brand-rgb), .28) 50%,
+    rgba(var(--brand-rgb), .16) 58%,
+    transparent 100%);
+  transform: translateX(-115%);
+  transition: transform 1.05s cubic-bezier(.4, 0, .15, 1);
+  transition-delay: calc(var(--d, 0s) + .1s);
+}
+.sdp-root .s09-cost.vis .s09-cost-wipe { transform: translateX(115%); }
+
+@media (hover: hover) {
+  .sdp-root .s09-cost.vis:hover {
+    border-color: var(--brand);
+    box-shadow: 0 12px 30px rgba(var(--brand-rgb), .14);
+    transform: translateY(-3px);
+  }
+  .sdp-root .s09-cost.vis:hover .s09-cost-ico { transform: scale(1.1) rotate(-5deg); }
+  .sdp-root .s09-cost.vis:hover .s09-cost-ghost { color: rgba(var(--brand-rgb), .12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sdp-root .s09-cost-arc-run { stroke-dashoffset: 0; transition: none; }
+  .sdp-root .s09-cost-ico { opacity: 1; transform: none; transition: none; }
+  .sdp-root .s09-cost-wipe { display: none; }
+  .sdp-root .s09-cost-grid > li:nth-child(even) { margin-top: 0; }
 }
 
 /* --- CTA (SDP :1761) --- */
@@ -1396,7 +1920,9 @@
 }
 @media (max-width: 640px) {
   .sdp-root .s09-grid { grid-template-columns: 1fr; }
-  .sdp-root .s09-costs { grid-template-columns: 1fr; gap: 14px; }
+  .sdp-root .s09-cost-grid { grid-template-columns: 1fr; gap: 14px; }
+  .sdp-root .s09-cost-grid > li:nth-child(even) { margin-top: 0; }
+  .sdp-root .s09-cost { padding: 22px; }
   .sdp-root .s09-title { font-size: 19px; }
   .sdp-root .s09-desc { font-size: 13px; }
 }

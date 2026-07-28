@@ -39,7 +39,7 @@ export function Colophon() {
         <p>
           All content, systems and coaching services provided by {site.brand} are intended for
           educational and informational purposes only and do not guarantee specific results.
-          Kunal is a coach, not a doctor — he works alongside your doctor, never around him. The
+          Kunal is a coach, not a doctor. He works alongside your doctor, never around him. The
           assessment is coaching guidance, not medical advice or diagnosis. Always consult a
           qualified healthcare professional before making changes to your diet, exercise or
           lifestyle. Client results vary with individual factors such as consistency, medical

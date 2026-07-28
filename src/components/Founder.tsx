@@ -1,33 +1,32 @@
 /**
- * S07 — Founder authority (DARK band).
+ * S07 — Founder authority / "Meet Your Coach" (DARK band).
  *
- * SDP reference: `_reference/sdp/components/landing/LandingPage.tsx:1231-1282`
- * (`FounderAuthority`) + `_reference/sdp/app/landing.css:854-938` (+ responsive
- * 2327-2328, 2352, 2444-2448 and the bar sweep 2769-2782).
+ * Copy source: "Kunal Full Funnel Seggregation.md" → MEET YOUR COACH. The
+ * credential list (ACSM, ASCA Level 1, INFS, HYROX Head Judge) and both bio
+ * paragraphs are verbatim from that document.
  *
- * Structure reproduced 1:1: eyebrow → h2 → centred intro paragraph → ONE merged
- * founder card (photo column + name/role/bio) → italic closing block with a
- * brand left rule. Reveal stagger is SDP's shipped ladder: 0 / .06s / .12s /
- * .16s / .28s. Only the copy (Kraft, from src/lib/content.ts) and the palette
- * (already brass via .sdp-root) differ.
+ * The single HYROX certificate figure the previous build carried is replaced by
+ * the md's five-item press + certification row, running as a slow left-to-right
+ * rail ("if these articles and certifications can be shown in a moving way from
+ * left to right, that'll be good"). The rail reuses the existing marquee engine
+ * in ClientBehaviors via `data-carousel="credcar"`; with JS off it degrades to a
+ * plain horizontally-scrollable strip, and every card is a real outbound link.
  *
- * Copy mapping — content.ts `founderStory` is three paragraphs and SDP's founder
- * block has exactly three prose slots, so they map one-to-one:
- *   founderStory[0] → intro   founderStory[1] → bio   founderStory[2] → closing
- * `founderPills` (credential set) and the HYROX certificate are Kraft assets SDP
- * has no slot for; both are kept inside the card in SDP's own chip/frame grammar
- * (see the manifest deviation note) rather than dropped.
+ * ASSET GAP: only the HYROX certificate exists in /public today. The other four
+ * cards paint their image as a CSS background, so a missing file shows the
+ * card's own titled brass plate instead of a broken image. Drop the files at the
+ * paths in `content.ts` → `credentials[].img` and they light up with no code
+ * change.
  *
- * Server component. No client JS — reveals are `data-sdp-reveal` hooks only.
+ * Server component. No client JS of its own.
  */
 import Image from "next/image";
-import { founderPills, founderStory } from "@/lib/content";
+import { founderPills, founderStory, credentials } from "@/lib/content";
 
 const [intro, bio, closing] = founderStory;
 
-/* SDP's closing block leads with a bolded claim, then the plain-weight rest
-   (LandingPage.tsx:1276). founderStory[2] has the same shape, so the lead
-   sentence is split off rather than re-typed. */
+/* SDP's closing block leads with a bolded claim, then the plain-weight rest.
+   founderStory[2] has the same shape, so the lead sentence is split off. */
 const closingLeadEnd = closing.indexOf(". ") + 1;
 const closingLead = closing.slice(0, closingLeadEnd);
 const closingRest = closing.slice(closingLeadEnd);
@@ -37,10 +36,12 @@ export function Founder() {
     <section id="founder" className="s07-founder sdp-dark">
       <div className="sdp-wrap">
         <div className="sdp-eyebrow center" data-sdp-reveal>
-          Behind The Protocol
+          Meet Your Coach
         </div>
         <h2 className="sdp-h2" data-sdp-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-          The Coach, And Why The Room Stays <em>Small.</em>
+          Athlete-Turned-Coach Who Built A Fitness System
+          <br />
+          For <em>High Performers.</em>
         </h2>
 
         <p
@@ -70,7 +71,9 @@ export function Founder() {
 
             <div className="s07-founder-body">
               <div className="s07-founder-name">KUNAL CHALKE</div>
-              <div className="s07-founder-role">1:1 Coach · HYROX-Certified, Head Judge</div>
+              <div className="s07-founder-role">
+                Athlete-Turned-Fitness Coach · HYROX Head Judge
+              </div>
 
               <ul className="s07-founder-pills">
                 {founderPills.map((p) => (
@@ -81,26 +84,102 @@ export function Founder() {
               </ul>
 
               <p className="s07-founder-bio">{bio}</p>
-
-              <figure className="s07-cert">
-                <div className="s07-cert-frame">
-                  <Image
-                    src="/kunal-hydrox.jpg"
-                    alt="HYROX365 Foundation certificate issued to Kunal Chalke"
-                    width={1400}
-                    height={936}
-                    sizes="(max-width: 640px) 220px, 320px"
-                  />
-                </div>
-                <figcaption className="s07-cert-cap">
-                  HYROX365 Foundation, <em>HYROX Ready.</em> Certified 29.06.26, signed by
-                  HYROX&rsquo;s managing directors.
-                </figcaption>
-              </figure>
             </div>
           </div>
         </div>
+      </div>
 
+      {/* ---- Press + certifications, slow left-to-right rail ---- */}
+      <div className="sdp-wrap">
+        <h3 className="s07-cred-head" data-sdp-reveal>
+          Recognised &amp; Certified
+        </h3>
+      </div>
+
+      {/* Boxed to the page grid, not full-bleed. The card is no longer one big
+          <a>: the IMAGE opens the asset in a lightbox (a certificate should be
+          readable in place, not bounce the visitor out to Google Drive), and only
+          a PRESS card's text links out to the publication, in a new tab. */}
+      <div className="sdp-wrap">
+        <div className="s07-credrail" data-carousel="credcar" data-sdp-reveal>
+          <div className="s07-credrail-track" data-carousel-track>
+            <div className="s07-credrail-set" data-carousel-set>
+              {credentials.map((c, idx) => {
+                const isPress = c.kind === "Press";
+                return (
+                  <div className="s07-cred-card" key={c.title}>
+                    <button
+                      type="button"
+                      className={`s07-cred-img${c.ready ? "" : " is-pending"}`}
+                      style={
+                        c.ready
+                          ? { backgroundImage: `url("${c.img}")`, backgroundPosition: c.focus }
+                          : undefined
+                      }
+                      data-cred-idx={idx}
+                      aria-label={`View ${c.title} full size`}
+                    >
+                      {!c.ready && <span className="s07-cred-plate">{c.source}</span>}
+                    </button>
+
+                    <div className="s07-cred-meta">
+                      <span className="s07-cred-kind">{c.kind}</span>
+                      {isPress ? (
+                        <a
+                          className="s07-cred-title s07-cred-title--link"
+                          href={c.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {c.title}
+                          <span className="s07-cred-ext" aria-hidden>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M14 4h6v6" />
+                              <path d="M20 4l-8.5 8.5" />
+                              <path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+                            </svg>
+                          </span>
+                        </a>
+                      ) : (
+                        <span className="s07-cred-title">{c.title}</span>
+                      )}
+                      <span className="s07-cred-src">{c.source}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Credential lightbox shell — inert until ClientBehaviors adds `.on`.
+          Lives inside the section so the `.sdp-root`-scoped CSS applies. */}
+      <div className="s07-credbox" data-credbox role="dialog" aria-modal="true" aria-hidden="true" hidden>
+        <div className="s07-credbox-inner">
+          <button className="s07-credbox-close" type="button" aria-label="Close" data-credbox-close>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          <button className="s07-credbox-nav s07-credbox-prev" type="button" aria-label="Previous" data-credbox-nav="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="s07-credbox-img" alt="" data-credbox-img src={credentials[0].img} />
+          <button className="s07-credbox-nav s07-credbox-next" type="button" aria-label="Next" data-credbox-nav="1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+          <div className="s07-credbox-cap" data-credbox-cap />
+        </div>
+      </div>
+
+      <div className="sdp-wrap">
         <div
           className="s07-founder-closing"
           data-sdp-reveal

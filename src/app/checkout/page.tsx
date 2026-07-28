@@ -5,20 +5,21 @@
  * SDP reference: `_reference/sdp/app/new-checkout-page/page.tsx:10-43` —
  * trust announce bar (3 items + dots, shield/lock/verified glyphs) → <main> stage →
  * <CheckoutForm/>. Reproduced 1:1; only the copy (Kraft) and hue (brass) differ, plus
- * SDP's "100% Refundable" claim is replaced with an honest, confirmed one (Kraft's
- * ₹299 refund/credit terms are unconfirmed — §6 Q5, flagged inside the summary).
+ * SDP's "100% Refundable" claim is replaced with Kraft's own fee terms, quoted from
+ * the /refund policy inside the order summary.
  *
  * Razorpay checkout.js is loaded here (afterInteractive) exactly as before; all
  * payment/tracking logic stays in the existing client component.
  */
 import type { Metadata } from "next";
+import Link from "next/link";
 import Script from "next/script";
 import { CheckoutForm } from "@/components/np/CheckoutForm";
 import { ClientBehaviors } from "@/components/ClientBehaviors";
 import "@/components/sections/P01Checkout.css";
 
 export const metadata: Metadata = {
-  title: "Secure your assessment — Kraft With Kunal",
+  title: "Secure your assessment | Kraft With Kunal",
   robots: { index: false, follow: false },
 };
 
@@ -57,10 +58,17 @@ export default function CheckoutPage() {
       <main className="p01-page">
         <CheckoutForm />
 
-        {/* Legal — once, at the very bottom */}
+        {/* Legal, once at the very bottom. The three policies are real routes,
+            so they link out rather than sitting as plain text, and the one line
+            that changes the buyer's expectation is given weight. */}
         <p className="p01-legal">
-          By completing this booking you agree to our Terms, Privacy Policy &amp; Refund Policy. We
-          never share your details. Your call slot is confirmed only after payment.
+          By completing this booking you agree to our{" "}
+          <Link href="/terms">Terms &amp; Conditions</Link>,{" "}
+          <Link href="/privacy">Privacy Policy</Link> and{" "}
+          <Link href="/refund">Refund Policy</Link>. We never share your details.{" "}
+          <strong className="p01-legal-em">
+            Your call slot is confirmed only after payment.
+          </strong>
         </p>
       </main>
 

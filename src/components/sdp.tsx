@@ -1,5 +1,7 @@
 import { site } from "@/lib/site";
-import { Check } from "./icons";
+import { ctaBadges } from "@/lib/content";
+import { Glyph } from "./icons";
+import { OfferTimer } from "./OfferTimer";
 
 /** Plain arrow glyph for the CTA's circular chip (no ".arrow" class so it
  *  doesn't inherit the SDP circle styling meant for its wrapper). */
@@ -31,39 +33,48 @@ export function SdpHead({
 }
 
 /**
- * THE CTA LOCKUP — reused verbatim after every proof beat (~6x).
- * SDP below-CTA stack, but the red urgency timer is replaced with a CALM brass
- * capacity line (Kunal is calm high-ticket; scarcity is his real calendar).
- * The only number is the assessment fee (env), shown in the button.
+ * THE CTA LOCKUP — one group, reused verbatim after every proof beat (~6x).
+ *
+ * FIXED ORDER, client-specified, identical at every occurrence on the page:
+ *   1. the button
+ *   2. the three reassurance badges
+ *   3. the urgency countdown
+ *
+ * The monthly-capacity pill and the "diagnostic session, not a pitch" note used
+ * to close this group; both were removed at the client's request.
+ *
+ * Keeping the countdown inside the lockup rather than only in the hero is what
+ * makes the group repeatable; every timer instance reads the same localStorage
+ * deadline, so they all show the same number and stay in sync.
+ *
+ * Button label and badges are the funnel md's own. The md prints the badges with
+ * emoji; they render here as the repo's line glyphs, because the skin brief bans
+ * emoji in chrome.
  */
 export function CtaLockup() {
   return (
     <div className="sdp-lockup">
       <a className="sdp-cta" href={site.checkoutUrl}>
         <span className="sdp-cta-main">
-          <span className="cta-label">Click Here To Get Your Personalised Diagnosis + Fitness Roadmap</span>
+          <span className="cta-label">
+            Click Here To Get Your Personalised High-Performer Fitness Roadmap
+          </span>
           <span className="arrow"><ArrowGlyph /></span>
         </span>
       </a>
 
-      {/* <p className="sdp-cta-roadmap">
-        Kunal&rsquo;s eyes on your case, and your personalised body and health roadmap.
-      </p> */}
-
       <div className="sdp-risk-strip">
-        <span className="sdp-risk-badge"><span className="sdp-risk-icon-gold"><Check size={15} /></span>90-Day or 6-Month</span>
-        <span className="sdp-risk-badge"><span className="sdp-risk-icon-green"><Check size={15} /></span>Coached 1:1</span>
-        <span className="sdp-risk-badge"><span className="sdp-risk-icon-blue"><Check size={15} /></span>₹25L+ men only</span>
+        {ctaBadges.map((b) => (
+          <span className="sdp-risk-badge" key={b.label}>
+            <span className="sdp-risk-icon-gold">
+              <Glyph name={b.icon} size={15} />
+            </span>
+            {b.label}
+          </span>
+        ))}
       </div>
 
-      <div className="sdp-capacity">
-        <span className="dot" aria-hidden />
-        Only {site.monthlySlots} assessments open each month.
-      </div>
-
-      <p className="sdp-cta-note">
-        A diagnostic session, not a pitch. If you&rsquo;re not the right fit, Kunal tells you honestly.
-      </p>
+      <OfferTimer />
     </div>
   );
 }

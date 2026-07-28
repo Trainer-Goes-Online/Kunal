@@ -1,29 +1,24 @@
 /**
- * S08 — MECHANISM (light-alt band).
+ * S08 — MECHANISM, rebuilt as a scroll-assembled TIMELINE.
  *
- * SDP reference: `_reference/sdp/components/landing/LandingPage.tsx:1295-1333`
- * (`Mechanism`) + `_reference/sdp/app/landing.css:940-1008` (mobile 2329, 2353,
- * 2451-2452; hover micro-motion 2720-2725). Structure reproduced 1:1:
- *   section.sdp-mech.sdp-light-alt
- *     └ .sdp-wrap
- *        ├ .sdp-center-wrap > .sdp-eyebrow.center           (reveal, no delay)
- *        ├ h2.sdp-h2                                        (reveal --d .06s)
- *        ├ p.<mech-sub-body>  italic/muted/13.5px           (reveal --d .10s)
- *        ├ .<pillars> grid 1fr 1fr, 4 × .<pillar>           (reveal --d .06 + i*.06)
- *        │    └ num badge → title → desc
- *        └ p.<mech-closing>  italic, border-top             (reveal --d .30s)
+ * Replaces the flat 2×2 pillar grid with a centre-spine timeline: a brass rail
+ * that fills as the section scrolls, four nodes (icon ring + phase number) sitting
+ * on it, and alternating cards that "lego" into place — each card slots in from
+ * its own side with a slight 3D tilt, the connector stub draws out to meet the
+ * spine, the icon scribes itself, then the text settles. All of it is CSS keyed to
+ * the `.vis` class the shared reveal observer already adds; the only new JS is the
+ * spine fill, wired in ClientBehaviors via `data-timeline`.
  *
- * Only the COPY (Kraft — `src/lib/content.ts` `phases`, `funnel-copy/
- * 01-landing-vsl.v2-nobrainer.md` Beat 6) and the palette (already brass in the
- * .sdp-root foundation) differ. Bespoke CSS lives in `sections/Mechanism.css`,
- * namespaced `.s08-*` so it cannot collide with the legacy `.sdp-pillar*` rules
- * still in globals.css (which encode a different, pre-SDP pillar layout).
+ * Copy: `src/lib/content.ts` `phases` — unchanged phase text, but re-framed
+ * against the funnel md's 12-week programme (weeks 1-12 = the programme, weeks
+ * 13-26 = the continuation the md's FAQ describes). Stage grouping comes from
+ * `phases[].stage`, so the framing lives in data, not markup.
  *
- * Server component. Reveal is delegated: `data-sdp-reveal` + inline `--d`.
- * No CTA here — SDP's Mechanism carries none, and §7 lists the CtaLockup only
- * for S05 / S09 / S11 (see manifest deviation note).
+ * Server component. Reduced-motion: the observer marks everything visible at once
+ * and the CSS drops every transform, leaving a plain readable list.
  */
 import { phases } from "@/lib/content";
+import { Glyph } from "./icons";
 
 export function Mechanism() {
   return (
@@ -36,7 +31,9 @@ export function Mechanism() {
         </div>
 
         <h2 className="sdp-h2" data-sdp-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-          One System. Four Phases. You Feel Each One <em>End</em>.
+          One System. Four Phases.
+          <br className="brk-mobile" />{" "}
+          You Feel Each One <em>End</em>.
         </h2>
 
         <p
@@ -48,30 +45,59 @@ export function Mechanism() {
           successful, not a gym-rat&rsquo;s week.
         </p>
 
-        <div className="s08-pillars">
-          {phases.map((p, idx) => (
-            <div
-              key={p.n}
-              className="s08-pillar"
-              data-sdp-reveal
-              style={{ "--d": `${0.06 + idx * 0.06}s` } as React.CSSProperties}
-            >
-              <div className="s08-pillar-num">{p.n}</div>
-              <div className="s08-pillar-label">{p.label}</div>
-              <div className="s08-pillar-title">{p.title}</div>
-              <p className="s08-pillar-desc">{p.body}</p>
-            </div>
-          ))}
-        </div>
+        {/* The rail + nodes. `data-timeline` is the hook ClientBehaviors uses to
+            drive --fill (0→1) from the section's scroll progress. */}
+        <ol className="s08-tl" data-timeline>
+          <span className="s08-tl-rail" aria-hidden>
+            <span className="s08-tl-rail-fill" />
+          </span>
+
+          {phases.map((p, idx) => {
+            const stageChanged = idx === 0 || phases[idx - 1].stage !== p.stage;
+            return (
+              <li
+                key={p.n}
+                className={`s08-tl-item${idx % 2 ? " is-right" : " is-left"}`}
+                data-sdp-reveal
+                style={{ "--d": `${(idx * 0.09).toFixed(2)}s` } as React.CSSProperties}
+              >
+                {stageChanged && (
+                  <p className="s08-tl-stage" aria-hidden={false}>
+                    {p.stage}
+                  </p>
+                )}
+
+                <span className="s08-tl-node" aria-hidden>
+                  <span className="s08-tl-node-ring" />
+                  <span className="s08-tl-node-ico">
+                    <Glyph name={p.icon} size={22} draw />
+                  </span>
+                </span>
+
+                <span className="s08-tl-stub" aria-hidden />
+
+                <article className="s08-tl-card">
+                  <header className="s08-tl-card-head">
+                    <span className="s08-tl-num">{p.n}</span>
+                    <span className="s08-tl-label">{p.label}</span>
+                  </header>
+                  <h3 className="s08-tl-title">{p.title}</h3>
+                  <p className="s08-tl-desc">{p.body}</p>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
 
         <p
           className="s08-lengths-note"
           data-sdp-reveal
           style={{ "--d": ".26s" } as React.CSSProperties}
         >
-          One system, two lengths: a <strong>90-Day Reset</strong> and a{" "}
-          <strong>6-Month Transformation</strong>. Same engine, same coach, same standard.{" "}
-          <strong>The length is the only real choice you make.</strong>
+          Your programme is the <strong>first 12 weeks</strong>: phases one and two, and
+          the window the <strong>100% Results Guarantee</strong> covers. If you choose to
+          continue, phases three and four carry the result into recomposition and make it
+          permanent.
         </p>
 
         <p

@@ -10,9 +10,9 @@ import { PaymentTiles } from "./PaymentTiles";
    invented "value" stack. */
 
 const includes = [
-  "A 1:1 assessment call with Kunal — personally, not a rep",
+  "A 1:1 assessment call with Kunal himself, not a rep",
   "Your health markers & real week read before you speak",
-  "A straight, man-to-man verdict — a fit, or not",
+  "A straight, man-to-man verdict: a fit, or not",
   "Your priority slot held the moment your fee is in",
 ];
 

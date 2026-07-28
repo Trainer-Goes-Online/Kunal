@@ -20,16 +20,17 @@
  *   · Purchase tracking stays server-side in the Razorpay webhook — the client just advances
  *
  * DELIBERATE HONESTY DEVIATIONS from SDP (see manifest):
- *   · No "was ₹999 / SAVE ₹902" strike-through + save badge and no coupon field. The ₹299
- *     assessment fee is not discounted and the repo has no coupon lib — inventing a discount
- *     would be a fabricated claim. ₹299 is the single hard number.
- *   · SDP's "100% Refundable · Zero Risk" guarantee line and its "8 yrs · 550+ clients ·
- *     14 countries" credential row are unconfirmed for Kraft → <Gap q={5}> / <Gap q={1}>.
+ *   · No "was ₹999 / SAVE ₹902" strike-through + save badge and no coupon field. The
+ *     assessment fee (`site.assessmentFee`, env-driven — ₹97 per the funnel md) is not
+ *     discounted and the repo has no coupon lib — inventing a discount would be a
+ *     fabricated claim. The fee is the single hard number on this page.
+ *   · SDP's "100% Refundable · Zero Risk" guarantee line is replaced by Kraft's real fee
+ *     terms (the /refund policy, quoted verbatim), and its "8 yrs · 550+ clients ·
+ *     14 countries" credential row by the landing page's confirmed figures.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/lib/site";
-import { Gap } from "@/components/shared/Gap";
 import { trackGa4EventOnce } from "@/lib/ga4";
 import {
   captureLandingParams,
@@ -104,12 +105,12 @@ const COUNTRIES: Country[] = [
   { code: "LU", name: "Luxembourg", dial: "+352", flag: "🇱🇺" },
 ];
 
-/* ── What the ₹299 actually holds. Honest, repo-sourced (funnel-copy/03-checkout.md) —
+/* ── What the assessment fee actually holds. Honest, repo-sourced (funnel-copy/03-checkout.md) —
       not SDP's value stack. ── */
 const INCLUSIONS = [
-  "A 1:1 assessment call with Kunal — personally, not a rep",
+  "A 1:1 assessment call with Kunal himself, not a rep",
   "Your health markers and your real week read before you speak",
-  "A straight, man-to-man verdict — a fit, or not",
+  "A straight, man-to-man verdict: a fit, or not",
   "Your priority slot held the moment your fee is in",
 ];
 
@@ -290,11 +291,16 @@ function SummaryBody() {
           <span className="p01-price-now">{site.assessmentFee}</span>
         </div>
         <p className="p01-price-note">
-          The assessment fee only — never the programme. Programme cost is a conversation you
+          The assessment fee only, never the programme. Programme cost is a conversation you
           have with Kunal directly.
         </p>
+        {/* Fee terms are confirmed and already stated on /refund; quoting them
+            here rather than a placeholder, from the same source of truth. */}
         <p className="p01-guarantee">
-          <span aria-hidden>✦</span> Fee terms: <Gap q={5}>₹299 refund / credit-on-joining terms</Gap>
+          <span aria-hidden>✦</span> Fee terms: if Kunal decides on the call that the
+          programme isn&rsquo;t the right fit, your {site.assessmentFee} is{" "}
+          <strong>refunded in full</strong>. If you enrol, it&rsquo;s{" "}
+          <strong>credited toward your programme</strong>.
         </p>
       </div>
     </>
@@ -369,9 +375,11 @@ function OrderSummary() {
         </span>
         <span className="p01-coach-names">
           <strong>Kunal Chalke</strong>
-          HYROX-certified coach &amp; head judge
+          ACSM certified · HYROX head judge
+          {/* the landing page's confirmed track record, not a placeholder */}
           <span className="p01-coach-gap">
-            <Gap q={1}>years coaching · client count</Gap>
+            {site.successStories}{" "}
+            high-performers coached · {site.clientRating} ★ rating
           </span>
         </span>
       </div>
@@ -737,7 +745,7 @@ export function CheckoutForm() {
               </div>
 
               <p className="p01-submit-note">
-                Not a sales call. Kunal gives you a straight, man-to-man read — and if it
+                Not a sales call. Kunal gives you a straight, man-to-man read, and if it
                 isn&rsquo;t a fit, he&rsquo;ll say so.
               </p>
             </div>

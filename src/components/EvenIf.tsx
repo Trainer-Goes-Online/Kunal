@@ -1,6 +1,5 @@
 import { faqs } from "@/lib/content";
 import { CtaLockup } from "./sdp";
-import { Gap } from "@/components/shared/Gap";
 
 /**
  * S11 — FAQ ("Common Questions").
@@ -34,7 +33,9 @@ export function EvenIf() {
           data-sdp-reveal
           style={{ "--d": ".06s" } as React.CSSProperties}
         >
-          The Honest Answers To <em>What&rsquo;s Stopping You.</em>
+          The Honest Answers To
+          <br className="brk-mobile" />{" "}
+          <em>What&rsquo;s Stopping You.</em>
         </h2>
 
         <div className="s11-list">
@@ -63,18 +64,11 @@ export function EvenIf() {
                   </span>
                 </summary>
                 <div className="sdp-q-body">
-                  <p>
-                    {f.a}
-                    {/* SDP's equivalent answer quotes a real range ("₹25,000 to
-                        ₹45,000 for 3 to 6 month programs"). Kraft's programme price
-                        is unconfirmed (§6 Q6) — flagged, never guessed. */}
-                    {f.q.toLowerCase().includes("investment") && (
-                      <>
-                        {" "}
-                        <Gap q={6}>programme price / range to state here</Gap>
-                      </>
-                    )}
-                  </p>
+                  {/* The old build appended a programme-price <Gap> to an
+                      "investment" question. The funnel md's question set has no
+                      such question — the price is deliberately reserved for the
+                      call — so the branch was dead and has been removed. */}
+                  <p>{f.a}</p>
                 </div>
               </details>
             </div>
