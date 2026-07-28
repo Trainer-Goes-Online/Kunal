@@ -37,18 +37,59 @@ export function CalendarEmbed({ name = "", email = "" }: { name?: string; email?
     if (email) src += `&email=${encodeURIComponent(email)}`;
   }
 
-  // ── UNCHANGED backend: Calendly → GA4 book_call → /thank-you ──────────
+  /* ── Booking hand-off: Calendly → GA4 book_call → /thank-you ──────────
+     Calendly's free plan has no redirect-after-booking setting, so the
+     redirect has to happen on our side: the inline embed postMessages
+     `calendly.event_scheduled` to the parent window when a slot is taken,
+     and we navigate on that.
+
+     Three hardenings over the original listener:
+      1. ORIGIN. `endsWith("calendly.com")` also matches a hostile
+         `https://notcalendly.com`. The check is now an exact match on
+         calendly.com or a true subdomain of it.
+      2. PAYLOAD SHAPE. Calendly has posted `e.data` as a JSON *string* in
+         some embed versions; both shapes are handled.
+      3. IDEMPOTENCE. A duplicate event can't fire two navigations.
+
+     The 1.2s delay is deliberate — it gives the GA4 beacon time to leave
+     before the page unloads. */
   useEffect(() => {
-    const onMsg = (e: MessageEvent) => {
-      if (typeof e.origin !== "string" || !e.origin.endsWith("calendly.com")) return;
-      const ev = (e.data && (e.data as { event?: string }).event) || "";
-      if (ev === "calendly.event_scheduled") {
-        trackGa4EventOnce("book_call");
-        window.setTimeout(() => {
-          window.location.href = site.thankYouUrl;
-        }, 1200);
+    let handed = false;
+
+    const isCalendly = (origin: string) => {
+      try {
+        const h = new URL(origin).hostname;
+        return h === "calendly.com" || h.endsWith(".calendly.com");
+      } catch {
+        return false;
       }
     };
+
+    const readEvent = (data: unknown): string => {
+      if (typeof data === "string") {
+        try {
+          return String((JSON.parse(data) as { event?: string })?.event ?? "");
+        } catch {
+          return "";
+        }
+      }
+      if (data && typeof data === "object") {
+        return String((data as { event?: string }).event ?? "");
+      }
+      return "";
+    };
+
+    const onMsg = (e: MessageEvent) => {
+      if (handed || typeof e.origin !== "string" || !isCalendly(e.origin)) return;
+      if (readEvent(e.data) !== "calendly.event_scheduled") return;
+
+      handed = true;
+      trackGa4EventOnce("book_call");
+      window.setTimeout(() => {
+        window.location.href = site.thankYouUrl;
+      }, 1200);
+    };
+
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
   }, []);
@@ -82,7 +123,7 @@ export function CalendarEmbed({ name = "", email = "" }: { name?: string; email?
         {!site.calendlyUrl ? (
           <p className="p02-cal-fallback">
             The booking calendar is being connected. Your assessment fee is already
-            received — reply to your confirmation email and we&rsquo;ll place your slot by hand.
+            received, reply to your confirmation email and we&rsquo;ll place your slot by hand.
           </p>
         ) : showFallback ? (
           <p className="p02-cal-fallback">

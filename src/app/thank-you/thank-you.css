@@ -532,3 +532,25 @@
   .ty-page .ty-prep-card:hover .ty-prep-num,
   .ty-page .ty-contact:hover .ty-contact-icon { transform: none !important; }
 }
+
+/* ---------------------------------------------------------------------
+   Fee card — centred at every width (client review). The card was a
+   left-ragged block; the icon, headline, body, the ticked reassurance row
+   and the terms line now all centre on the same axis. The tick row becomes
+   a stacked column so the glyph sits above its sentence rather than
+   pinning the text to a left edge.
+   --------------------------------------------------------------------- */
+.ty-page .ty-fee-card { text-align: center; }
+.ty-page .ty-fee-icon { margin-left: auto; margin-right: auto; }
+.ty-page .ty-refund-row {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+.ty-page .ty-refund-row .ck { margin-top: 0; }
+.ty-page .ty-fee-extra a { color: var(--brand-bright); text-decoration: underline; }
+
+/* the support line now carries a real mailto, not a placeholder chip */
+.ty-page .ty-contact-gap { text-align: center; }
+.ty-page .ty-contact-gap a { color: var(--brand-bright); text-decoration: underline; }

@@ -1,49 +1,66 @@
 /**
  * S02 — Trust strip. Light bar directly under the trust banner (S01) and above the
- * header (S03): reviewer avatar cluster + two proof items, centred and wrapping.
+ * header (S03): reviewer avatar cluster + the rating + the guarantee.
  *
- * SDP reference: `_reference/sdp/components/landing/LandingPage.tsx:199-228`
- * (`TrustStrip`) + `_reference/sdp/app/landing.css:212-247` (mobile 2375-2378).
- * Structure reproduced 1:1: one flex row → `.avatars` cluster of four overlapping
- * circles, then N `.item` rows of (glyph + short line with a <b> lead). Only the
- * copy (Kraft) and hue (brass) differ.
+ * Copy: "Kunal Full Funnel Seggregation.md" hero strip line 2 —
+ * "[Photos] ★★★★★ 5.0 Review | 100% Results Guarantee". The rating and the
+ * guarantee are now client-confirmed, so both former <Gap>s are retired.
  *
- * Honesty (§6):
- * - SDP asserts "★★★★★ 5.0 Review". Kraft has no confirmed aggregate rating or
- *   review count, so the stars AND the number are withheld — the item renders as a
- *   visible <Gap q={2}/> rather than a borrowed 5.0.
- * - SDP's four reviewer portraits have no Kraft equivalent (no consented client
- *   photos in /public), so the cluster renders as four empty placeholder rings
- *   plus <Gap q={3}/>. The markup and metrics are kept so dropping real images in
- *   later is a one-line change (style={{backgroundImage:…}} per avatar).
- * - SDP's third item asserts "100% Guaranteed Results". Kraft's guarantee IS
- *   confirmed copy — the four-week rebuild guarantee (funnel-copy/01-landing-vsl.md:118,
- *   resolved in funnel-copy/00-funnel-overview.md:70; also src/lib/content.ts:199) —
- *   so it renders as fact, minus the unearned "100%".
+ * The md marked the reviewer portraits as "[Photos]" without supplying any. They
+ * now come from the SAME source as the testimonial tiles: the real opening frame
+ * of each client's video, pulled from Vimeo (src/lib/vimeo.ts). So the faces in
+ * this cluster are the faces in the testimonials, and nothing is stock or
+ * invented. A clip that Vimeo can't resolve falls back to a brass ring.
  *
- * Server component. No client JS; the strip is static (no reveal in SDP either —
- * it sits above the fold, so it must paint immediately).
+ * Async server component. No client JS; the strip is static — it sits above the
+ * fold, so it must paint immediately.
  */
-import { Gap } from "@/components/shared/Gap";
+import { site } from "@/lib/site";
+import { testimonialAvatarCrop } from "@/lib/content";
+import { vimeoThumbs } from "@/lib/vimeo";
 
-/** Four slots, matching SDP's TRUST_AVATARS length. No sources until Q3 lands. */
-const AVATAR_SLOTS = [0, 1, 2, 3];
+export default async function S02TrustStrip() {
+  /* Ask for the PORTRAIT frame, not a square one: cropping to the face is done
+     in CSS below, where it can be tuned, rather than by Vimeo's centre crop. */
+  const fetched = await vimeoThumbs(site.testimonialVideos, "360x640");
+  const avatars = site.testimonialVideos.map(
+    (_, i) => site.testimonialPosters[i] || fetched[i] || site.testimonialFallbacks[i] || ""
+  );
 
-export default function S02TrustStrip() {
   return (
     <div className="s02-trust-strip">
       <div className="s02-trust-strip-avatars" aria-hidden="true">
-        {AVATAR_SLOTS.map((i) => (
-          <span key={i} className="s02-trust-strip-avatar is-empty" />
-        ))}
+        {avatars.map((src, i) => {
+          const crop = testimonialAvatarCrop[i];
+          return (
+            <span
+              key={i}
+              className={`s02-trust-strip-avatar${src ? "" : " is-empty"}`}
+              style={
+                src
+                  ? {
+                      backgroundImage: `url("${src}")`,
+                      backgroundSize: crop ? `${crop.zoom} auto` : "cover",
+                      backgroundPosition: `center ${crop ? crop.focus : "50%"}`,
+                    }
+                  : undefined
+              }
+            />
+          );
+        })}
       </div>
 
       <div className="s02-trust-strip-item">
-        <Gap q={3}>consented client photos for the reviewer row</Gap>
-      </div>
-
-      <div className="s02-trust-strip-item">
-        <Gap q={2}>aggregate rating + review count</Gap>
+        <span className="s02-trust-strip-stars" aria-hidden="true">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <svg key={i} viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3l2.7 5.7 6.3.8-4.6 4.3 1.2 6.2L12 17l-5.6 3 1.2-6.2L3 9.5l6.3-.8z" />
+            </svg>
+          ))}
+        </span>
+        <span>
+          <b>{site.clientRating}</b> Review
+        </span>
       </div>
 
       <div className="s02-trust-strip-item">
@@ -53,7 +70,9 @@ export default function S02TrustStrip() {
             <polyline points="9 12 11 14 15 10" />
           </svg>
         </span>
-        <span><b>Four-Week</b> Rebuild Guarantee</span>
+        <span>
+          <b>100%</b> Results Guarantee
+        </span>
       </div>
     </div>
   );

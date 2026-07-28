@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — Kraft With Kunal",
+  title: "Terms & Conditions | Kraft With Kunal",
   robots: { index: false, follow: false },
 };
 
@@ -26,7 +27,7 @@ export default function TermsPage() {
         heading: "Contact",
         body: (
           <p>
-            Questions? Email <a href="mailto:business@trainergoesonline.com">business@trainergoesonline.com</a>.
+            Questions? Email <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>.
           </p>
         ),
       }}
@@ -35,15 +36,15 @@ export default function TermsPage() {
         <p>
           Kraft With Kunal provides health and fitness coaching for high-performing professionals. Booking a
           paid assessment secures a review of your situation and a conversation with Kunal. It is an
-          application — <strong>it is not a guarantee of enrolment</strong> into any program.
+          application: <strong>it is not a guarantee of enrolment</strong> into any program.
         </p>
       </LegalSection>
 
       <LegalSection id="medical" heading="Not medical advice">
         <div className="pol-callout">
           <p>
-            Kunal is a coach, not a doctor. All guidance is coaching guidance, provided alongside — never in place
-            of — your own doctor. Always consult a qualified medical professional before changing your diet,
+            Kunal is a coach, not a doctor. All guidance is coaching guidance, provided alongside (never in place
+            of) your own doctor. Always consult a qualified medical professional before changing your diet,
             exercise, or lifestyle. Nothing here is medical advice, diagnosis, or treatment.
           </p>
         </div>

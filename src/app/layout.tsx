@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Bebas_Neue, Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import "./sections.css";
+// Loaded last: the review-round-2 overrides depend on winning by source order.
+import "./polish.css";
 import { Analytics } from "@/components/Analytics";
 import { CtaTracker } from "@/components/CtaTracker";
 import { siteOrigin } from "@/lib/config";
@@ -35,9 +37,9 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
-  title: "Kraft With Kunal — Build the body that matches the life you built",
+  title: "Kraft With Kunal | Lose 8-12 kilos in the next 90 days",
   description:
-    "High-performer health coaching for successful men, 35–50. In six months, a body that matches the life you built. Apply for a paid assessment with Kunal.",
+    "The High-Performer Protocol: 1:1 coaching for business owners and professionals 35+, built around travel, long workdays and client dinners. 200+ success stories, 100% Results Guarantee.",
   robots: { index: false, follow: false }, // pre-launch: keep out of search until assets/figures confirmed
 };
 

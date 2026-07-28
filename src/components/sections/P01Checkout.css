@@ -509,11 +509,15 @@
   line-height: 1.55;
   color: var(--ink-soft);
 }
+/* Was a flex row built around a single placeholder chip. It now holds a real
+   sentence with <strong> spans, and flex would make each span its own item —
+   opening a 6px gap before every full stop. Normal inline flow instead, with a
+   hanging indent so the ✦ sits outside the text block. */
+.sdp-root .p01-guarantee > [aria-hidden] { margin-right: .35em; }
 .sdp-root .p01-guarantee {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
+  display: block;
+  text-indent: -0.95em;
+  padding-left: 0.95em;
   margin: 10px 0 0;
   font-family: var(--fb);
   font-size: 12.5px;

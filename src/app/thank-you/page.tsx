@@ -21,7 +21,9 @@
  *   your case, not for a pitch").
  * - Callout line: funnel-copy/04-thank-you.md:33 ("It was never your discipline").
  * - Fee + brand + routes from src/lib/site.ts.
- * Unconfirmed → visible <Gap>: the ₹299 refund / credit terms (Q5, matching S10
+ * Fee terms and the support address are now confirmed and stated inline (they were
+ * <Gap> placeholders; the refund policy and site.supportEmail are the sources).
+ * Historic note — this block used to read: the ₹299 refund / credit terms (Q5, matching S10
  * Guarantee) and the support address for reschedules (Q12). SDP's post-booking
  * film has no Kraft counterpart and is dropped outright, not reserved — Q11 is
  * retired here rather than left as a standing placeholder.
@@ -34,12 +36,11 @@ import Link from "next/link";
 import { SdpHead } from "@/components/sdp";
 import { ClientBehaviors } from "@/components/ClientBehaviors";
 import { Colophon } from "@/components/Colophon";
-import { Gap } from "@/components/shared/Gap";
 import { site } from "@/lib/site";
 import "./thank-you.css";
 
 export const metadata: Metadata = {
-  title: "Your assessment is confirmed — Kraft With Kunal",
+  title: "Your assessment is confirmed | Kraft With Kunal",
   robots: { index: false, follow: false },
 };
 
@@ -72,7 +73,7 @@ const COVER = [
   },
   {
     num: "05",
-    title: "Whether the Protocol fits — straight",
+    title: "Whether the Protocol fits, straight",
     body: (
       <>
         If it&rsquo;s right, <strong>Kunal tells you</strong>. If it isn&rsquo;t, he tells you that
@@ -88,7 +89,7 @@ const PREP = [
   {
     num: "Step 01",
     title: "Be on time.",
-    body: "The hour is blocked for you — join a couple of minutes early.",
+    body: "The hour is blocked for you, so join a couple of minutes early.",
   },
   {
     num: "Step 02",
@@ -162,7 +163,7 @@ function Hero() {
           >
             The time you picked is <strong>held</strong>, and{" "}
             <mark>the call link is on its way to your inbox</mark>. This is a real, blocked hour on
-            Kunal&rsquo;s calendar — booked for you.
+            Kunal&rsquo;s calendar, booked for you.
           </p>
 
           <div
@@ -316,7 +317,7 @@ function AboutTheFee() {
           </h3>
           <p className="ty-fee-body">
             It&rsquo;s a paid assessment, not a sales call. Kunal looks at your history, your
-            schedule and your goals, and tells you straight — a fit or not.{" "}
+            schedule and your goals, and tells you straight: a fit or not.{" "}
             <strong>
               You&rsquo;re paying for his eyes on your case, not for a pitch.
             </strong>
@@ -339,12 +340,14 @@ function AboutTheFee() {
             </div>
           </div>
 
+          {/* Confirmed terms, quoted from the /refund policy rather than flagged. */}
           <p className="ty-fee-extra">
             <span>
-              Whether the {site.assessmentFee} is refunded or credited is set out in the refund
-              policy —
+              If Kunal decides on the call that the programme isn&rsquo;t the right fit, your{" "}
+              {site.assessmentFee}{" "}
+              is refunded in full. If you enrol, it&rsquo;s credited toward your programme.
+              Full terms in the <Link href="/refund">refund policy</Link>.
             </span>
-            <Gap q={5}>{site.assessmentFee} refund / credit terms, in Kunal&rsquo;s words</Gap>
           </p>
         </div>
       </div>
@@ -373,7 +376,7 @@ function Contact() {
           data-sdp-reveal
           style={{ "--d": ".10s" } as React.CSSProperties}
         >
-          Reschedule straight from your calendar invite — just don&rsquo;t leave the slot empty,
+          Reschedule straight from your calendar invite. Just don&rsquo;t leave the slot empty,
           someone else is on the list. If the invite isn&rsquo;t in your inbox, check spam first.
         </p>
         <p
@@ -381,11 +384,13 @@ function Contact() {
           data-sdp-reveal
           style={{ "--d": ".13s" } as React.CSSProperties}
         >
-          <Gap q={12}>the support address for reschedules and questions</Gap>
+          Need to reschedule, or something isn&rsquo;t right? Email{" "}
+          <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a> and a real person
+          will pick it up.
         </p>
 
         <p className="ty-signoff" data-sdp-reveal style={{ "--d": ".16s" } as React.CSSProperties}>
-          See you on the call. — Team {site.brand}
+          See you on the call. Team {site.brand}
         </p>
 
         <div data-sdp-reveal style={{ "--d": ".20s" } as React.CSSProperties}>

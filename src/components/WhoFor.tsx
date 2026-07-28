@@ -1,4 +1,4 @@
-import { fitYes, notForYou, incomeLine } from "@/lib/content";
+import { fitYes } from "@/lib/content";
 import { CtaLockup } from "./sdp";
 
 /* ================================================================
@@ -34,7 +34,7 @@ export function WhoFor() {
       <div className="sdp-wrap s05-wrap">
         <div className="s05-center-wrap">
           <div className="sdp-eyebrow center" data-sdp-reveal>
-            Is This You?
+            For high-performing businessmen &amp; senior professionals
           </div>
         </div>
 
@@ -43,7 +43,7 @@ export function WhoFor() {
           data-sdp-reveal
           style={{ "--d": ".06s" } as React.CSSProperties}
         >
-          These Are The Men The Protocol Was <em>Built For</em>.
+          This Is For You <em>If:</em>
         </h2>
 
         <ul className="s05-who-list">
@@ -62,21 +62,6 @@ export function WhoFor() {
             </li>
           ))}
         </ul>
-
-        <p
-          className="sdp-disqualify"
-          data-sdp-reveal
-          style={{ "--d": ".30s" } as React.CSSProperties}
-        >
-          {notForYou}
-        </p>
-        <p
-          className="sdp-income-line"
-          data-sdp-reveal
-          style={{ "--d": ".32s" } as React.CSSProperties}
-        >
-          {incomeLine}
-        </p>
 
         <div
           className="s05-who-cta"

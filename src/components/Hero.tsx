@@ -1,81 +1,72 @@
 import { VSLFrame } from "./VSLFrame";
 import { CtaLockup } from "./sdp";
-import { Gap } from "./shared/Gap";
-import { site } from "@/lib/site";
-import { outcomes } from "@/lib/content";
+import { site, kiloRange } from "@/lib/site";
+import { outcomes, heroStats } from "@/lib/content";
 
 /**
- * S04 · HERO + VSL — SERVER component. Structural port of SDP `Hero`
- * (_reference/sdp/components/landing/LandingPage.tsx:490-604): callout pill →
- * h1 (l1/l2) → hero-sub → marker chips → above-VSL button → VSL → CTA →
- * below-VSL line → 4-card credibility row → 4-item trust strip, with SDP's
- * reveal stagger (.06 → .42s) reproduced exactly.
+ * S04 · HERO + VSL — SERVER component.
  *
- * Copy is Kraft (funnel-copy/01-landing-vsl.v2-nobrainer.md Beat 1 + content.ts);
- * palette is the existing brass `.sdp-root` foundation. Any hero stat Kunal has
- * not confirmed renders as a visible <Gap q={7}/> chip, never a guess.
+ * Copy source: "Kunal Full Funnel Seggregation.md" hero block, top to bottom:
+ * qualifier callout → three-line H1 (the 8-12 kilos / 90 days promise) →
+ * Protocol sub → the "200+ have used it to achieve" lead-in → four outcome chips
+ * → watch-below cue → VSL → CTA lockup → offer countdown → the four-cell stat
+ * ledger. (The four-item icon trust strip that used to close the hero was
+ * removed at the client's request.)
+ *
+ * Every number is read from `site`/`content`, never typed inline, so the client
+ * can move the fee, the kilo range or the proof figures from Vercel env without a
+ * code change. The only client component in here is the countdown.
  */
-
-/** SDP's four blood-marker chips → Kraft's four confirmed programme outcomes. */
 const HERO_CHIPS = outcomes;
-
-/** SDP trust strip icons, verbatim paths (landing.css strokes them, fill:none). */
-const TRUST_ITEMS = [
-  {
-    label: "Blood markers tracked",
-    path: <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />,
-  },
-  {
-    label: "Built for travel weeks",
-    path: (
-      <>
-        <rect x="2" y="7" width="20" height="14" rx="2" />
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-      </>
-    ),
-  },
-  {
-    label: "A diagnosis, never a template",
-    path: (
-      <>
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        <polyline points="9 12 11 14 15 10" />
-      </>
-    ),
-  },
-  {
-    label: "Coached 1:1 by Kunal",
-    path: (
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-    ),
-  },
-] as const;
 
 export function Hero() {
   return (
     <section id="top" className="sdp-hero s04-hero">
       <div className="sdp-wrap sdp-hero-inner">
         <div className="sdp-callout">
-          For the successful man 35 to 50 whose body stopped keeping up with his life
+          For high-performing business owners &amp; professionals 35+ whose body has stopped
+          matching their success
         </div>
 
         <h1 className="sdp-h1" data-sdp-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
-          <span className="sdp-h1-l1">You built the career.</span>
-          <span className="sdp-h1-l2">Now build the body that matches it.</span>
+          <span className="sdp-h1-l1">
+            Lose Up To{" "}
+            <span className="s04-h1-kilos">{kiloRange} Kilos</span>{" "}
+            In The Next {site.promiseDays} Days
+          </span>
+          <span className="sdp-h1-l2">
+            &amp; Start Looking Like The Successful Man You Are.
+          </span>
         </h1>
 
         <p className="s04-hero-sub" data-sdp-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-          In six months: <mark>15 to 20kg down</mark>, real muscle on the frame, and blood work
-          moving the right way &mdash; through{" "}
-          <strong>The High-Performer Protocol</strong>, a plan built around the life that made you
-          successful, not a gym-rat&rsquo;s week.
+          Using our <strong>High-Performer Protocol</strong>, designed around travel, long
+          workdays, client dinners, and demanding schedules, not the lifestyle of a
+          full-time gym-goer.
+        </p>
+
+        <p
+          className="s04-hero-lead"
+          data-sdp-reveal
+          style={{ "--d": ".15s" } as React.CSSProperties}
+        >
+          {/* One deliberate break, before "to lose", so the highlighted kilo box
+              always starts a line and can never be split in half. Everything
+              before it wraps on its own with `text-wrap: balance`, which
+              adapts to any width — a hard mobile break here orphaned
+              "professionals" onto its own line on narrower phones. */}
+          <strong>{site.successStories}</strong>{" "}
+          high-performing businessmen &amp; professionals have used the{" "}
+          <strong>High-Performer Protocol</strong>
+          <br />{" "}
+          to lose <mark>{kiloRange} kilos</mark> and achieve:
         </p>
 
         <div
           className="s04-hero-markers"
           data-sdp-reveal
           style={{ "--d": ".16s" } as React.CSSProperties}
-          aria-label="What the six months are built to deliver"
+          aria-label="What the protocol is built to deliver"
         >
           {HERO_CHIPS.map((c) => (
             <span key={c} className="sdp-marker-chip">
@@ -85,17 +76,19 @@ export function Hero() {
           ))}
         </div>
 
-        {/* <p className="s04-range-note" data-sdp-reveal style={{ "--d": ".18s" } as React.CSSProperties}>
-          The kilo range is a directional promise, not a guarantee.
-        </p> */}
-
         <a
           className="s04-above-vsl"
           href="#sdp-vsl"
           data-sdp-reveal
           style={{ "--d": ".20s" } as React.CSSProperties}
         >
-          Watch the short video below <span aria-hidden>&darr;</span>
+          Watch the short video below
+          <span className="s04-above-vsl-arrow" aria-hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 4v14" />
+              <path d="M6 13l6 6 6-6" />
+            </svg>
+          </span>
         </a>
 
         <VSLFrame />
@@ -104,40 +97,15 @@ export function Hero() {
           <CtaLockup />
         </div>
 
-        {/* <p className="s04-below-vsl" data-sdp-reveal style={{ "--d": ".3s" } as React.CSSProperties}>
-          A short walkthrough of why every plan collapsed the moment work got heavy, and what
-          Kunal does differently.
-        </p> */}
-
         <div className="s04-cred-row" data-sdp-reveal style={{ "--d": ".36s" } as React.CSSProperties}>
-          <div className="s04-cred-card">
-            <div className="s04-cred-num"><Gap q={7}>clients coached</Gap></div>
-            <div className="s04-cred-lbl">Clients</div>
-          </div>
-          <div className="s04-cred-card">
-            <div className="s04-cred-num"><Gap q={7}>years coaching</Gap></div>
-            <div className="s04-cred-lbl">Coaching</div>
-          </div>
-          <div className="s04-cred-card">
-            <div className="s04-cred-num">1:1</div>
-            <div className="s04-cred-lbl">Coached by Kunal</div>
-          </div>
-          <div className="s04-cred-card">
-            <div className="s04-cred-num">{site.assessmentFee}</div>
-            <div className="s04-cred-lbl">To start</div>
-          </div>
-        </div>
-
-        <div className="s04-trust" data-sdp-reveal style={{ "--d": ".42s" } as React.CSSProperties}>
-          {TRUST_ITEMS.map((t) => (
-            <div className="s04-trust-item" key={t.label}>
-              <div className="s04-trust-icon" aria-hidden>
-                <svg viewBox="0 0 24 24">{t.path}</svg>
-              </div>
-              <span>{t.label}</span>
+          {heroStats.map((s) => (
+            <div className="s04-cred-card" key={s.v}>
+              <div className="s04-cred-num">{s.k}</div>
+              <div className="s04-cred-lbl">{s.v}</div>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

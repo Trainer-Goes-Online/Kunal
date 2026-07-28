@@ -41,7 +41,7 @@ export function StickyCTA() {
                   <polyline points="9 12 11 14 15 10" />
                 </svg>
                 <span>
-                  <b>Four-week</b> guarantee
+                  <b>100%</b> Results Guarantee
                 </span>
               </span>
               <span className="s13-badge-sep" aria-hidden="true">·</span>
@@ -50,7 +50,7 @@ export function StickyCTA() {
                   <polygon points="12 2 15 8.5 22 9.3 17 14 18.3 21 12 17.5 5.7 21 7 14 2 9.3 9 8.5 12 2" />
                 </svg>
                 <span>
-                  <b>{site.monthlySlots}</b> assessments / month
+                  <b>{site.successStories}</b> Success Stories
                 </span>
               </span>
             </div>
@@ -59,7 +59,7 @@ export function StickyCTA() {
 
         <a className="sdp-cta s13-cta" href={site.checkoutUrl}>
           <span className="sdp-cta-main">
-            <span className="cta-label s13-cta-text">Click Here To Get Your Personalised Diagnosis + Fitness Roadmap</span>
+            <span className="cta-label s13-cta-text">Click Here To Get Your Personalised High-Performer Fitness Roadmap</span>
             <span className="arrow">
               <ArrowGlyph />
             </span>

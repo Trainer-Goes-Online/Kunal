@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { LegalLayout, LegalSection } from "@/components/LegalLayout";
+import { guarantee } from "@/lib/content";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Refund Policy — Kraft With Kunal",
+  title: "Refund Policy | Kraft With Kunal",
   robots: { index: false, follow: false },
 };
 
@@ -27,7 +29,7 @@ export default function RefundPage() {
         heading: "How to request a refund",
         body: (
           <p>
-            Email <a href="mailto:business@trainergoesonline.com">business@trainergoesonline.com</a> with your
+            Email <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a> with your
             name and booking details. Approved refunds are returned to your original payment method.
           </p>
         ),
@@ -56,11 +58,19 @@ export default function RefundPage() {
         </p>
       </LegalSection>
 
-      <LegalSection id="guarantee" heading="The program guarantee">
+      <LegalSection id="guarantee" heading="The 100% Results Guarantee">
+        <p>{guarantee.promise}</p>
         <p>
-          If you go on to join the program, our guarantee is the four-week mark: follow the plan for the first
-          four weeks and if your energy, sleep, and waist haven&rsquo;t started to move, we sit down and rebuild the
-          plan — no charge for the time. The only way it fails is if the work doesn&rsquo;t happen.
+          <strong>{guarantee.qualifyLabel}:</strong>
+        </p>
+        <ul className="pol-list">
+          {guarantee.qualify.map((q, i) => (
+            <li key={i}>{q}</li>
+          ))}
+        </ul>
+        <p>
+          The only way it fails is if the work doesn&rsquo;t happen. This guarantee covers the
+          coaching programme; it is separate from the assessment-fee terms above.
         </p>
       </LegalSection>
     </LegalLayout>

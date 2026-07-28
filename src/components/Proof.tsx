@@ -36,8 +36,8 @@
  * exactly as SDP ships them — they render image-only with no caption body.
  */
 import { site } from "@/lib/site";
-import { baCards } from "@/lib/content";
-import { Gap } from "@/components/shared/Gap";
+import { baCards, testimonialNames } from "@/lib/content";
+import { isMediaFile, vimeoThumbs } from "@/lib/vimeo";
 import { ArrowGlyph } from "./sdp";
 
 /* SDP's inline play triangle (LandingPage.tsx:944) — same path, same viewBox. */
@@ -49,8 +49,29 @@ function PlayGlyph() {
   );
 }
 
-export function Proof() {
+/**
+ * How many times the three clips repeat inside ONE marquee set.
+ * The engine wraps on a single set's width, so that width must exceed the
+ * widest viewport we care about or a gap opens at the seam:
+ *   3 clips × 3 repeats × (300px card + 24px gap) ≈ 2.9k px.
+ */
+const REPEATS = 3;
+
+export async function Proof() {
   const testimonials = site.testimonialVideos;
+  /* Posters, in priority order: an explicit NEXT_PUBLIC_TESTIMONIAL_POSTER_n,
+     then the live frame from Vimeo, then the committed copy of that frame, and
+     only then the branded plate. The static fallback means a Vimeo outage or a
+     build machine with blocked egress can never leave these tiles blank. */
+  const fetched = await vimeoThumbs(testimonials);
+  const posters = testimonials.map(
+    (_, i) => site.testimonialPosters[i] || fetched[i] || site.testimonialFallbacks[i] || ""
+  );
+
+  const TILE_SEQUENCE = Array.from(
+    { length: testimonials.length * REPEATS },
+    (_, i) => i % testimonials.length
+  );
 
   return (
     <section id="proof" className="sdp-section sdp-light s06-proof">
@@ -61,66 +82,110 @@ export function Proof() {
           </div>
         </div>
         <h2 className="sdp-h2" data-sdp-reveal style={{ ["--d" as string]: ".06s" }}>
-          Men Who <em>Stopped Restarting</em>.
+          See How High-Performing Businessmen Lost 13-20 Kilos{" "}
+          <em>Without Putting Their Careers On Hold.</em>
         </h2>
         <p className="sdp-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
-          Clients like you. Founders, GMs, engineers, corporate leaders — 35 to 50, and
-          done starting over.
+          These aren&rsquo;t fitness influencers. They&rsquo;re businessmen, professionals and
+          entrepreneurs just like you.
         </p>
       </div>
 
-      {/* ---------- Testimonials: static 2×2 portrait grid ---------- */}
-      <div className="sdp-wrap">
-        <div className="s06-tgrid">
-          {testimonials.map((src, idx) => {
-            const poster = site.testimonialPosters[idx];
-            const hasVideo = Boolean(src);
-            return (
-              <article
-                className="s06-tslide"
-                key={idx}
-                data-sdp-reveal
-                style={{ ["--d" as string]: `${0.06 * idx + 0.06}s` }}
-              >
-                <div
-                  className={`s06-tslide-video${hasVideo ? " has-video" : ""}`}
-                  data-tslide-idx={idx}
-                  data-tslide-src={src || undefined}
-                  role={hasVideo ? "button" : undefined}
-                  tabIndex={hasVideo ? 0 : undefined}
-                  aria-label={hasVideo ? `Play client testimonial ${idx + 1}` : undefined}
-                >
-                  {hasVideo &&
-                    (poster ? (
-                      <div
-                        className="s06-tslide-vthumb"
-                        style={{ backgroundImage: `url("${poster}")` }}
-                      />
-                    ) : (
-                      /* No poster asset exists yet, so the still comes from the clip
-                         itself: a muted metadata-only <video> seeked past the black
-                         lead-in. Pure HTML — needs no client JS. */
-                      <video
-                        className="s06-tslide-vthumb s06-tslide-vthumb--el"
-                        src={`${src}#t=0.5`}
-                        preload="metadata"
-                        muted
-                        playsInline
-                        tabIndex={-1}
-                        aria-hidden
-                      />
-                    ))}
-                  <div className="s06-tslide-play">
-                    <PlayGlyph />
-                  </div>
-                </div>
-                <div className="s06-tslide-body">
-                  <Gap q={8}>name, role &amp; pull-quote for video {idx + 1}</Gap>
-                </div>
-              </article>
-            );
-          })}
+      {/* ---------- Testimonials: infinite auto-scrolling portrait rail ----------
+          Three clips is not enough to fill a wide viewport, and the marquee engine
+          wraps on the width of ONE set — so the source set repeats the three tiles
+          REPEATS times, and ClientBehaviors clones that whole set once more. The
+          seam is therefore always off-screen and the loop reads as continuous.
+
+          No `data-sdp-reveal` on the tiles, deliberately: the reveal observer is
+          wired at mount, before the engine clones the set, so a cloned tile would
+          carry the hidden state with no observer left to release it. The rail as a
+          whole reveals instead. */}
+      <div className="sdp-wrap s06-tcar-wrap">
+        <div className="s06-tcar" id="s06-tcar" data-carousel="tcar" data-sdp-reveal>
+          <div className="s06-tcar-track" data-carousel-track>
+            <div className="s06-tcar-set" data-carousel-set>
+              {TILE_SEQUENCE.map((idx, pos) => {
+                const src = testimonials[idx];
+                const poster = posters[idx];
+                const name = testimonialNames[idx];
+                const hasVideo = Boolean(src);
+                return (
+                  <article className="s06-tslide" key={`${pos}-${idx}`}>
+                    <div
+                      className={`s06-tslide-video${hasVideo ? " has-video" : ""}`}
+                      data-tslide-idx={idx}
+                      data-tslide-src={src || undefined}
+                      role={hasVideo ? "button" : undefined}
+                      tabIndex={hasVideo ? 0 : undefined}
+                      aria-label={hasVideo ? `Play ${name}'s testimonial` : undefined}
+                    >
+                      {hasVideo &&
+                        (poster ? (
+                          <div
+                            className="s06-tslide-vthumb"
+                            style={{ backgroundImage: `url("${poster}")` }}
+                          />
+                        ) : isMediaFile(src) ? (
+                          /* Direct file with no poster: the still comes from the clip
+                             itself — a muted, metadata-only <video> seeked past the
+                             black lead-in. Pure HTML, no client JS. */
+                          <video
+                            className="s06-tslide-vthumb s06-tslide-vthumb--el"
+                            src={`${src}#t=0.5`}
+                            preload="metadata"
+                            muted
+                            playsInline
+                            tabIndex={-1}
+                            aria-hidden
+                          />
+                        ) : (
+                          /* Vimeo embed: a cross-origin iframe cannot be sampled for a
+                             frame, so the tile shows a branded plate until a poster is
+                             supplied via NEXT_PUBLIC_TESTIMONIAL_POSTER_n. */
+                          <div className="s06-tslide-vthumb s06-tslide-vthumb--plate" aria-hidden />
+                        ))}
+                      <div className="s06-tslide-play">
+                        <PlayGlyph />
+                      </div>
+                    </div>
+                    <div className="s06-tslide-body">
+                      <span className="s06-tslide-name">{name}</span>
+                      <span className="s06-tslide-role">Client transformation</span>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
         </div>
+
+        {/* Nav lives OUTSIDE the rail: the rail is edge-masked (buttons would fade)
+            and is the drag surface (a press on a button would start a drag). */}
+        <button
+          className="s06-bacar-nav s06-tcar-prev"
+          type="button"
+          aria-label="Previous testimonials"
+          aria-controls="s06-tcar"
+          data-carousel-nav="-1"
+          data-carousel-target="tcar"
+        >
+          <span className="s06-bacar-nav-glyph s06-bacar-nav-glyph--flip">
+            <ArrowGlyph size={18} />
+          </span>
+        </button>
+        <button
+          className="s06-bacar-nav s06-tcar-next"
+          type="button"
+          aria-label="Next testimonials"
+          aria-controls="s06-tcar"
+          data-carousel-nav="1"
+          data-carousel-target="tcar"
+        >
+          <span className="s06-bacar-nav-glyph">
+            <ArrowGlyph size={18} />
+          </span>
+        </button>
       </div>
 
       <div className="sdp-wrap">
@@ -133,7 +198,7 @@ export function Proof() {
           The rail and its manual nav are siblings: the buttons must sit OUTSIDE
           `.s06-bacar`, which is both edge-masked (they'd fade out) and the drag
           surface (a press on a button would start a drag). */}
-      <div className="s06-bacar-wrap">
+      <div className="sdp-wrap s06-bacar-wrap">
         <div className="s06-bacar" id="s06-bacar" data-carousel="bacar" data-sdp-reveal>
           <div className="s06-bacar-track" data-carousel-track>
             <div className="s06-bacar-set" data-carousel-set>
