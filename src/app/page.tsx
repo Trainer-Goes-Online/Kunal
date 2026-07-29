@@ -6,7 +6,7 @@ import { WhoFor } from "@/components/WhoFor";
 import { Proof } from "@/components/Proof";
 import { EliteAthlete } from "@/components/EliteAthlete";
 import { Founder } from "@/components/Founder";
-import { Mechanism } from "@/components/Mechanism";
+// import { Mechanism } from "@/components/Mechanism";
 import { Programme } from "@/components/Programme";
 import { Guarantee } from "@/components/Guarantee";
 import { EvenIf } from "@/components/EvenIf";
@@ -41,7 +41,7 @@ export default function Home() {
         <EliteAthlete />
         <Proof />
         <Founder />
-        <Mechanism />
+        {/* <Mechanism /> */}
         <Programme />
         <Guarantee />
         <EvenIf />

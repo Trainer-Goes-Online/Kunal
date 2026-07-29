@@ -170,6 +170,87 @@ function CalendarSection({ firstName, email }: { firstName: string; email: strin
 }
 
 /* ============================================================
+   Slot-not-available help — sits directly below the calendar.
+   Reference: thefoodfreedomco.com/book-a-call. A paid applicant who
+   can't find a time is reassured (seat reserved) and routed to a
+   human via WhatsApp / email. Numbers come from `site` (single source).
+   ============================================================ */
+function WhatsAppGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2zm0 1.8c2.16 0 4.19.84 5.72 2.37a8.05 8.05 0 0 1 2.37 5.73c0 4.46-3.63 8.09-8.1 8.09a8.2 8.2 0 0 1-4.17-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.05 8.05 0 0 1-1.24-4.3c0-4.46 3.63-8.09 8.1-8.09zm-4.5 4.3c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.63s1.13 3.05 1.29 3.26c.16.21 2.22 3.39 5.38 4.75.75.32 1.34.51 1.8.66.75.24 1.44.2 1.98.12.6-.09 1.86-.76 2.12-1.5.26-.73.26-1.36.18-1.49-.08-.13-.29-.21-.6-.37-.31-.16-1.86-.92-2.15-1.02-.29-.11-.5-.16-.71.16-.21.31-.81 1.02-1 1.23-.18.21-.37.24-.68.08-.31-.16-1.32-.49-2.52-1.55-.93-.83-1.56-1.86-1.74-2.17-.18-.31-.02-.48.14-.63.14-.14.31-.37.47-.55.16-.19.21-.31.31-.52.11-.21.05-.39-.02-.55-.08-.16-.7-1.72-.98-2.35-.26-.62-.52-.53-.71-.54-.18-.01-.4-.01-.61-.01z" />
+    </svg>
+  );
+}
+function MailGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <polyline points="3 7 12 13 21 7" />
+    </svg>
+  );
+}
+function AlertGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
+function SlotHelpSection() {
+  const waDigits = site.supportPhone.replace(/\D/g, "");
+  const waText = encodeURIComponent(
+    "Hi Kunal's team — I've paid my assessment fee but can't find a slot that works. My name, email, phone and preferred day/time are:"
+  );
+  return (
+    <section className="sdp-section sdp-dark p02-slot">
+      <div className="sdp-wrap">
+        <div className="p02-slot-card" data-sdp-reveal>
+          <div className="p02-slot-kicker">
+            <AlertGlyph />
+            Preferred Slot Not Available?
+          </div>
+
+          <h2 className="p02-slot-h">Can&rsquo;t Find A Time That Works For You?</h2>
+
+          <p className="p02-slot-body">
+            You&rsquo;ve already paid, and your seat is reserved, so you won&rsquo;t lose it.
+            If none of the times above suit you, message us your{" "}
+            <strong>name, email, phone number, and your preferred day and time</strong>, and
+            we&rsquo;ll personally set up your slot.
+          </p>
+
+          <div className="p02-slot-actions">
+            <a
+              className="p02-slot-btn is-wa"
+              href={`https://wa.me/${waDigits}?text=${waText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <WhatsAppGlyph />
+              Message us on WhatsApp
+            </a>
+            <a className="p02-slot-btn is-mail" href={`mailto:${site.supportEmail}`}>
+              <MailGlyph />
+              Email us
+            </a>
+          </div>
+
+          <div className="p02-slot-contact">
+            <a href={`tel:${site.supportPhone.replace(/\s/g, "")}`}>{site.supportPhone}</a>
+            <span className="dot" aria-hidden>·</span>
+            <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
    What's included — SDP L318-359 (6 cards, "Included" pills)
    ============================================================ */
 const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
@@ -234,46 +315,46 @@ const VALUE_CARDS: { title: string; body: string; icon: React.ReactNode }[] = [
   },
 ];
 
-function IncludedSection() {
-  return (
-    <section className="sdp-section sdp-light">
-      <div className="sdp-wrap">
-        <div className="sdp-center">
-          <div className="sdp-eyebrow center" data-sdp-reveal>The paid hour</div>
-        </div>
-        <h2 className="sdp-h2" data-sdp-reveal style={{ ["--d" as string]: ".06s" }}>
-          A Real Diagnostic. <em>Not A Pitch.</em>
-        </h2>
-        <p className="sdp-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
-          What your assessment covers: an honest read on your body, your week, and whether
-          the Protocol is the right fit.
-        </p>
+// function IncludedSection() {
+//   return (
+//     <section className="sdp-section sdp-light">
+//       <div className="sdp-wrap">
+//         <div className="sdp-center">
+//           <div className="sdp-eyebrow center" data-sdp-reveal>The paid hour</div>
+//         </div>
+//         <h2 className="sdp-h2" data-sdp-reveal style={{ ["--d" as string]: ".06s" }}>
+//           A Real Diagnostic. <em>Not A Pitch.</em>
+//         </h2>
+//         <p className="sdp-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
+//           What your assessment covers: an honest read on your body, your week, and whether
+//           the Protocol is the right fit.
+//         </p>
 
-        <div className="p02-value-grid">
-          {VALUE_CARDS.map((card, idx) => (
-            <div
-              className="p02-value-card"
-              key={card.title}
-              data-sdp-reveal
-              style={{ ["--d" as string]: `${(0.04 + idx * 0.06).toFixed(2)}s` }}
-            >
-              <span className="p02-vc-pill">
-                <Tick /> Included
-              </span>
-              <div className="p02-vc-ic">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  {card.icon}
-                </svg>
-              </div>
-              <h3>{card.title}</h3>
-              <p>{card.body}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+//         <div className="p02-value-grid">
+//           {VALUE_CARDS.map((card, idx) => (
+//             <div
+//               className="p02-value-card"
+//               key={card.title}
+//               data-sdp-reveal
+//               style={{ ["--d" as string]: `${(0.04 + idx * 0.06).toFixed(2)}s` }}
+//             >
+//               <span className="p02-vc-pill">
+//                 <Tick /> Included
+//               </span>
+//               <div className="p02-vc-ic">
+//                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+//                   {card.icon}
+//                 </svg>
+//               </div>
+//               <h3>{card.title}</h3>
+//               <p>{card.body}</p>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }
 
 /* ============================================================
    Why book now — SDP L365-411 (dark scarcity card + stat row)
@@ -533,9 +614,10 @@ export function BookACall({ firstName = "", email = "" }: { firstName?: string; 
       <main>
         <Hero firstName={firstName} />
         <CalendarSection firstName={firstName} email={email} />
-        <IncludedSection />
+        <SlotHelpSection />
+        {/* <IncludedSection /> */}
         <WhyCard />
-        <TransformationsSection />
+        {/* <TransformationsSection /> */}
         <FAQSection />
         <FinalCTA />
       </main>

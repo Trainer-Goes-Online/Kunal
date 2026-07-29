@@ -106,6 +106,10 @@ export function Founder() {
             <div className="s07-credrail-set" data-carousel-set>
               {credentials.map((c, idx) => {
                 const isPress = c.kind === "Press";
+                // Press items link out only when a href is set. Some are
+                // intentionally commented out in content.ts (dead/placeholder
+                // links) — those render as plain, non-clickable titles.
+                const href = (c as { href?: string }).href;
                 return (
                   <div className="s07-cred-card" key={c.title}>
                     <button
@@ -124,10 +128,10 @@ export function Founder() {
 
                     <div className="s07-cred-meta">
                       <span className="s07-cred-kind">{c.kind}</span>
-                      {isPress ? (
+                      {isPress && href ? (
                         <a
                           className="s07-cred-title s07-cred-title--link"
-                          href={c.href}
+                          href={href}
                           target="_blank"
                           rel="noopener noreferrer"
                         >

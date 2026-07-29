@@ -51,13 +51,13 @@ export function Programme() {
           ))}
         </div>
 
-        <p className="s09-note" data-sdp-reveal style={{ "--d": ".48s" } as React.CSSProperties}>
+        {/* <p className="s09-note" data-sdp-reveal style={{ "--d": ".48s" } as React.CSSProperties}>
           You are not paying for a plan. A plan is free on YouTube. You are paying for the system, the
           accountability, and <strong>the coach who has done this</strong> for 200+ businessmen,
           senior professionals and athletes who all looked like you before they started.
-        </p>
+        </p> */}
 
-        <FourCosts />
+        {/* <FourCosts /> */}
 
         <div className="s09-cta" data-sdp-reveal style={{ "--d": ".60s" } as React.CSSProperties}>
           <CtaLockup />

@@ -33,6 +33,9 @@ export const site = {
   /** The one support inbox: reschedules, refunds, privacy and legal questions. */
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "kraftwithkunal@gmail.com",
 
+  /** The one support line — WhatsApp + call reminders + "slot not available" help. */
+  supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE ?? "+91 98705 26900",
+
   /* ---- Proof figures, all confirmed in the funnel md. Env = override only. ---- */
 
   /** "200+ Success Stories" / "200+ High-Performers Coached Globally". */

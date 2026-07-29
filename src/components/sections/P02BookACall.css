@@ -514,6 +514,117 @@
   color: var(--muted-dark);
 }
 
+/* ── Slot-not-available help card (dark band, below the calendar) ──
+   Reference: thefoodfreedomco.com/book-a-call. Same striped-brass card
+   language as `.p02-why-card`; adds a WhatsApp/email action row. */
+.sdp-root .p02-slot-card {
+  max-width: 780px;
+  margin: 0 auto;
+  background: var(--grad-guarantee);
+  border: 1px solid rgba(var(--brand-rgb), .25);
+  border-radius: 22px;
+  padding: 40px 40px 34px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(var(--brand-rgb), .14);
+  background-image:
+    repeating-linear-gradient(45deg, rgba(var(--brand-rgb), .05) 0 2px, transparent 2px 11px),
+    var(--grad-guarantee);
+}
+.sdp-root .p02-slot-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--fb);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--brand-bright);
+  background: rgba(var(--brand-rgb), .14);
+  border: 1px solid rgba(var(--brand-rgb), .32);
+  padding: 7px 16px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.sdp-root .p02-slot-kicker svg { width: 14px; height: 14px; stroke: var(--brand-bright); }
+.sdp-root .p02-slot-h {
+  font-family: var(--fh);
+  font-size: clamp(24px, 3.4vw, 36px);
+  color: var(--ink-dark);
+  letter-spacing: .03em;
+  line-height: 1.12;
+  margin: 0 auto 14px;
+  max-width: 560px;
+}
+.sdp-root .p02-slot-body {
+  color: var(--ink-dark-soft);
+  font-size: 14.5px;
+  line-height: 1.75;
+  margin: 0 auto 26px;
+  max-width: 600px;
+}
+.sdp-root .p02-slot-body strong { color: var(--ink-dark); font-weight: 700; }
+
+.sdp-root .p02-slot-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.sdp-root .p02-slot-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-family: var(--fb);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .2s, filter .2s, box-shadow .2s, background .2s;
+}
+.sdp-root .p02-slot-btn svg { width: 19px; height: 19px; flex-shrink: 0; }
+.sdp-root .p02-slot-btn.is-wa {
+  background: linear-gradient(145deg, #2ecc71, #1faf55);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(37, 179, 88, .32);
+}
+.sdp-root .p02-slot-btn.is-wa:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 12px 28px rgba(37, 179, 88, .42); }
+.sdp-root .p02-slot-btn.is-mail {
+  background: rgba(var(--brand-rgb), .08);
+  color: var(--brand-bright);
+  border: 1px solid rgba(var(--brand-rgb), .4);
+}
+.sdp-root .p02-slot-btn.is-mail:hover { transform: translateY(-2px); border-color: var(--brand-bright); background: rgba(var(--brand-rgb), .14); }
+
+.sdp-root .p02-slot-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: var(--fb);
+  font-size: 13px;
+  letter-spacing: .06em;
+  color: var(--muted-dark);
+}
+.sdp-root .p02-slot-contact a {
+  color: var(--ink-dark-soft);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(var(--brand-rgb), .35);
+  padding-bottom: 1px;
+  transition: color .2s, border-color .2s;
+}
+.sdp-root .p02-slot-contact a:hover { color: var(--brand-bright); border-color: var(--brand-bright); }
+.sdp-root .p02-slot-contact .dot { color: rgba(var(--brand-rgb), .5); }
+
 /* ── FAQ list (rows are the foundation `.sdp-q` native <details>) ──
    SDP's `.faq-list` is max-width 840px, centred (book-a-call.css:608). */
 .sdp-root .p02-faq-list { max-width: 840px; margin: 0 auto; }
@@ -700,6 +811,9 @@
   .sdp-root .p02-step-line { width: 32px; margin: 0 6px; }
   .sdp-root .p02-cal-head { margin-bottom: 14px; }
   .sdp-root .p02-cal-head h2 { font-size: 24px; }
+  .sdp-root .p02-slot-card { padding: 30px 22px 26px; }
+  .sdp-root .p02-slot-actions { flex-direction: column; gap: 12px; }
+  .sdp-root .p02-slot-btn { width: 100%; }
   .sdp-root .p02-final { padding: 48px 0; }
   .sdp-root .p02-value-card h3 { padding-right: 78px; }
 }

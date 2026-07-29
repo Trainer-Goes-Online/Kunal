@@ -290,18 +290,18 @@ function SummaryBody() {
           <span className="p01-price-label">Total due today</span>
           <span className="p01-price-now">{site.assessmentFee}</span>
         </div>
-        <p className="p01-price-note">
+        {/* <p className="p01-price-note">
           The assessment fee only, never the programme. Programme cost is a conversation you
           have with Kunal directly.
-        </p>
+        </p> */}
         {/* Fee terms are confirmed and already stated on /refund; quoting them
             here rather than a placeholder, from the same source of truth. */}
-        <p className="p01-guarantee">
+        {/* <p className="p01-guarantee">
           <span aria-hidden>✦</span> Fee terms: if Kunal decides on the call that the
           programme isn&rsquo;t the right fit, your {site.assessmentFee} is{" "}
           <strong>refunded in full</strong>. If you enrol, it&rsquo;s{" "}
           <strong>credited toward your programme</strong>.
-        </p>
+        </p> */}
       </div>
     </>
   );
@@ -313,7 +313,9 @@ function SummaryBody() {
    ============================================================ */
 
 function MobileSummary() {
-  const [open, setOpen] = useState(false);
+  // Open by default so the buyer sees exactly what the fee holds on arrival;
+  // the bar still toggles closed to reclaim the screen.
+  const [open, setOpen] = useState(true);
 
   return (
     <div className="p01-summary-mobile">
@@ -582,9 +584,9 @@ export function CheckoutForm() {
           <div className="p01-form-heading">
             <div className="p01-section-label">Secure checkout</div>
             <h1 className="p01-form-title">Your Details</h1>
-            <p className="p01-form-note">
+            {/* <p className="p01-form-note">
               So Kunal can reach you and read your situation before you speak. Under a minute.
-            </p>
+            </p> */}
           </div>
 
           <form onSubmit={handleSubmit} noValidate>

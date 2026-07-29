@@ -35,9 +35,9 @@ export function Guarantee() {
             {guarantee.badge}
           </div>
 
-          <h2 className="s10-title">
+          {/* <h2 className="s10-title">
             Hit The Outcome, Or <em>Every Rupee Comes Back.</em>
-          </h2>
+          </h2> */}
 
           <p className="s10-primary">{guarantee.promise}</p>
 
