@@ -22,6 +22,7 @@
  */
 import Image from "next/image";
 import { founderPills, founderStory, credentials } from "@/lib/content";
+import { ArrowGlyph } from "./sdp";
 
 const [intro, bio, closing] = founderStory;
 
@@ -100,7 +101,7 @@ export function Founder() {
           <a>: the IMAGE opens the asset in a lightbox (a certificate should be
           readable in place, not bounce the visitor out to Google Drive), and only
           a PRESS card's text links out to the publication, in a new tab. */}
-      <div className="sdp-wrap">
+      <div className="sdp-wrap s07-credrail-wrap">
         <div className="s07-credrail" data-carousel="credcar" data-sdp-reveal>
           <div className="s07-credrail-track" data-carousel-track>
             <div className="s07-credrail-set" data-carousel-set>
@@ -155,6 +156,32 @@ export function Founder() {
             </div>
           </div>
         </div>
+
+        {/* Manual prev/next — moved here from the video + before/after rails at
+            client request. Buttons sit OUTSIDE `.s07-credrail` (it's edge-masked
+            and is the drag surface) and find it by data-carousel-target. */}
+        <button
+          className="s07-cred-nav s07-cred-prev"
+          type="button"
+          aria-label="Previous certificates"
+          data-carousel-nav="-1"
+          data-carousel-target="credcar"
+        >
+          <span className="s06-bacar-nav-glyph s06-bacar-nav-glyph--flip">
+            <ArrowGlyph size={18} />
+          </span>
+        </button>
+        <button
+          className="s07-cred-nav s07-cred-next"
+          type="button"
+          aria-label="Next certificates"
+          data-carousel-nav="1"
+          data-carousel-target="credcar"
+        >
+          <span className="s06-bacar-nav-glyph">
+            <ArrowGlyph size={18} />
+          </span>
+        </button>
       </div>
 
       {/* Credential lightbox shell — inert until ClientBehaviors adds `.on`.

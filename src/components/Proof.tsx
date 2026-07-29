@@ -38,7 +38,6 @@
 import { site } from "@/lib/site";
 import { baCards, testimonialNames } from "@/lib/content";
 import { isMediaFile, vimeoThumbs } from "@/lib/vimeo";
-import { ArrowGlyph } from "./sdp";
 
 /* SDP's inline play triangle (LandingPage.tsx:944) — same path, same viewBox. */
 function PlayGlyph() {
@@ -159,33 +158,8 @@ export async function Proof() {
             </div>
           </div>
         </div>
-
-        {/* Nav lives OUTSIDE the rail: the rail is edge-masked (buttons would fade)
-            and is the drag surface (a press on a button would start a drag). */}
-        <button
-          className="s06-bacar-nav s06-tcar-prev"
-          type="button"
-          aria-label="Previous testimonials"
-          aria-controls="s06-tcar"
-          data-carousel-nav="-1"
-          data-carousel-target="tcar"
-        >
-          <span className="s06-bacar-nav-glyph s06-bacar-nav-glyph--flip">
-            <ArrowGlyph size={18} />
-          </span>
-        </button>
-        <button
-          className="s06-bacar-nav s06-tcar-next"
-          type="button"
-          aria-label="Next testimonials"
-          aria-controls="s06-tcar"
-          data-carousel-nav="1"
-          data-carousel-target="tcar"
-        >
-          <span className="s06-bacar-nav-glyph">
-            <ArrowGlyph size={18} />
-          </span>
-        </button>
+        {/* Manual prev/next removed at client request — the rail auto-scrolls and
+            stays drag/swipe-scrollable. Arrows now live on the certificates rail. */}
       </div>
 
       <div className="sdp-wrap">
@@ -229,33 +203,8 @@ export async function Proof() {
             </div>
           </div>
         </div>
-
-        {/* Manual nav — one card per press, and the drift holds for a beat after
-            (the client file pauses on press, same as it does on hover/drag). */}
-        <button
-          className="s06-bacar-nav s06-bacar-prev"
-          type="button"
-          aria-label="Previous transformations"
-          aria-controls="s06-bacar"
-          data-carousel-nav="-1"
-          data-carousel-target="bacar"
-        >
-          <span className="s06-bacar-nav-glyph s06-bacar-nav-glyph--flip">
-            <ArrowGlyph size={18} />
-          </span>
-        </button>
-        <button
-          className="s06-bacar-nav s06-bacar-next"
-          type="button"
-          aria-label="Next transformations"
-          aria-controls="s06-bacar"
-          data-carousel-nav="1"
-          data-carousel-target="bacar"
-        >
-          <span className="s06-bacar-nav-glyph">
-            <ArrowGlyph size={18} />
-          </span>
-        </button>
+        {/* Manual prev/next removed at client request — the rail auto-scrolls and
+            stays drag/swipe-scrollable. Arrows now live on the certificates rail. */}
       </div>
 
       {/* ---------- Overlay shells (inert until ClientBehaviors adds `.on`) ----------

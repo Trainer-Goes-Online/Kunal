@@ -1305,6 +1305,38 @@
 .sdp-root .s07-credrail-track{ display:flex; gap:18px; width:max-content; will-change:transform; }
 .sdp-root .s07-credrail-set{ display:flex; gap:18px; }
 
+/* Manual prev/next for the certificates rail (moved here from the proof
+   rails). White disc reads on the dark S07 band; sits in the padded wrap,
+   outside the edge-masked rail. */
+.sdp-root .s07-credrail-wrap{ position:relative; }
+.sdp-root .s07-cred-nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  z-index:3;
+  width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(var(--brand-rgb),.5);
+  box-shadow:0 6px 20px rgba(0,0,0,.4);
+  color:var(--brand-deep);
+  display:grid; place-items:center;
+  padding:0; cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  transition:background .25s, border-color .25s, color .25s, box-shadow .25s, transform .25s;
+}
+.sdp-root .s07-cred-nav:hover{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+  box-shadow:0 10px 26px rgba(var(--brand-rgb),.45);
+  transform:translateY(-50%) scale(1.08);
+}
+.sdp-root .s07-cred-nav:active{ transform:translateY(-50%) scale(.96); }
+.sdp-root .s07-cred-prev{ left:clamp(4px,2vw,10px); }
+.sdp-root .s07-cred-next{ right:clamp(4px,2vw,10px); }
+@media (max-width:640px){
+  .sdp-root .s07-cred-nav{ width:38px; height:38px; }
+}
+
 .sdp-root .s07-cred-card{
   flex:0 0 268px; width:268px;
   display:flex; flex-direction:column;
