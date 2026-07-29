@@ -81,8 +81,9 @@ export function LegalLayout({
   updated: string;
   /** The policy's opening paragraph, rendered as SDP's intro slab. */
   intro: ReactNode;
-  /** The closing contact block, rendered as SDP's dark band. Heading + body verbatim. */
-  contact: { id: string; heading: ReactNode; body: ReactNode };
+  /** The closing dark band. Heading + body verbatim. `icon` overrides the default
+      envelope (e.g. a guarantee mark when the closing section isn't about contact). */
+  contact: { id: string; heading: ReactNode; body: ReactNode; icon?: ReactNode };
   /** One <LegalSection> per existing <h2>. */
   children: ReactNode;
 }) {
@@ -122,7 +123,7 @@ export function LegalLayout({
             </aside>
 
             <article className="pol-body">
-              <p className="pol-intro">{intro}</p>
+              <div className="pol-intro">{intro}</div>
               {children}
             </article>
           </div>
@@ -133,10 +134,12 @@ export function LegalLayout({
       <section className="pol-contact" id={contact.id}>
         <div className="pol-wrap">
           <div className="pol-contact-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
+            {contact.icon ?? (
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+            )}
           </div>
           <h2 className="pol-contact-h">{contact.heading}</h2>
           {contact.body}

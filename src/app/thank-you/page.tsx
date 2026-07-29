@@ -341,14 +341,14 @@ function AboutTheFee() {
           </div>
 
           {/* Confirmed terms, quoted from the /refund policy rather than flagged. */}
-          <p className="ty-fee-extra">
+          {/* <p className="ty-fee-extra">
             <span>
               If Kunal decides on the call that the programme isn&rsquo;t the right fit, your{" "}
               {site.assessmentFee}{" "}
               is refunded in full. If you enrol, it&rsquo;s credited toward your programme.
               Full terms in the <Link href="/refund">refund policy</Link>.
             </span>
-          </p>
+          </p> */}
         </div>
       </div>
     </section>

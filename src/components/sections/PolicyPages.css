@@ -219,6 +219,9 @@
   color: var(--ink-soft);
 }
 .sdp-root .pol-intro strong { color: var(--ink); }
+/* Intro may carry more than one paragraph (e.g. Refund Policy) — space them. */
+.sdp-root .pol-intro p { margin: 0 0 14px; }
+.sdp-root .pol-intro p:last-child { margin-bottom: 0; }
 
 /* ── Sections — SDP :215-260 ─────────────────────────────────────── */
 .sdp-root .pol-sec {
@@ -505,6 +508,7 @@
   font-weight: 600;
 }
 .sdp-root .pol-contact p a:hover { color: #fff; border-bottom-color: #fff; }
+.sdp-root .pol-contact p strong { color: var(--ink-dark); font-weight: 700; }
 .sdp-root .pol-home-link {
   display: inline-flex;
   align-items: center;

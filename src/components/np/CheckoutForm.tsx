@@ -108,10 +108,10 @@ const COUNTRIES: Country[] = [
 /* ── What the assessment fee actually holds. Honest, repo-sourced (funnel-copy/03-checkout.md) —
       not SDP's value stack. ── */
 const INCLUSIONS = [
-  "A 1:1 assessment call with Kunal himself, not a rep",
-  "Your health markers and your real week read before you speak",
-  "A straight, man-to-man verdict: a fit, or not",
-  "Your priority slot held the moment your fee is in",
+  "A personalised assessment of your current fitness, lifestyle and health goals",
+  "A clear roadmap to help you lose 8-12 kilos while building strength over the next 90 days",
+  "An honest fit assessment. If the High-Performer Programme isn't the right fit for you, Kunal will tell you.",
+  "A walkthrough of the High-Performer Programme and exactly how it can be tailored to your schedule, travel and work commitments",
 ];
 
 /* ============================================================
@@ -268,7 +268,7 @@ function CountryDropdown({
 function SummaryBody() {
   return (
     <>
-      <div className="p01-event-pill">1:1 Assessment · With Kunal</div>
+      <div className="p01-event-pill">Personalised Fitness Strategy Call </div>
 
       <div className="p01-divider" />
 
@@ -326,7 +326,8 @@ function MobileSummary() {
         aria-expanded={open}
         aria-controls="p01-mobile-summary-panel"
       >
-        <span className="p01-summary-mobile-title">Assessment with Kunal</span>
+        <span className="p01-summary-mobile-title">
+1:1 High-Performer Fitness Strategy Call with Kunal </span>
         <span className="p01-summary-mobile-trail">
           <span className="p01-summary-mobile-price">{site.assessmentFee}</span>
           <span className={`p01-summary-mobile-chevron${open ? " open" : ""}`} aria-hidden>
@@ -355,7 +356,7 @@ function OrderSummary() {
   return (
     <aside className="p01-summary" aria-label="Order summary">
       <p className="p01-summary-label">Order summary</p>
-      <h2 className="p01-product-name">Assessment with Kunal</h2>
+      <h2 className="p01-product-name">1:1 High-Performer Fitness Strategy Call with Kunal</h2>
 
       <SummaryBody />
 

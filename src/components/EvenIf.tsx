@@ -25,17 +25,17 @@ export function EvenIf() {
   return (
     <section id="faq" className="sdp-section sdp-light s11-faq">
       <div className="sdp-wrap">
-        <div className="sdp-eyebrow center" data-sdp-reveal>
+        {/* <div className="sdp-eyebrow center" data-sdp-reveal>
           Common Questions
-        </div>
+        </div> */}
         <h2
           className="sdp-h2"
           data-sdp-reveal
           style={{ "--d": ".06s" } as React.CSSProperties}
         >
-          The Honest Answers To
+          COMMON QUESTIONS FROM 
           <br className="brk-mobile" />{" "}
-          <em>What&rsquo;s Stopping You.</em>
+          <em>HIGH-PERFORMING BUSINESSMEN & PROFESSIONALS</em>
         </h2>
 
         <div className="s11-list">
