@@ -23,9 +23,20 @@ export function Hero() {
   return (
     <section id="top" className="sdp-hero s04-hero">
       <div className="sdp-wrap sdp-hero-inner">
+        {/* Two variants, not one string with a break: the phone gets shorter
+            copy, so this is a wording change and not just a different wrap.
+            Toggled by CSS at 640px, so it needs no client JS. */}
         <div className="sdp-callout">
-          For high-performing business owners &amp; professionals 35+ whose body has stopped
-          matching their success
+          <span className="hero-copy-wide">
+            FOR HIGH-PERFORMERS 35+ WHOSE BODY HAS STOPPED MATCHING THEIR SUCCESS
+          </span>
+          {/* explicit space before the break: below 360px the <br> is hidden
+              and the two halves have to still read as one sentence */}
+          <span className="hero-copy-narrow">
+            For High-Performers 35+ Whose Body{" "}
+            <br />
+            Has Stopped Matching Their Success
+          </span>
         </div>
 
         <h1 className="sdp-h1" data-sdp-reveal style={{ "--d": ".06s" } as React.CSSProperties}>
@@ -40,9 +51,13 @@ export function Hero() {
         </h1>
 
         <p className="s04-hero-sub" data-sdp-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-          Using our <strong>High-Performer Protocol</strong>, designed around travel, long
-          workdays, client dinners, and demanding schedules, not the lifestyle of a
-          full-time gym-goer.
+          {/* One shared copy at every width now (the "not the lifestyle of a
+              full-time gym-goer" clause is dropped everywhere), held to exactly
+              two lines by a hard break plus a fluid font-size — see
+              `.s04-hero-sub` in polish.css. */}
+          Using our <strong>High-Performer Protocol</strong>, designed around travel,
+          <br />
+          long workdays, client dinners, and demanding schedules.
         </p>
 
         <p

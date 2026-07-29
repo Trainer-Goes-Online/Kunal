@@ -10,6 +10,12 @@ import { site } from "@/lib/site";
  * and ClientBehaviors pre-boots the player near the viewport, then plays with
  * sound (and toggles `.playing`) on click / Enter.
  *
+ * POSTER: a real frame from the film (`site.vslPoster`), replacing the designed
+ * `/VSL_thumbnail.png` plate so the hero shows Kunal on camera rather than a
+ * title card. Deliberately NOT fetched from Vimeo oEmbed: that returns only the
+ * single poster frame set on the video, and that frame catches a caption
+ * mid-animation. See the note on `site.vslPoster` for how to swap it.
+ *
  * Fail-open: poster + play disc are real HTML, and a <noscript> iframe lets the
  * film actually play with JS disabled.
  */
@@ -18,6 +24,8 @@ import { site } from "@/lib/site";
 const VSL_VIMEO_ID = "1210701586";
 
 export function VSLFrame() {
+  const poster = site.vslPoster;
+
   return (
     <div className="s04-video-frame" data-sdp-reveal style={{ "--d": ".22s" } as React.CSSProperties}>
       <div
@@ -27,13 +35,13 @@ export function VSLFrame() {
         tabIndex={0}
         aria-label="Play the film"
         data-vimeo-id={VSL_VIMEO_ID}
-        data-vimeo-thumb={site.vslPoster}
+        data-vimeo-thumb={poster}
       >
         <div className="sdp-video-host" />
 
         <div className="sdp-video-thumb on">
           <img
-            src={site.vslPoster}
+            src={poster}
             alt=""
             width={640}
             height={360}

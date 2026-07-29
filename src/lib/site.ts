@@ -25,7 +25,21 @@ export const site = {
 
   /** Hero VSL. Empty => placeholder poster + play disc (video being edited). */
   vslVideoUrl: process.env.NEXT_PUBLIC_VSL_VIDEO_URL ?? "",
-  vslPoster: process.env.NEXT_PUBLIC_VSL_POSTER ?? "/VSL_thumbnail.png",
+
+  /**
+   * Hero VSL poster — a real frame from the film, committed rather than fetched.
+   *
+   * Vimeo's oEmbed only ever returns the ONE poster frame set on the video, and
+   * that frame catches an on-screen caption mid-animation ("Just …" with a
+   * second word part-hidden behind Kunal's head). There is no API to ask it for
+   * a different timestamp, and the video is domain-restricted, so its stream
+   * can't be opened to pull one. This still is that frame with the caption band
+   * cropped out, which is why it is a file and not a fetch.
+   *
+   * To swap it: either drop a new image here, or change the thumbnail on the
+   * Vimeo video itself and point NEXT_PUBLIC_VSL_POSTER at the new URL.
+   */
+  vslPoster: process.env.NEXT_PUBLIC_VSL_POSTER ?? "/vsl-poster.jpg",
 
   /** Real capacity for the calm scarcity line. Confirm the true number with Kunal. */
   monthlySlots: process.env.NEXT_PUBLIC_MONTHLY_ASSESSMENT_SLOTS ?? "8",
