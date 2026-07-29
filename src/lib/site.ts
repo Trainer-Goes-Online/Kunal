@@ -25,7 +25,15 @@ export const site = {
 
   /** Hero VSL. Empty => placeholder poster + play disc (video being edited). */
   vslVideoUrl: process.env.NEXT_PUBLIC_VSL_VIDEO_URL ?? "",
-  vslPoster: process.env.NEXT_PUBLIC_VSL_POSTER ?? "/VSL_thumbnail.png",
+
+  /**
+   * Hero VSL poster. Left EMPTY by default on purpose: the still is pulled
+   * from the film itself via Vimeo oEmbed (see VSLFrame), the same way the
+   * testimonial tiles work. Set this only to override with a hand-picked image.
+   */
+  vslPoster: process.env.NEXT_PUBLIC_VSL_POSTER ?? "",
+  /** Committed copy of that frame — used if Vimeo can't be reached at build. */
+  vslPosterFallback: "/vsl-frame.jpg",
 
   /** Real capacity for the calm scarcity line. Confirm the true number with Kunal. */
   monthlySlots: process.env.NEXT_PUBLIC_MONTHLY_ASSESSMENT_SLOTS ?? "8",

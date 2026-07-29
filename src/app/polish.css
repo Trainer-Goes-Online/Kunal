@@ -311,11 +311,63 @@
   .sdp-root .sdp-risk-badge svg { width: 13px; height: 13px; }
 }
 
-/* ---- 16. HERO TYPE STEP-DOWN (mobile only) ---------------------------
-   Client-specified sizes: 12px for the two paragraphs under the H1, 10px for
-   the outcome pills. Desktop is untouched. */
+/* ---- 17. HERO COPY VARIANTS ------------------------------------------
+   The callout and the sub carry DIFFERENT wording on a phone (shorter), not
+   just a different wrap, so both variants ship in the markup and CSS picks
+   one. Server-rendered either way — no JS, no hydration mismatch. Only one
+   is ever exposed to assistive tech because the other is display:none. */
+.hero-copy-narrow { display: none; }
 @media (max-width: 640px) {
-  .sdp-root .s04-hero-sub,
+  .hero-copy-wide { display: none; }
+  .hero-copy-narrow { display: inline; }
+}
+
+/* The callout's forced break gives the requested split on a normal phone, but
+   below ~360px the first line no longer fits on its own — the break then lands
+   on top of a natural wrap and strands a single word. Under that width the
+   break is dropped and the text is balanced instead, so it degrades to even
+   lines rather than orphans. */
+.sdp-callout .hero-copy-narrow br { display: none; }
+@media (min-width: 361px) { .sdp-callout .hero-copy-narrow br { display: inline; } }
+.sdp-root .s04-hero .sdp-callout { text-wrap: balance; }
+
+/* ---- 18. HERO MASTHEAD: matched widths, two-line sub -----------------
+   The H1 and the line under it are sized so their rendered text spans the
+   SAME width — that is what the 72 / 32 pair does at desktop, and the ratio
+   is held below it so the pairing survives every width rather than only the
+   one it was measured at.
+
+   The sub is pinned to exactly two lines everywhere: a hard break fixes where
+   it splits, and a viewport-linked font-size keeps each half inside the
+   column instead of wrapping to a third line on a narrow phone. `balance` is
+   off here on purpose — it would fight the deliberate break. */
+.sdp-root .s04-hero .sdp-h1-l1 { font-size: clamp(34px, 5.6vw, 72px); }
+.sdp-root .s04-hero .sdp-h1-l2 {
+  font-size: clamp(15px, 2.49vw, 32px);   /* 0.444 x the H1, the matched ratio */
+  margin-top: 5px;
+  letter-spacing: .4px;
+}
+.sdp-root .s04-hero-sub {
+  font-size: clamp(8.6px, 2.85vw, 15px);
+  text-wrap: wrap;
+  max-width: 100%;
+}
+
+/* ---- 16. HERO TYPE STEP-DOWN (mobile only) ---------------------------
+   Client-specified sizes: 38px H1, 12px for the two paragraphs under it,
+   10px for the outcome pills. Desktop is untouched. */
+@media (max-width: 640px) {
+  /* 40px is the target, but "Lose Up To 8-12 Kilos" is ~290px wide at that
+     size and a 320px phone only offers 280px of column — so it would spill to
+     a third line. The vw term scales it down just for those narrow widths and
+     the cap holds it at a flat 40px from ~360px up, which keeps the headline
+     to exactly two lines everywhere. */
+  .sdp-root .s04-hero .sdp-h1-l1 { font-size: clamp(34px, 11.1vw, 40px); }
+  /* 0.444 x 38px — the same ratio the desktop 72/32 pair uses, so the H1 and
+     the line under it render to the same width on a phone too. */
+  .sdp-root .s04-hero .sdp-h1-l2 { font-size: 17px; }
+  /* NOTE: `.s04-hero-sub` is deliberately NOT pinned here — its size is fluid
+     (section 18) because it has to hold two lines at every width. */
   .sdp-root .s04-hero-lead { font-size: 12px; }
   .sdp-root .s04-hero-markers .sdp-marker-chip {
     font-size: 10px;
