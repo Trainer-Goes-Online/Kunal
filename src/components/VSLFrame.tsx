@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import { site } from "@/lib/site";
-import { vimeoThumb } from "@/lib/vimeo";
 
 /**
  * S04 · Hero VSL — SERVER component, structural port of SDP `VSLVideo`
@@ -11,13 +10,11 @@ import { vimeoThumb } from "@/lib/vimeo";
  * and ClientBehaviors pre-boots the player near the viewport, then plays with
  * sound (and toggles `.playing`) on click / Enter.
  *
- * POSTER: the still is now a real frame from the film, pulled from Vimeo's
- * oEmbed thumbnail at 1280x720 — the same mechanism the testimonial tiles use.
- * It replaces the designed `/VSL_thumbnail.png` plate, so the hero shows Kunal
- * on camera rather than a title card. Resolution order:
- *   NEXT_PUBLIC_VSL_POSTER  →  live Vimeo frame  →  committed copy of it
- * The committed copy means a Vimeo outage at build time can't leave the hero
- * with an empty player.
+ * POSTER: a real frame from the film (`site.vslPoster`), replacing the designed
+ * `/VSL_thumbnail.png` plate so the hero shows Kunal on camera rather than a
+ * title card. Deliberately NOT fetched from Vimeo oEmbed: that returns only the
+ * single poster frame set on the video, and that frame catches a caption
+ * mid-animation. See the note on `site.vslPoster` for how to swap it.
  *
  * Fail-open: poster + play disc are real HTML, and a <noscript> iframe lets the
  * film actually play with JS disabled.
@@ -26,9 +23,8 @@ import { vimeoThumb } from "@/lib/vimeo";
 /** Hero VSL — Vimeo id per MASTER-HANDOFF §6 "known facts" (SDP ships 1209777174). */
 const VSL_VIMEO_ID = "1210701586";
 
-export async function VSLFrame() {
-  const fetched = await vimeoThumb(`https://vimeo.com/${VSL_VIMEO_ID}`, "1280x720");
-  const poster = site.vslPoster || fetched || site.vslPosterFallback;
+export function VSLFrame() {
+  const poster = site.vslPoster;
 
   return (
     <div className="s04-video-frame" data-sdp-reveal style={{ "--d": ".22s" } as React.CSSProperties}>
