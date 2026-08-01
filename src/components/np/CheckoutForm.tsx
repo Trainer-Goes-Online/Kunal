@@ -313,9 +313,9 @@ function SummaryBody() {
    ============================================================ */
 
 function MobileSummary() {
-  // Open by default so the buyer sees exactly what the fee holds on arrival;
-  // the bar still toggles closed to reclaim the screen.
-  const [open, setOpen] = useState(true);
+  // Closed by default on mobile — the offer block above already carries the
+  // price/coupon, so the summary stays collapsed until the buyer taps to expand.
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="p01-summary-mobile">
