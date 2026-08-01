@@ -530,3 +530,292 @@
   .sdp-root .s07-credbox-close { top: -16px; right: -6px; }
   .sdp-root .s07-credbox-nav   { width: 38px; height: 38px; }
 }
+
+
+/* =====================================================================
+   REVIEW ROUND 3
+   ===================================================================== */
+
+/* ---- 19. HERO BODY COPY: readability on a phone ----------------------
+   The two paragraphs under the H1 were mid-grey at a fluid size and read as
+   faint on a phone. They now sit at near-black with a heavier body weight.
+
+   The SIZE is the constrained part: the sub is pinned to exactly two lines,
+   and its first line ("Using our High-Performer Protocol, designed around
+   travel,") is ~57 characters. At 14px that needs ~400px of column and a
+   390px phone only offers 350 â€” it would break to a third line. So the sub
+   keeps a fluid size (nudged down slightly to absorb the heavier weight,
+   which widens the text) while the lead, which already balances over three
+   lines, takes the full 14px. */
+@media (max-width: 640px) {
+  .sdp-root .s04-hero-sub,
+  .sdp-root .s04-hero-lead {
+    color: #000000;
+    font-weight: 500;
+  }
+  /* Both target the client's 14px and back off only where the extra width
+     would add a line. The sub is the tighter of the two: it is pinned to two
+     lines and its first line is ~57 characters, so 14px would need ~400px of
+     column against the 350px a 390px phone gives. */
+  .sdp-root .s04-hero-sub  { font-size: clamp(9px, 2.95vw, 14px); }
+  .sdp-root .s04-hero-lead { font-size: clamp(11.5px, 3.6vw, 14px); }
+  /* emphasis runs keep the brass but match the heavier body weight */
+  .sdp-root .s04-hero-sub strong,
+  .sdp-root .s04-hero-lead strong { font-weight: 700; }
+}
+
+/* ---- 20. STICKY CTA: present from the first screen -------------------
+   The bar shipped translated 120% off-screen and was revealed by an
+   IntersectionObserver once the hero scrolled away. It now sits in place from
+   first paint on every page and at every width â€” no reveal, no scroll
+   dependency, and it survives JS never running. */
+.sdp-root .sdp-stuck { transform: translateY(0); }
+
+/* ---- 21. CHECKOUT: offer block, confetti, sticky pay ------------------ */
+
+/* the celebratory strip above the offer card */
+.sdp-root .p01-unlock {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--r);
+  border: 1px solid rgba(var(--brand-rgb), .38);
+  background: linear-gradient(180deg, rgba(var(--brand-rgb), .14), rgba(var(--brand-rgb), .06));
+}
+.sdp-root .p01-unlock-ico { font-size: 20px; line-height: 1.2; flex: 0 0 auto; }
+.sdp-root .p01-unlock-h {
+  font-family: var(--fb);
+  font-size: 14px; font-weight: 800;
+  color: var(--brand-deep);
+  margin: 0 0 3px;
+}
+.sdp-root .p01-unlock-s {
+  font-family: var(--fb);
+  font-size: 12.5px; line-height: 1.5;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.sdp-root .p01-unlock-code {
+  font-family: var(--f-mono, ui-monospace, monospace);
+  font-weight: 700;
+  color: var(--brand-deep);
+  background: rgba(var(--brand-rgb), .16);
+  border-radius: 4px;
+  padding: 1px 5px;
+  letter-spacing: .02em;
+}
+
+/* the offer card: timer, unlocked price, coupon receipt */
+.sdp-root .p01-offer {
+  margin-top: 14px;
+  border: 1px solid rgba(var(--brand-rgb), .38);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.sdp-root .p01-offer-timer {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 11px 16px;
+  background: rgba(229, 52, 42, .07);
+  border-bottom: 1px solid rgba(229, 52, 42, .22);
+}
+.sdp-root .p01-offer-timer-l {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--fb); font-size: 12.5px; font-weight: 700;
+  color: #B4351F;
+}
+.sdp-root .p01-offer-clock {
+  font-family: var(--f-mono, ui-monospace, monospace);
+  font-size: 15px; font-weight: 700;
+  color: #fff;
+  background: #E5342A;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-variant-numeric: tabular-nums;
+}
+.sdp-root .p01-offer-body { padding: 16px; }
+.sdp-root .p01-offer-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--fb); font-size: 11.5px; font-weight: 800;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--brand-deep);
+  margin-bottom: 12px;
+}
+.sdp-root .p01-offer-prices {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.sdp-root .p01-offer-was {
+  font-family: var(--fb); font-size: 15px; font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.sdp-root .p01-offer-off {
+  font-family: var(--fb); font-size: 11.5px; font-weight: 800;
+  color: #fff; background: #E5342A;
+  border-radius: 999px; padding: 3px 9px;
+}
+.sdp-root .p01-offer-now {
+  margin-left: auto;
+  font-family: var(--fh); font-size: 34px; line-height: 1;
+  letter-spacing: .02em;
+  color: var(--ink);
+}
+.sdp-root .p01-offer-applied {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(var(--brand-rgb), .3);
+  background: rgba(var(--brand-rgb), .08);
+  font-family: var(--fb); font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.sdp-root .p01-offer-applied b {
+  font-family: var(--f-mono, ui-monospace, monospace);
+  color: var(--brand-deep);
+}
+.sdp-root .p01-offer-change {
+  display: inline-block; margin-top: 10px;
+  font-family: var(--fb); font-size: 12px;
+  color: var(--muted);
+  text-decoration: underline;
+  background: none; border: 0; padding: 0; cursor: pointer;
+}
+.sdp-root .p01-offer-change:hover { color: var(--brand-deep); }
+
+/* confetti canvas â€” sits over the page, never intercepts a click */
+.p01-confetti {
+  position: fixed; inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+/* the "view more details" affordance on the mobile summary bar */
+.sdp-root .p01-summary-mobile-more {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--fb); font-size: 11.5px; font-weight: 700;
+  color: var(--brand-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* sticky pay bar (checkout) */
+.sdp-root .p01-stuck-inner {
+  max-width: 1120px; margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 28px);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.sdp-root .p01-stuck-meta { min-width: 0; }
+.sdp-root .p01-stuck-h {
+  font-family: var(--fb); font-size: 13px; font-weight: 700;
+  color: var(--ink-dark);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sdp-root .p01-stuck-s {
+  font-family: var(--fb); font-size: 11.5px;
+  color: var(--brand-bright);
+  margin-top: 2px;
+}
+.sdp-root .p01-stuck-btn {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 22px; border: 0; border-radius: 999px;
+  background: var(--grad-cta); color: var(--cta-ink);
+  font-family: var(--fh); font-size: 16px; letter-spacing: .04em;
+  cursor: pointer; white-space: nowrap;
+  box-shadow: var(--glow-cta);
+  transition: transform .2s, filter .2s;
+}
+.sdp-root .p01-stuck-btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.sdp-root .p01-stuck-btn:disabled { opacity: .7; cursor: default; transform: none; }
+
+/* keep the page clear of the fixed bar */
+.sdp-root .p01-page { padding-bottom: 96px; }
+
+@media (max-width: 860px) {
+  /* the in-page pay button is redundant once the sticky bar is always there */
+  .sdp-root .p01-submit-wrap { display: none; }
+  .sdp-root .p01-stuck-meta { display: none; }
+  .sdp-root .p01-stuck-btn { width: 100%; justify-content: center; font-size: 15px; }
+  .sdp-root .p01-offer-now { font-size: 28px; }
+}
+
+/* desktop: the form panel sits UNDER the offer block and is tightened up */
+@media (min-width: 861px) {
+  .sdp-root .p01-form-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .sdp-root .p01-form-panel { padding: 26px 28px 28px; }
+  .sdp-root .p01-form-title { font-size: 28px; }
+}
+
+
+/* =====================================================================
+   REVIEW ROUND 4
+   ===================================================================== */
+
+/* ---- 22. HERO: both paragraphs at one size --------------------------
+   The sub was running smaller than the lead because it was being held to two
+   lines. The client has chosen matched size over that constraint, so both now
+   share the lead's scale — the sub takes a third line on narrower phones as a
+   result, which is the accepted trade. */
+@media (max-width: 640px) {
+  .sdp-root .s04-hero-sub { font-size: clamp(11.5px, 3.6vw, 14px); }
+}
+
+/* ---- 23. CHECKOUT: offer timer, spacing, struck prices --------------- */
+
+/* the countdown strip reads as a red band; the clock sits on white so the
+   digits never blend into it */
+.sdp-root .p01-offer-timer {
+  background: linear-gradient(135deg, #DC2626, #EF4444);
+  border-bottom: 0;
+}
+.sdp-root .p01-offer-timer-l { color: #fff; }
+.sdp-root .p01-offer-clock {
+  background: #fff;
+  color: #B4241C;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+}
+
+/* breathing room between the offer card and the form panel below it */
+.sdp-root .p01-offer-wrap { margin-bottom: 18px; }
+
+/* was-price beside the fee, in the summary bar and on the sticky button */
+.sdp-root .p01-price-was {
+  font-family: var(--fb);
+  font-size: 13px; font-weight: 600;
+  color: var(--muted);
+  text-decoration: line-through;
+  margin-right: 7px;
+}
+.sdp-root .p01-stuck-was {
+  opacity: .65;
+  font-size: .82em;
+  margin-right: 2px;
+}
+
+/* ---- 24. CHECKOUT: themed icons + footer clearance ------------------- */
+
+/* the offer block's glyphs replaced emoji; align them on the text baseline
+   and inherit each context's colour */
+.sdp-root .p01-unlock-ico {
+  display: inline-grid; place-items: center;
+  width: 26px; height: 26px; flex: 0 0 26px;
+  border-radius: 50%;
+  background: rgba(var(--brand-rgb), .18);
+  color: var(--brand-deep);
+}
+.sdp-root .p01-offer-timer-l { display: inline-flex; align-items: center; gap: 7px; }
+.sdp-root .p01-offer-timer-l .glyph { color: #fff; flex: 0 0 auto; }
+.sdp-root .p01-offer-badge .glyph { color: var(--brand-deep); flex: 0 0 auto; }
+.sdp-root .p01-offer-applied .glyph { color: var(--brand-deep); flex: 0 0 auto; }
+
+/* The sticky pay bar is fixed, so the page needs real clearance or it sits on
+   top of the closing legal line. The bar is taller on a phone (full-width
+   button), hence the two values. */
+.sdp-root .p01-page { padding-bottom: 132px; }
+@media (max-width: 860px) {
+  .sdp-root .p01-page { padding-bottom: 168px; }
+}

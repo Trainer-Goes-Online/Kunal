@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Bebas_Neue, Newsreader, Inter_Tight, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import "./sections.css";
 // Loaded last: the review-round-2 overrides depend on winning by source order.
@@ -35,6 +35,14 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
+// BODY face for the whole site. Self-hosted by next/font so the stack in
+// globals.css (`--fb`) resolves to a real webfont, not a local-only fallback.
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
   title: "Kraft With Kunal | Lose 8-12 kilos in the next 90 days",
@@ -50,7 +58,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dark"
-      className={`${bebas.variable} ${newsreader.variable} ${interTight.variable} ${jetbrains.variable}`}
+      className={`${bebas.variable} ${newsreader.variable} ${interTight.variable} ${jetbrains.variable} ${manrope.variable}`}
     >
       <body>
         <Analytics />

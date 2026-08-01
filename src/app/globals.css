@@ -11,7 +11,7 @@
 :root {
   /* ---- fonts (wired from next/font variables in layout.tsx) ---- */
   --f-display: var(--font-newsreader), "Georgia", serif;
-  --f-sans: var(--font-inter-tight), "Geist", -apple-system, system-ui, sans-serif;
+  --f-sans: var(--font-manrope), "Manrope", "Helvetica Neue", sans-serif;
   --f-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* ---- rhythm / radius (inherited) ---- */
@@ -625,7 +625,7 @@ p em, li em, span em { font-family: var(--f-sans); font-style: normal; font-weig
   --success:#3F8F5B; --danger:#B4451F; --danger-rgb:180,69,31; --star:#E3C078; --gold:#E3C078;
 
   --fh: var(--font-bebas), 'Bebas Neue','Helvetica Neue',sans-serif;   /* DISPLAY condensed caps */
-  --fb: var(--font-inter-tight), 'Manrope',system-ui,sans-serif;       /* BODY clean sans (Kunal's wired face) */
+  --fb: var(--font-manrope), 'Manrope','Helvetica Neue',sans-serif;    /* BODY face, site-wide */
 
   --r-sm:8px; --r:12px; --r-lg:18px; --r-xl:28px;
 
