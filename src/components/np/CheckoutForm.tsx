@@ -19,18 +19,21 @@
  *   · Razorpay modal, brass theme #C9A24B, ondismiss → un-spin
  *   · Purchase tracking stays server-side in the Razorpay webhook — the client just advances
  *
+ * OFFER BLOCK: the client asked for the strike-through / coupon / countdown
+ * treatment, so `OfferUnlocked` now sits above the form. The was-price is
+ * env-gated (`NEXT_PUBLIC_ASSESSMENT_FEE_ORIGINAL`) and the block simply omits
+ * the strike-through and percentage badge when it is unset — see the note on
+ * `offer` in src/lib/site.ts for why that anchor has to be a real price.
+ *
  * DELIBERATE HONESTY DEVIATIONS from SDP (see manifest):
- *   · No "was ₹999 / SAVE ₹902" strike-through + save badge and no coupon field. The
- *     assessment fee (`site.assessmentFee`, env-driven — ₹97 per the funnel md) is not
- *     discounted and the repo has no coupon lib — inventing a discount would be a
- *     fabricated claim. The fee is the single hard number on this page.
  *   · SDP's "100% Refundable · Zero Risk" guarantee line is replaced by Kraft's real fee
  *     terms (the /refund policy, quoted verbatim), and its "8 yrs · 550+ clients ·
  *     14 countries" credential row by the landing page's confirmed figures.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { site } from "@/lib/site";
+import { site, offer } from "@/lib/site";
+import { OfferUnlocked } from "./OfferUnlocked";
 import { trackGa4EventOnce } from "@/lib/ga4";
 import {
   captureLandingParams,
@@ -110,7 +113,6 @@ const COUNTRIES: Country[] = [
 const INCLUSIONS = [
   "A personalised assessment of your current fitness, lifestyle and health goals",
   "A clear roadmap to help you lose 8-12 kilos while building strength over the next 90 days",
-  "An honest fit assessment. If the High-Performer Programme isn't the right fit for you, Kunal will tell you.",
   "A walkthrough of the High-Performer Programme and exactly how it can be tailored to your schedule, travel and work commitments",
 ];
 
@@ -286,10 +288,8 @@ function SummaryBody() {
       <div className="p01-divider" />
 
       <div className="p01-price-block">
-        <div className="p01-price-row">
-          <span className="p01-price-label">Total due today</span>
-          <span className="p01-price-now">{site.assessmentFee}</span>
-        </div>
+        {/* "Total due today" row removed at client request — the price already
+            reads twice above (summary bar) and once in the offer card. */}
         {/* <p className="p01-price-note">
           The assessment fee only, never the programme. Programme cost is a conversation you
           have with Kunal directly.
@@ -327,8 +327,14 @@ function MobileSummary() {
         aria-controls="p01-mobile-summary-panel"
       >
         <span className="p01-summary-mobile-title">
-1:1 High-Performer Fitness Strategy Call with Kunal </span>
+          1:1 High-Performer Fitness Strategy Call with Kunal
+          {/* explicit affordance — the chevron alone wasn't reading as tappable */}
+          <span className="p01-summary-mobile-more">
+            {open ? "Hide details" : "View more details"}
+          </span>
+        </span>
         <span className="p01-summary-mobile-trail">
+          {offer.hasAnchor && <span className="p01-price-was">{offer.was}</span>}
           <span className="p01-summary-mobile-price">{site.assessmentFee}</span>
           <span className={`p01-summary-mobile-chevron${open ? " open" : ""}`} aria-hidden>
             ▾
@@ -580,7 +586,15 @@ export function CheckoutForm() {
 
       <div className="p01-main">
         {/* No `data-sdp-reveal` here — SDP's checkout has no reveal animation, and a
-            reveal would hide the payment form outright if JS never runs. */}
+            reveal would hide the payment form outright if JS never runs.
+
+            Column order is deliberate and works for both layouts: the offer block
+            sits ABOVE the form, so desktop reads offer → your details down the
+            left column, and mobile reads order details → offer → your details
+            (the desktop aside is hidden under 960px). */}
+        <div className="p01-form-col">
+          <OfferUnlocked />
+
         <div className="p01-form-panel">
           <div className="p01-form-heading">
             <div className="p01-section-label">Secure checkout</div>
@@ -590,7 +604,7 @@ export function CheckoutForm() {
             </p> */}
           </div>
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form id="p01-checkout-form" onSubmit={handleSubmit} noValidate>
             <div className="p01-fields">
               <div className="p01-fields-row">
                 <div className="p01-field" id="p01-field-firstName">
@@ -754,8 +768,43 @@ export function CheckoutForm() {
             </div>
           </form>
         </div>
+        </div>
 
         <OrderSummary />
+      </div>
+
+      {/* Sticky pay bar. Present from the first screen (no scroll reveal), and
+          on mobile it replaces the in-page button entirely — the button is a
+          real `form=` submit, so it runs the same validation and Razorpay path
+          rather than duplicating any of it. */}
+      <div className="sdp-stuck p01-stuck on" data-sticky-cta>
+        <div className="p01-stuck-inner">
+          <div className="p01-stuck-meta">
+            <div className="p01-stuck-h">1:1 High-Performer Fitness Strategy Call</div>
+            <div className="p01-stuck-s">
+              {site.assessmentFee} today · Secure checkout via Razorpay
+            </div>
+          </div>
+          <button
+            type="submit"
+            form="p01-checkout-form"
+            className="p01-stuck-btn"
+            disabled={loading}
+            aria-busy={loading}
+          >
+            {loading ? (
+              "Processing…"
+            ) : (
+              <>
+                Pay{" "}
+                {offer.hasAnchor && <s className="p01-stuck-was">{offer.was}</s>}{" "}
+                {site.assessmentFee}{" "}
+                &amp; Book My Call
+              </>
+            )}
+            <span aria-hidden>→</span>
+          </button>
+        </div>
       </div>
     </>
   );

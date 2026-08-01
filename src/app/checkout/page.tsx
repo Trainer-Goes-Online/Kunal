@@ -15,6 +15,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
 import { CheckoutForm } from "@/components/np/CheckoutForm";
+import { Confetti } from "@/components/np/Confetti";
 import { ClientBehaviors } from "@/components/ClientBehaviors";
 import "@/components/sections/P01Checkout.css";
 
@@ -27,6 +28,11 @@ export default function CheckoutPage() {
   return (
     <div className="sdp-root">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+
+      {/* Fires once on arrival — the buyer has just clicked a CTA and the
+          "special offer unlocked" block is what greets them. Pointer-events
+          none, self-terminating, and silent under prefers-reduced-motion. */}
+      <Confetti />
 
       {/* SDP `_reference/sdp/app/new-checkout-page/page.tsx:13-37` */}
       <div className="p01-announce" role="region" aria-label="Checkout trust">

@@ -96,4 +96,38 @@ export const site = {
 /** "8-12" — the kilo range as printed in the H1, guarantee and FAQ. */
 export const kiloRange = `${site.kilosLow}-${site.kilosHigh}`;
 
+/**
+ * The /checkout "special offer" block.
+ *
+ * ⚠️ `NEXT_PUBLIC_ASSESSMENT_FEE_ORIGINAL` is the struck-through anchor price.
+ * It must be a price the business has genuinely charged or genuinely offers —
+ * a strike-through against a figure never actually charged is a misleading
+ * price representation, and India's CCPA guidelines treat it as such. Set it
+ * to a real number, or leave it UNSET: with no anchor the block still renders
+ * the coupon and the countdown, it simply drops the was-price and the
+ * percentage badge rather than inventing a discount.
+ *
+ * The coupon code is intentionally static — the client asked for a fixed code,
+ * so nothing here pretends to be a per-visitor voucher.
+ */
+const feeNum = Number(site.assessmentFeeRaw) || 0;
+/* Default 999, the figure the client specified for the struck-through price.
+   ONE anchor drives every place it appears — the offer card, the order-summary
+   bar and the sticky pay button — so the page can never quote two different
+   "was" prices. CONFIRM IT IS REAL before launch; see the warning above. Set
+   the var to "0" to drop the strike-through and badge entirely. */
+const anchorRaw = Number(process.env.NEXT_PUBLIC_ASSESSMENT_FEE_ORIGINAL ?? "999") || 0;
+const hasAnchor = anchorRaw > feeNum;
+
+export const offer = {
+  code: process.env.NEXT_PUBLIC_OFFER_CODE ?? "uwpxkowyzpqx",
+  timerMinutes: Number(process.env.NEXT_PUBLIC_OFFER_TIMER_MINUTES ?? "15") || 15,
+  hasAnchor,
+  wasRaw: anchorRaw,
+  /** "₹999" — ready to print beside the fee wherever the pair is shown. */
+  was: `₹${anchorRaw.toLocaleString("en-IN")}`,
+  savingRaw: hasAnchor ? anchorRaw - feeNum : 0,
+  percentOff: hasAnchor ? Math.round(((anchorRaw - feeNum) / anchorRaw) * 1000) / 10 : 0,
+} as const;
+
 export const CTA_LABEL = `Book your assessment — ${site.assessmentFee}`;

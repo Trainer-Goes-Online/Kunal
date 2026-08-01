@@ -327,12 +327,22 @@ export function ClientBehaviors() {
       const down = (cx: number) => { dragging = true; startX = cx; startTx = x; moved = 0; car.classList.add("dragging"); };
       const move = (cx: number) => { if (!dragging) return; const dx = cx - startX; moved = Math.max(moved, Math.abs(dx)); x = startTx + dx; wrap(); apply(); };
       const up = () => { if (!dragging) return; dragging = false; car.classList.remove("dragging"); };
+      /* Manual drag/swipe is disabled on phones for the two PROOF rails (video
+         testimonials + before/after). They auto-scroll on their own there, and
+         a drag surface competing with vertical page scroll made the section
+         awkward to get past. The certificates rail keeps its drag, and every
+         rail keeps it on desktop. */
+      const proofRail = kind === "tcar" || kind === "bacar";
+      const dragEnabled = !(proofRail && window.matchMedia("(max-width: 860px)").matches);
+
+      if (dragEnabled) {
       on(car, "mousedown", (e) => { (e as MouseEvent).preventDefault(); down((e as MouseEvent).clientX); });
       on(window, "mousemove", (e) => move((e as MouseEvent).clientX));
       on(window, "mouseup", up);
       on(car, "touchstart", (e) => down((e as TouchEvent).touches[0].clientX), { passive: true });
       on(window, "touchmove", (e) => { if (dragging) move((e as TouchEvent).touches[0].clientX); }, { passive: true });
       on(window, "touchend", up);
+      }
 
       const threshold = kind === "tcar" ? 10 : 6;
       on(car, "click", (e) => {
@@ -364,17 +374,15 @@ export function ClientBehaviors() {
       }
     });
 
-    /* ---- 6. Sticky CTA (show once hero leaves viewport) ---- */
-    const sticky = document.querySelector<HTMLElement>("[data-sticky-cta]");
-    const heroSentinel = document.querySelector(".sdp-hero");
-    if (sticky && heroSentinel && "IntersectionObserver" in window) {
-      const sio = new IntersectionObserver(
-        ([e]) => sticky.classList.toggle("on", !e.isIntersecting),
-        { threshold: 0 }
-      );
-      sio.observe(heroSentinel);
-      cleanups.push(() => sio.disconnect());
-    }
+    /* ---- 6. Sticky CTA ----
+       Previously revealed by an IntersectionObserver once the hero scrolled
+       out of view. It is now present from the first screen on every page and
+       at every width, so the observer is gone. The CSS already ships the bar
+       untranslated (polish.css §20) — this only keeps `.on` in sync for any
+       rule still keyed to it. */
+    document
+      .querySelectorAll<HTMLElement>("[data-sticky-cta]")
+      .forEach((el) => el.classList.add("on"));
 
     /* ---- 7. Smooth-scroll in-page anchors ---- */
     on(document, "click", (e) => {

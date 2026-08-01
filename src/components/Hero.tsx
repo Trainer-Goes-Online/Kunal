@@ -51,13 +51,14 @@ export function Hero() {
         </h1>
 
         <p className="s04-hero-sub" data-sdp-reveal style={{ "--d": ".14s" } as React.CSSProperties}>
-          {/* One shared copy at every width now (the "not the lifestyle of a
-              full-time gym-goer" clause is dropped everywhere), held to exactly
-              two lines by a hard break plus a fluid font-size — see
-              `.s04-hero-sub` in polish.css. */}
-          Using our <strong>High-Performer Protocol</strong>, designed around travel,
-          <br />
-          long workdays, client dinners, and demanding schedules.
+          {/* One shared copy at every width (the "not the lifestyle of a full-time
+              gym-goer" clause is dropped everywhere). The hard break that used to
+              pin this to two lines is gone: now that the type matches the lead's
+              size, that break landed on top of a natural wrap and stranded
+              "travel," and "schedules." on lines of their own. `text-wrap:
+              balance` distributes it evenly instead. */}
+          Using our <strong>High-Performer Protocol</strong>, designed around travel, long
+          workdays, client dinners, and demanding schedules.
         </p>
 
         <p

@@ -148,6 +148,46 @@ const G = {
       <path d="M12 3.5c2.4 2.4 3.6 5.3 3.6 8.5S14.4 18.1 12 20.5c-2.4-2.4-3.6-5.3-3.6-8.5S9.6 5.9 12 3.5z" pathLength={1} />
     </>
   ),
+  /* --- checkout offer block (replaces the emoji placeholders) --- */
+  gift: (
+    <>
+      <rect x="3" y="8" width="18" height="4.5" rx="1" pathLength={1} />
+      <path d="M5 12.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7.5" pathLength={1} />
+      <path d="M12 8v13" pathLength={1} />
+      {/* the two bow loops */}
+      <path d="M12 8S10.8 4 8.8 4a2.2 2.2 0 0 0 0 4H12z" pathLength={1} />
+      <path d="M12 8s1.2-4 3.2-4a2.2 2.2 0 0 1 0 4H12z" pathLength={1} />
+    </>
+  ),
+  party: (
+    <>
+      <path d="M4 20.5l4.2-11.2 7 7L4 20.5z" pathLength={1} />
+      <path d="M9.6 8.1a3.2 3.2 0 0 1 3.2-3.2" pathLength={1} />
+      <path d="M15.6 15.6a3.2 3.2 0 0 0 3.2-3.2" pathLength={1} />
+      <path d="M14.4 4.2l.6-1.4M19.6 9.4l1.4-.6M17.8 5.1l1.1-1.1" pathLength={1} />
+    </>
+  ),
+  hourglass: (
+    <>
+      <path d="M7 3h10M7 21h10" pathLength={1} />
+      <path d="M8 3v3.4a4 4 0 0 0 1.6 3.2L12 12l-2.4 2.4A4 4 0 0 0 8 17.6V21" pathLength={1} />
+      <path d="M16 3v3.4a4 4 0 0 1-1.6 3.2L12 12l2.4 2.4a4 4 0 0 1 1.6 3.2V21" pathLength={1} />
+    </>
+  ),
+  unlock: (
+    <>
+      <rect x="4" y="10.5" width="16" height="10.5" rx="2.2" pathLength={1} />
+      {/* shackle swung open to the right — the "unlocked" read */}
+      <path d="M8 10.5V7.5a4 4 0 0 1 7.7-1.5" pathLength={1} />
+      <path d="M12 14.8v2.4" pathLength={1} />
+    </>
+  ),
+  tag: (
+    <>
+      <path d="M11.6 2.8H20a1.2 1.2 0 0 1 1.2 1.2v8.4a1.2 1.2 0 0 1-.35.85l-8 8a1.2 1.2 0 0 1-1.7 0l-8.4-8.4a1.2 1.2 0 0 1 0-1.7l8-8a1.2 1.2 0 0 1 .85-.35z" pathLength={1} />
+      <circle cx="16.6" cy="7.4" r="1.5" pathLength={1} />
+    </>
+  ),
 } as const;
 
 export type GlyphKey = keyof typeof G;

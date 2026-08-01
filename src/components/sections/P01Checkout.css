@@ -63,10 +63,14 @@
 }
 
 /* ── Page stage — SDP :54-70 ─────────────────────────────────────── */
+/* Bottom padding clears the FIXED sticky pay bar (~73px on a phone, ~78px on
+   desktop). Without it the bar sits on top of the closing legal line. Set here
+   rather than in polish.css: this route sheet is emitted after it, so an
+   override there loses at equal specificity. */
 .sdp-root .p01-page {
   min-height: 100vh;
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-alt) 100%);
-  padding: 48px 22px 80px;
+  padding: 48px 22px 140px;
 }
 .sdp-root .p01-main {
   max-width: 1180px;
@@ -80,8 +84,8 @@
 @media (max-width: 960px) {
   .sdp-root .p01-main { grid-template-columns: minmax(0, 1fr); gap: 22px; }
 }
-@media (max-width: 640px) { .sdp-root .p01-page { padding: 32px 16px 56px; } }
-@media (max-width: 420px) { .sdp-root .p01-page { padding: 26px 13px 48px; } }
+@media (max-width: 640px) { .sdp-root .p01-page { padding: 32px 16px 150px; } }
+@media (max-width: 420px) { .sdp-root .p01-page { padding: 26px 13px 150px; } }
 
 /* ── Form panel — SDP :72-105 ────────────────────────────────────── */
 .sdp-root .p01-form-panel {
