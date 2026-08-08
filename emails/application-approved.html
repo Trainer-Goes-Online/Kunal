@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- light only: brass on cream inverts badly under Gmail/Outlook auto-dark -->
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>Your application is in - one step left</title>
+<!--
+  KRAFT WITH KUNAL — FREE funnel · QUALIFIED lead confirmation.
+  Send from Pabbly when the lead webhook posts  status = "booking"
+  (equivalently qualified = "true").
+
+  SUBJECT (pick one — no caps, no exclamation, no "free", under 50 chars):
+    {{first_name}}, your application is in — one step left
+    One step left on your application, {{first_name}}
+    Your application is in. Now pick your call time.
+
+  FROM: Kunal Chalke <kunal@kraftwithkunal.com>   ← a real, replied-to mailbox
+  REPLY-TO: kraftwithkunal@gmail.com
+  Do NOT send from noreply@ and do NOT send from a gmail.com address —
+  see the deliverability notes at the foot of this file.
+
+  MERGE TAGS use the EXACT field names src/app/api/lead/route.ts posts.
+  Map them to the Pabbly webhook step:
+    first_name  email  phone  submitted_date  submitted_time
+    q4_role  q5_goal  q6_income  q7_investment
+  Also available: full_name, country_code, dial_code, q1_first_name,
+  q2_email, q3_whatsapp, status, qualified, lead_id, utm_source,
+  utm_medium, utm_campaign, utm_content, utm_term, submitted_timestamp.
+  There is no amount / payment_id / order_id — this funnel takes no payment.
+
+  ⚠ If a tag renders literally as {{first_name}}, Pabbly has a stale captured
+  payload. Re-capture the webhook response and re-map.
+-->
+<style type="text/css">
+  body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse !important; }
+  body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #F2EEE4; -webkit-font-smoothing: antialiased; }
+  a { color: #8A6D2B; }
+  .lnk:hover { text-decoration: underline !important; }
+  @media screen and (max-width: 620px) {
+    .wrap { width: 100% !important; }
+    .pad { padding-left: 22px !important; padding-right: 22px !important; }
+    .h1 { font-size: 30px !important; line-height: 34px !important; }
+    .btn-a { display: block !important; width: auto !important; }
+    .stack { display: block !important; width: 100% !important; }
+    .stack-lbl { padding-bottom: 2px !important; }
+    .stack-val { padding-bottom: 12px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#F2EEE4;">
+
+<!-- Preheader: the grey line Gmail shows next to the subject. The NBSP run
+     stops the client pulling body copy in after it. -->
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F2EEE4;">
+  Your answers reached Kunal. The last step is choosing a time that you will actually keep.
+  &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F2EEE4;">
+<tr><td align="center" style="padding:28px 12px;">
+
+<table role="presentation" class="wrap" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+
+  <!-- ================= brand bar ================= -->
+  <tr><td align="center" style="padding:0 0 18px;">
+    <span style="font-family:'Arial Narrow',Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;letter-spacing:3px;text-transform:uppercase;color:#8A6D2B;">Kraft With Kunal</span>
+  </td></tr>
+
+  <!-- ================= card ================= -->
+  <tr><td style="background-color:#FFFFFF;border:1px solid #E7E1D5;border-radius:14px;">
+
+    <!-- brass rule -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td height="4" style="height:4px;line-height:4px;font-size:4px;background-color:#C9A24B;border-radius:14px 14px 0 0;">&nbsp;</td></tr>
+    </table>
+
+    <!-- ---------- hero ---------- -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" style="padding:34px 40px 0;">
+        <p style="margin:0 0 12px;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:#8A6D2B;">Application received</p>
+
+        <h1 class="h1" style="margin:0 0 16px;font-family:'Arial Narrow',Arial,Helvetica,sans-serif;font-size:38px;line-height:42px;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;color:#161310;">
+          One step left, {{first_name}}.
+        </h1>
+
+        <p style="margin:0 0 14px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#544E43;">
+          Your answers came through on <strong style="color:#161310;">{{submitted_date}} at {{submitted_time}} IST</strong>, and they are with Kunal. Going by them, you are a fit for the High-Performer Programme.
+        </p>
+
+        <p style="margin:0 0 26px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:26px;color:#544E43;">
+          Nothing is charged at any point. The only thing standing between today and an honest read on your situation is a time on the calendar.
+        </p>
+      </td></tr>
+    </table>
+
+    <!-- ---------- why it matters ---------- -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" style="padding:0 40px 26px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F7F5F0;border:1px solid #E7E1D5;border-left:3px solid #C9A24B;border-radius:0 10px 10px 0;">
+          <tr><td style="padding:20px 22px;">
+            <p style="margin:0 0 12px;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;color:#8A6D2B;">Why this last step matters</p>
+
+            <p style="margin:0 0 10px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#544E43;">
+              <strong style="color:#161310;">Kunal runs every call himself.</strong> Not a team member, not a setter. That puts a real ceiling on the week, which is why an unbooked application quietly expires instead of waiting for you.
+            </p>
+            <p style="margin:0 0 10px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#544E43;">
+              <strong style="color:#161310;">He reads your answers before you speak.</strong> The hour is spent on your body, your week and your travel — not on him catching up.
+            </p>
+            <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#544E43;">
+              <strong style="color:#161310;">It is a diagnostic, not a pitch.</strong> You leave with a straight answer on what is actually driving it, whether or not you go further.
+            </p>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <!-- ---------- CTA ---------- -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" align="center" style="padding:0 40px 12px;">
+
+        <!--[if mso]>
+        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://kraftwithkunal.com/book-a-call" style="height:54px;v-text-anchor:middle;width:320px;" arcsize="50%" stroke="f" fillcolor="#C9A24B">
+          <w:anchorlock/>
+          <center style="color:#1A1509;font-family:Arial,sans-serif;font-size:17px;font-weight:bold;">Choose my call time</center>
+        </v:roundrect>
+        <![endif]-->
+        <!--[if !mso]><!-->
+        <a class="btn-a" href="https://kraftwithkunal.com/book-a-call" style="display:inline-block;padding:17px 40px;background-color:#C9A24B;color:#1A1509;font-family:Helvetica,Arial,sans-serif;font-size:17px;font-weight:bold;line-height:20px;text-decoration:none;border-radius:30px;">
+          Choose my call time &rarr;
+        </a>
+        <!--<![endif]-->
+
+      </td></tr>
+      <tr><td class="pad" align="center" style="padding:0 40px 30px;">
+        <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#8A8474;">
+          Takes about thirty seconds &middot; Reschedule up to 24 hours before, no questions
+        </p>
+      </td></tr>
+    </table>
+
+    <!-- ---------- their answers ---------- -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" style="padding:0 40px 8px;">
+        <p style="margin:0 0 4px;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1.6px;text-transform:uppercase;color:#8A8474;">What you told us</p>
+        <p style="margin:0 0 16px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:20px;color:#8A8474;">
+          Check it over. If something is wrong, reply to this email and we will correct it before the call.
+        </p>
+      </td></tr>
+
+      <tr><td class="pad" style="padding:0 40px 30px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #E7E1D5;border-radius:10px;">
+
+          <tr>
+            <td class="stack stack-lbl" width="42%" style="padding:13px 18px 13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;border-bottom:1px solid #E7E1D5;">Name</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;border-bottom:1px solid #E7E1D5;">{{first_name}}</td>
+          </tr>
+          <tr>
+            <td class="stack stack-lbl" style="padding:13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;border-bottom:1px solid #E7E1D5;">Email</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;border-bottom:1px solid #E7E1D5;">{{email}}</td>
+          </tr>
+          <tr>
+            <td class="stack stack-lbl" style="padding:13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;border-bottom:1px solid #E7E1D5;">WhatsApp</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;border-bottom:1px solid #E7E1D5;">{{phone}}</td>
+          </tr>
+          <tr>
+            <td class="stack stack-lbl" style="padding:13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;border-bottom:1px solid #E7E1D5;">Which best describes you</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;border-bottom:1px solid #E7E1D5;">{{q4_role}}</td>
+          </tr>
+          <tr>
+            <td class="stack stack-lbl" style="padding:13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;border-bottom:1px solid #E7E1D5;">Biggest goal, next 90 days</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;border-bottom:1px solid #E7E1D5;">{{q5_goal}}</td>
+          </tr>
+          <tr>
+            <td class="stack stack-lbl" style="padding:13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;border-bottom:1px solid #E7E1D5;">Annual income</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;border-bottom:1px solid #E7E1D5;">{{q6_income}}</td>
+          </tr>
+          <tr>
+            <td class="stack stack-lbl" style="padding:13px 18px;font-family:Helvetica,Arial,sans-serif;font-size:13px;line-height:19px;color:#8A8474;">Ready to invest</td>
+            <td class="stack stack-val" style="padding:13px 18px 13px 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:19px;font-weight:bold;color:#161310;">{{q7_investment}}</td>
+          </tr>
+
+        </table>
+      </td></tr>
+    </table>
+
+    <!-- ---------- instagram band ---------- -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" style="padding:0 40px 34px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#181510;border-radius:12px;">
+          <tr><td style="padding:26px 24px;">
+
+            <p style="margin:0 0 10px;font-family:Helvetica,Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1.8px;text-transform:uppercase;color:#E3C078;">Before the call</p>
+
+            <h2 style="margin:0 0 12px;font-family:'Arial Narrow',Arial,Helvetica,sans-serif;font-size:25px;line-height:29px;font-weight:bold;letter-spacing:0.5px;text-transform:uppercase;color:#F5F0E6;">
+              Follow Kunal on Instagram
+            </h2>
+
+            <p style="margin:0 0 20px;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#CFC7B6;">
+              Practical content on fitness, fat loss, nutrition and building a healthier body around a demanding career &mdash; the same thinking behind the call you are about to book. Worth a scroll beforehand.
+            </p>
+
+            <!--[if mso]>
+            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://www.instagram.com/kraftwithkunal/" style="height:46px;v-text-anchor:middle;width:250px;" arcsize="50%" stroke="f" fillcolor="#C9A24B">
+              <w:anchorlock/>
+              <center style="color:#1A1509;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;">Follow @kraftwithkunal</center>
+            </v:roundrect>
+            <![endif]-->
+            <!--[if !mso]><!-->
+            <a class="btn-a" href="https://www.instagram.com/kraftwithkunal/" style="display:inline-block;padding:14px 30px;background-color:#C9A24B;color:#1A1509;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;line-height:18px;text-decoration:none;border-radius:26px;">
+              Follow @kraftwithkunal &rarr;
+            </a>
+            <!--<![endif]-->
+
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <!-- ---------- sign off ---------- -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="pad" style="padding:0 40px 34px;border-top:1px solid #E7E1D5;">
+        <p style="margin:24px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:24px;color:#544E43;">
+          See you on the call,<br>
+          <strong style="color:#161310;">Team Kraft With Kunal</strong>
+        </p>
+        <p style="margin:14px 0 0;font-family:Helvetica,Arial,sans-serif;font-size:14px;line-height:22px;color:#544E43;">
+          Can&rsquo;t find a slot that works? Just reply to this email &mdash; a real person reads it and will place your slot by hand.
+        </p>
+      </td></tr>
+    </table>
+
+  </td></tr>
+
+  <!-- ================= footer ================= -->
+  <tr><td class="pad" style="padding:24px 30px 6px;">
+    <p style="margin:0 0 10px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#8A8474;text-align:center;">
+      You are receiving this because you submitted an application on kraftwithkunal.com on {{submitted_date}}. This is a one-off confirmation of that application.
+    </p>
+    <p style="margin:0 0 10px;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#8A8474;text-align:center;">
+      Kraft With Kunal &middot; <a class="lnk" href="mailto:kraftwithkunal@gmail.com" style="color:#8A6D2B;text-decoration:none;">kraftwithkunal@gmail.com</a><br>
+      <!-- REQUIRED: replace with the real registered postal address before sending.
+           A physical address is a hard requirement under CAN-SPAM and a
+           reputation signal for Gmail. Do not ship the placeholder. -->
+      [REGISTERED POSTAL ADDRESS], India
+    </p>
+    <p style="margin:0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:19px;color:#8A8474;text-align:center;">
+      <a class="lnk" href="https://kraftwithkunal.com/privacy" style="color:#8A8474;">Privacy</a> &nbsp;&middot;&nbsp;
+      <a class="lnk" href="https://kraftwithkunal.com/terms" style="color:#8A8474;">Terms</a> &nbsp;&middot;&nbsp;
+      <!-- {{unsubscribe_url}} = the ESP's OWN unsubscribe URL, which records the
+           removal and then redirects to https://kraftwithkunal.com/unsubscribe_emails
+           (set that as the post-unsubscribe redirect in the sending tool).
+           Do NOT hard-code the page URL here: the page only confirms, it cannot
+           remove anyone. See the comment at the top of
+           src/app/unsubscribe_emails/page.tsx. -->
+      <a class="lnk" href="{{unsubscribe_url}}" style="color:#8A8474;">Unsubscribe</a>
+    </p>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+
+<!--
+  ===================================================================
+  DELIVERABILITY — what this file does, and what it cannot do for you
+  ===================================================================
+  In the template (done):
+    · No images at all. Nothing to block, nothing to break, no
+      image-heavy penalty, and the email reads identically with remote
+      content turned off.
+    · Table layout with fully inline styles. The <style> block is
+      progressive enhancement only — strip it and the email still holds.
+    · Real text throughout, healthy text-to-link ratio, two links to one
+      domain plus one to instagram.com. No shorteners, no redirect
+      trackers, no naked IPs.
+    · No spam-trigger patterns: no ALL-CAPS subject, no exclamation
+      marks, no "act now" / "limited time" / "guaranteed" / "risk free",
+      no currency symbols in the subject.
+    · Preheader, physical address, unsubscribe, and a plain "why you got
+      this" line — all four are things filters look for.
+    · light-only color-scheme, so Gmail and Outlook dark mode cannot
+      invert the brass into something unreadable.
+
+  OUTSIDE the template (you must do these — they matter far more than
+  any markup choice):
+    1. AUTHENTICATE THE SENDING DOMAIN. SPF, DKIM and DMARC on
+       kraftwithkunal.com. Without all three, Gmail junks or rejects
+       bulk mail outright as of the 2024 sender rules.
+    2. SEND FROM YOUR OWN DOMAIN, e.g. kunal@kraftwithkunal.com.
+       Sending "from" a gmail.com address through Pabbly fails DMARC
+       alignment and is the single most common cause of landing in spam.
+    3. NOT noreply@. A monitored, replied-to address earns reputation;
+       this email explicitly invites a reply, which is a positive signal.
+    4. SEND A PLAIN-TEXT PART TOO. multipart/alternative. HTML-only mail
+       is a spam signal — application-approved.txt sits beside this file.
+    5. WARM UP. A brand-new sending domain blasting volume on day one
+       gets throttled regardless of content.
+    6. Keep the list clean — this only ever goes to people who
+       submitted the form, which is exactly the right list.
+-->
+
+</body></html>

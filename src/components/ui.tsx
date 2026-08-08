@@ -49,7 +49,11 @@ export function EyebrowPill({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Primary CTA (R3) — breathing brass pill, price injected from env, links to checkout. */
+/**
+ * Primary CTA (R3) — breathing brass pill. Opens the six-step qualifier modal
+ * (`data-qualify-open`, intercepted by QualifyModal); the href is the calendar
+ * itself, so with JS off the click still books.
+ */
 export function CTAButton({
   label = CTA_LABEL,
   micro,
@@ -59,7 +63,7 @@ export function CTAButton({
 }) {
   return (
     <div>
-      <a className="cta-big" href={site.checkoutUrl}>
+      <a className="cta-big" href={site.bookUrl} data-qualify-open>
         {label}
         <Arrow size={20} />
       </a>

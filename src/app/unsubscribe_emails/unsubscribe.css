@@ -1,0 +1,127 @@
+/* =====================================================================
+   /unsubscribe_emails — route-local stylesheet.
+   Classes namespaced `.un-…`, scoped under `.un-page`, token-only off the
+   `.sdp-root` theme block in globals.css. The Instagram band brings its
+   own sheet (components/sections/InstagramFollow.css).
+   ===================================================================== */
+
+.un-page { background: var(--bg); }
+
+/* ---------------- 1 · confirmation ---------------- */
+.un-page .un-hero { padding: 64px 0 58px; text-align: center; }
+
+.un-page .un-seal {
+  width: 64px; height: 64px;
+  margin: 0 auto 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--brand-deep);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(var(--brand-rgb), 0.1));
+  border: 1px solid rgba(var(--brand-rgb), 0.4);
+  box-shadow: 0 6px 22px rgba(var(--brand-rgb), 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.un-page .un-seal svg { width: 28px; height: 28px; }
+
+.un-page .un-eyebrow-row { display: flex; justify-content: center; }
+.un-page .un-eyebrow-row .sdp-eyebrow { margin-bottom: 14px; }
+
+.un-page h1.un-h1 {
+  font-family: var(--fh);
+  font-size: clamp(34px, 6vw, 62px);
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: 0 auto 20px;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.un-page h1.un-h1 em { font-style: normal; color: var(--brand); }
+
+.un-page .un-sub {
+  max-width: 58ch;
+  margin: 0 auto 14px;
+  font-size: clamp(15px, 1.7vw, 17.5px);
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+
+/* The address is echoed back from ?email=. Monospace so an unfamiliar or
+   mistyped address is legible character by character, and `anywhere` so a
+   long one wraps instead of widening the page on a phone. */
+.un-page .un-email {
+  font-family: var(--f-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.94em;
+  font-weight: 700;
+  color: var(--brand-deep);
+  overflow-wrap: anywhere;
+}
+
+.un-page .un-note {
+  max-width: 54ch;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ---------------- 3 · close ---------------- */
+.un-page .un-close {
+  max-width: 620px;
+  margin: 0 auto;
+  text-align: center;
+  padding: clamp(26px, 4vw, 40px) clamp(20px, 3vw, 36px);
+  border-radius: var(--r-xl);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+.un-page .un-close-lead {
+  font-family: var(--fh);
+  font-size: clamp(21px, 3vw, 29px);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+
+.un-page .un-close-sub {
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--ink-soft);
+}
+.un-page .un-close-sub a {
+  color: var(--brand-deep);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.un-page .un-close-contact { margin: 0; }
+
+.un-page .un-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 26px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--cta-ink);
+  background: var(--grad-cta);
+  border: 1px solid rgba(var(--brand-rgb), 0.55);
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: var(--glow-cta), var(--inset-hi);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s;
+}
+.un-page .un-home:hover { transform: translateY(-2px); box-shadow: var(--glow-cta-hover), var(--inset-hi); }
+.un-page .un-home svg { width: 16px; height: 16px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.un-page .un-home:hover svg { transform: translateX(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .un-page .un-home:hover { transform: none; }
+  .un-page .un-home:hover svg { transform: none; }
+}

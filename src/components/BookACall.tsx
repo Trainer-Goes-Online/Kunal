@@ -67,7 +67,7 @@ function ArrowInCircle() {
 function AnnounceMarquee() {
   const unit = (
     <>
-      <span>Payment Received</span>
+      <span>Application Received</span>
       <span className="dot" aria-hidden>·</span>
       <span><b>1:1</b> With Kunal Himself</span>
       <span className="dot" aria-hidden>·</span>
@@ -97,15 +97,15 @@ function Hero({ firstName }: { firstName: string }) {
       <div className="sdp-wrap">
         <div className="p02-hero-row" data-sdp-reveal>
           <div className="p02-tick" aria-hidden><Tick /></div>
-          <div className="p02-paid-badge">Payment Received</div>
+          <div className="p02-paid-badge">Application Received</div>
         </div>
 
         <h1 className="p02-h1" data-sdp-reveal style={{ ["--d" as string]: ".06s" }}>
-          YOUR FEE IS IN{greet}. <em>NOW LOCK THE SLOT.</em>
+          YOUR ANSWERS ARE IN{greet}. <em>NOW LOCK THE SLOT.</em>
         </h1>
 
         <p className="p02-hero-sub" data-sdp-reveal style={{ ["--d" as string]: ".10s" }}>
-          Your <strong>{site.assessmentFee} assessment fee</strong> is received.{" "}
+          Your <strong>application is with Kunal</strong>.{" "}
           <mark>Pick the time you&rsquo;ll actually keep</mark>. Kunal reviews your details
           before you speak, so the hour is spent on you.
         </p>
@@ -116,7 +116,7 @@ function Hero({ firstName }: { firstName: string }) {
               <span className="p02-num">1</span>
               <Tick />
             </div>
-            <div className="p02-step-lbl">Paid</div>
+            <div className="p02-step-lbl">Your Answers</div>
           </div>
           <div className="p02-step-line" aria-hidden />
           <div className="p02-step is-active">
@@ -171,7 +171,7 @@ function CalendarSection({ firstName, email }: { firstName: string; email: strin
 
 /* ============================================================
    Slot-not-available help — sits directly below the calendar.
-   Reference: thefoodfreedomco.com/book-a-call. A paid applicant who
+   Reference: thefoodfreedomco.com/book-a-call. An applicant who
    can't find a time is reassured (seat reserved) and routed to a
    human via WhatsApp / email. Numbers come from `site` (single source).
    ============================================================ */
@@ -203,7 +203,7 @@ function AlertGlyph() {
 function SlotHelpSection() {
   const waDigits = site.supportPhone.replace(/\D/g, "");
   const waText = encodeURIComponent(
-    "Hi Kunal's team — I've paid my assessment fee but can't find a slot that works. My name, email, phone and preferred day/time are:"
+    "Hi Kunal's team — I've completed my application but can't find a slot that works. My name, email, phone and preferred day/time are:"
   );
   return (
     <section className="sdp-section sdp-dark p02-slot">
@@ -217,7 +217,7 @@ function SlotHelpSection() {
           <h2 className="p02-slot-h">Can&rsquo;t Find A Time That Works For You?</h2>
 
           <p className="p02-slot-body">
-            You&rsquo;ve already paid, and your seat is reserved, so you won&rsquo;t lose it.
+            Your application is in and your seat is held, so you won&rsquo;t lose it.
             If none of the times above suit you, message us your{" "}
             <strong>name, email, phone number, and your preferred day and time</strong>, and
             we&rsquo;ll personally set up your slot.
@@ -403,7 +403,7 @@ function WhyCard() {
           </div>
 
           <p>
-            You&rsquo;ve already cleared the paid step. The only thing left is to{" "}
+            You&rsquo;ve already cleared the application step. The only thing left is to{" "}
             <strong>actually pick a time</strong> so Kunal can prep for the call. This is
             thirty seconds.
           </p>
@@ -564,7 +564,7 @@ function FinalCTA() {
     <section className="p02-final">
       <div className="sdp-wrap">
         <h2 data-sdp-reveal>
-          You&rsquo;ve Paid.
+          You&rsquo;ve Applied.
           <span className="p02-hl">Now Lock The Assessment.</span>
         </h2>
         <p data-sdp-reveal style={{ ["--d" as string]: ".08s" }}>
@@ -592,7 +592,7 @@ function StickyStrip() {
           <span className="p02-pulse" aria-hidden />
           <div className="p02-stuck-text">
             <div className="p02-stuck-h"><em>One step left</em>: pick your slot</div>
-            <div className="p02-stuck-s">1:1 with Kunal · Fee already paid · Free reschedule</div>
+            <div className="p02-stuck-s">1:1 with Kunal · No payment needed · Free reschedule</div>
           </div>
         </div>
         <a className="p02-btn" href="#calendar">

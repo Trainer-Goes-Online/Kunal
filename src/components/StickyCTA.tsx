@@ -57,7 +57,7 @@ export function StickyCTA() {
           </div>
         </div>
 
-        <a className="sdp-cta s13-cta" href={site.checkoutUrl}>
+        <a className="sdp-cta s13-cta" href={site.bookUrl} data-qualify-open>
           <span className="sdp-cta-main">
             <span className="cta-label s13-cta-text">Click Here To Get Your Personalised High-Performer Fitness Roadmap</span>
             <span className="arrow">

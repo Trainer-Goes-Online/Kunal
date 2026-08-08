@@ -15,7 +15,15 @@ export const site = {
   assessmentFee: `₹${feeRaw}`,
   assessmentFeeRaw: feeRaw,
 
-  /** Funnel routes. Flow: LP → /checkout → /book-a-call → /thank-you. */
+  /**
+   * Funnel routes. Flow: LP → qualifier modal → /book-a-call → /thank-you.
+   *
+   * NO PAYMENT IS TAKEN IN THIS FUNNEL. `checkoutUrl` is no longer linked from
+   * anywhere — every CTA now opens the six-step qualifier (src/lib/qualify.ts)
+   * and hands off to `bookUrl`. The /checkout route and the Razorpay plumbing
+   * are still in the repo but are unreachable from the site; delete them, or
+   * leave them dormant if the paid variant may come back.
+   */
   checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL ?? "/checkout",
   bookUrl: "/book-a-call",
   thankYouUrl: "/thank-you",

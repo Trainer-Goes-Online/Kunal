@@ -1,0 +1,72 @@
+KRAFT WITH KUNAL
+Application received
+
+ONE STEP LEFT, {{first_name}}.
+
+Your answers came through on {{submitted_date}} at {{submitted_time}} IST,
+and they are with Kunal. Going by them, you are a fit for the
+High-Performer Programme.
+
+Nothing is charged at any point. The only thing standing between today and
+an honest read on your situation is a time on the calendar.
+
+
+WHY THIS LAST STEP MATTERS
+
+- Kunal runs every call himself. Not a team member, not a setter. That puts
+  a real ceiling on the week, which is why an unbooked application quietly
+  expires instead of waiting for you.
+
+- He reads your answers before you speak. The hour is spent on your body,
+  your week and your travel, not on him catching up.
+
+- It is a diagnostic, not a pitch. You leave with a straight answer on what
+  is actually driving it, whether or not you go further.
+
+
+CHOOSE YOUR CALL TIME:
+https://kraftwithkunal.com/book-a-call
+
+Takes about thirty seconds. Reschedule up to 24 hours before, no questions.
+
+
+WHAT YOU TOLD US
+
+Check it over. If something is wrong, reply to this email and we will
+correct it before the call.
+
+  Name                        {{first_name}}
+  Email                       {{email}}
+  WhatsApp                    {{phone}}
+  Which best describes you    {{q4_role}}
+  Biggest goal, next 90 days  {{q5_goal}}
+  Annual income               {{q6_income}}
+  Ready to invest             {{q7_investment}}
+
+
+BEFORE THE CALL: FOLLOW KUNAL ON INSTAGRAM
+
+Practical content on fitness, fat loss, nutrition and building a healthier
+body around a demanding career. The same thinking behind the call you are
+about to book. Worth a scroll beforehand.
+
+https://www.instagram.com/kraftwithkunal/
+
+
+See you on the call,
+Team Kraft With Kunal
+
+Can't find a slot that works? Just reply to this email. A real person reads
+it and will place your slot by hand.
+
+---
+You are receiving this because you submitted an application on
+kraftwithkunal.com on {{submitted_date}}. This is a one-off confirmation of
+that application.
+
+Kraft With Kunal - kraftwithkunal@gmail.com
+[REGISTERED POSTAL ADDRESS], India
+
+Privacy:     https://kraftwithkunal.com/privacy
+Terms:       https://kraftwithkunal.com/terms
+Unsubscribe: {{unsubscribe_url}}
