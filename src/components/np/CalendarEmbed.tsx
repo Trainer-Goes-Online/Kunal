@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 import { trackGa4EventOnce } from "@/lib/ga4";
+import { fireScheduleEvent, type LeadPII } from "@/lib/tracking";
+import { QUALIFY_STORAGE_KEY } from "@/lib/qualify";
 
 /**
  * P02 — the Calendly inline embed, reskinned to SDP's `CalendlyEmbed`
@@ -26,6 +28,35 @@ import { trackGa4EventOnce } from "@/lib/ga4";
  * disabled. The spinner sits BELOW it (z-index) and the opaque iframe
  * covers it on paint — no JS needed to reveal the calendar.
  */
+
+/**
+ * The lead PII for the Schedule CAPI event. The qualifier stash carries the
+ * phone and country (best EMQ); if it is gone (private mode, or a direct visit
+ * that skipped the qualifier) we fall back to the ?name / ?email prefill.
+ */
+function readScheduleLead(name: string, email: string): LeadPII {
+  try {
+    const raw = window.sessionStorage.getItem(QUALIFY_STORAGE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw) as {
+        firstName?: string;
+        email?: string;
+        whatsapp?: string;
+        countryCode?: string;
+      };
+      return {
+        firstName: d.firstName || name,
+        email: d.email || email,
+        phone: d.whatsapp || "",
+        countryCode: d.countryCode || "",
+      };
+    }
+  } catch {
+    /* private mode / bad JSON — fall through to the prefill */
+  }
+  return { firstName: name, email, phone: "", countryCode: "" };
+}
+
 export function CalendarEmbed({ name = "", email = "" }: { name?: string; email?: string }) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -85,6 +116,10 @@ export function CalendarEmbed({ name = "", email = "" }: { name?: string; email?
 
       handed = true;
       trackGa4EventOnce("book_call");
+      // Meta CAPI Schedule — Calendly's own scheduled event, not a pageview. PII
+      // comes from the qualifier stash (best EMQ), falling back to the ?name/
+      // ?email prefill this embed was handed.
+      fireScheduleEvent(readScheduleLead(name, email));
       window.setTimeout(() => {
         window.location.href = site.thankYouUrl;
       }, 1200);
@@ -92,7 +127,7 @@ export function CalendarEmbed({ name = "", email = "" }: { name?: string; email?
 
     window.addEventListener("message", onMsg);
     return () => window.removeEventListener("message", onMsg);
-  }, []);
+  }, [name, email]);
 
   // Give the embed 12s (SDP polls 60 × 200ms) before offering the direct link.
   useEffect(() => {

@@ -127,3 +127,55 @@ export async function sendInitiateCheckoutEvent(a: {
     console.error("[ic] custom ic_event failed:", err);
   }
 }
+
+/**
+ * Lead-side events for the FREE funnel — CompleteRegistration, QualifiedLead
+ * (custom) and Schedule. No payment is taken, so these carry the qualifier's own
+ * PII (email, phone, first name, country) for the highest Event Match Quality
+ * available here. `eventName` is the Meta event; `idKey` keeps each event_id
+ * distinct per person per event, so Meta dedupes re-sends of the SAME event and
+ * never collapses two different ones. City and last name are absent because the
+ * qualifier does not collect them.
+ */
+export async function sendLeadEvent(a: {
+  pixelId: string;
+  accessToken: string;
+  eventName: string;
+  idKey: string;
+  email: string;
+  phone: string;
+  firstName: string;
+  countryCode: string;
+  eventSourceUrl: string;
+  fbc?: string;
+  fbp?: string;
+  clientIp?: string;
+  clientUserAgent?: string;
+}): Promise<void> {
+  const eventTime = Math.floor(Date.now() / 1000);
+  const eventId = sha256(`${a.email.trim().toLowerCase()}|${a.idKey}`);
+  const userData: Record<string, unknown> = {
+    em: [hashNorm(a.email)],
+    ph: [hashPhone(a.phone)],
+    fn: [hashNorm(a.firstName)],
+    country: [hashNorm(a.countryCode)],
+    external_id: [hashNorm(a.email)],
+  };
+  if (a.fbc) userData.fbc = a.fbc;
+  if (a.fbp) userData.fbp = a.fbp;
+  if (a.clientIp) userData.client_ip_address = a.clientIp;
+  if (a.clientUserAgent) userData.client_user_agent = a.clientUserAgent;
+
+  await postEvent(a.pixelId, a.accessToken, {
+    event_name: a.eventName,
+    event_id: eventId,
+    event_time: eventTime,
+    action_source: "website",
+    event_source_url: a.eventSourceUrl,
+    user_data: userData,
+    custom_data: {
+      content_name: brand.productName,
+      content_ids: [brand.productSlug],
+    },
+  });
+}

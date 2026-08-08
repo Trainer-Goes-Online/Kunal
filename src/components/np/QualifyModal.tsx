@@ -14,7 +14,7 @@ import {
 } from "@/lib/qualify";
 import { site } from "@/lib/site";
 import { trackGa4EventOnce } from "@/lib/ga4";
-import { restoreUtm, restoreFbclid } from "@/lib/tracking";
+import { restoreUtm, restoreFbclid, fireRegistrationEvents } from "@/lib/tracking";
 
 /**
  * THE CTA MODAL — six questions, one per screen, then straight to the calendar.
@@ -59,7 +59,8 @@ export function QualifyModal() {
       e.preventDefault();
       lastFocused.current = trigger;
       setOpen(true);
-      trackGa4EventOnce("qualify_start");
+      // AddToCart (Meta CAPI) + GA4 add_to_cart fire from CtaTracker on this same
+      // [data-qualify-open] click; the modal just opens here.
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
@@ -135,7 +136,17 @@ export function QualifyModal() {
            recorded" state, and the booking hand-off is unaffected */
       }
 
-      trackGa4EventOnce(disqualified ? "qualify_disqualified" : "generate_lead");
+      // GA4: complete_registration for everyone who finishes the form;
+      // qualified_lead only when the investment answer qualifies (top 3 options).
+      trackGa4EventOnce("complete_registration");
+      if (!disqualified) trackGa4EventOnce("qualified_lead");
+
+      // Meta CAPI (highest EMQ): CompleteRegistration always, QualifiedLead when
+      // qualified. Fire-and-forget; survives the hand-off navigation below.
+      fireRegistrationEvents(
+        { firstName, email, phone: payload.whatsapp, countryCode: country.code },
+        !disqualified
+      );
 
       const body = JSON.stringify(payload);
       let sent = false;
