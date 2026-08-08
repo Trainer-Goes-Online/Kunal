@@ -13,6 +13,8 @@ import { EvenIf } from "@/components/EvenIf";
 import { Colophon } from "@/components/Colophon";
 import { StickyCTA } from "@/components/StickyCTA";
 import { ClientBehaviors } from "@/components/ClientBehaviors";
+import { QualifyModal } from "@/components/np/QualifyModal";
+import "@/components/sections/QualifyModal.css";
 
 /* Kraft With Kunal — VSL landing page. Rebuilt section-by-section pixel-exact to
    the SDP reference on the existing .sdp-root brass foundation. Every section is a
@@ -48,6 +50,10 @@ export default function Home() {
       </main>
       <Colophon />
       <StickyCTA />
+      {/* Mounted once. Every CTA on the page carries `data-qualify-open`; this
+          listens for those clicks and runs the six-step qualifier before
+          handing off to /book-a-call. No payment step exists in this funnel. */}
+      <QualifyModal />
       <ClientBehaviors />
     </div>
   );

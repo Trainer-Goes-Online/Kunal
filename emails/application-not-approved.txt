@@ -1,0 +1,75 @@
+KRAFT WITH KUNAL
+Application received
+
+THANK YOU FOR APPLYING, {{first_name}}.
+
+Your answers came through on {{submitted_date}} at {{submitted_time}} IST.
+After going through them, it looks like the High-Performer Programme may not
+be the right fit for you at this moment.
+
+We would rather tell you that now than take an hour of your time pretending
+otherwise. You answered honestly, and that is worth more to us than a booked
+call that was never going anywhere.
+
+
+WHY IT WASN'T APPROVED
+
+To make sure every strategy call is genuinely useful, we only book calls for
+people who meet all three of these.
+
+1. Being a business owner, senior professional or high-performing
+   professional with a demanding career.
+   Your response: {{q4_role}}
+
+2. Having a specific fitness goal you're serious about achieving over the
+   next 90 days.
+   Your response: {{q5_goal}}
+
+3. Being ready to invest in your health and fitness if it's a clear fit on
+   the call.
+   Your response: {{q7_investment}}
+   >> This is the one that decided it.
+
+The High-Performer Programme is 1:1 coaching with Kunal and it is paid. The
+call ends in an offer, and there is no free version of the programme to
+point you at, so booking you in when you have already told us you are not
+ready would only waste your evening.
+
+
+YOU'RE NOT LEFT EMPTY HANDED
+
+The work doesn't stop here. Come and take it.
+
+Follow Kunal on Instagram for practical content on fitness, fat loss,
+nutrition and building a healthier body around a demanding career. It costs
+nothing and there is nothing to sign up for. Take it whether or not you ever
+work with Kunal.
+
+https://www.instagram.com/kraftwithkunal/
+
+
+THINK YOU ANSWERED SOMETHING INCORRECTLY?
+
+Only re-apply if you genuinely feel your answers didn't reflect your actual
+situation. If you do meet the criteria above, you can re-apply with accurate
+answers: https://kraftwithkunal.com/
+
+
+This doesn't mean your fitness goals aren't real or important. It just means
+this particular programme, in its current format, isn't the right fit for
+you right now.
+
+All the best,
+Team Kraft With Kunal
+
+---
+You are receiving this because you submitted an application on
+kraftwithkunal.com on {{submitted_date}}. This is a one-off response to that
+application.
+
+Kraft With Kunal - kraftwithkunal@gmail.com
+[REGISTERED POSTAL ADDRESS], India
+
+Privacy:     https://kraftwithkunal.com/privacy
+Terms:       https://kraftwithkunal.com/terms
+Unsubscribe: {{unsubscribe_url}}

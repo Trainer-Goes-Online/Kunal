@@ -122,8 +122,8 @@ export function CalendarEmbed({ name = "", email = "" }: { name?: string; email?
       >
         {!site.calendlyUrl ? (
           <p className="p02-cal-fallback">
-            The booking calendar is being connected. Your assessment fee is already
-            received, reply to your confirmation email and we&rsquo;ll place your slot by hand.
+            The booking calendar is being connected. Your application is already in —
+            message us on WhatsApp at {site.supportPhone} and we&rsquo;ll place your slot by hand.
           </p>
         ) : showFallback ? (
           <p className="p02-cal-fallback">

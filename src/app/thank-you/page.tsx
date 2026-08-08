@@ -7,7 +7,8 @@
  * SDP section order reproduced exactly:
  *   AnnounceMarquee → Hero (tick + h1 + sub + booking card)
  *   → WhatHappensNext (dark numbered timeline) → CalloutBand
- *   → PrepQuestions (light-alt card grid) → FeeRefund (dark) → Contact → Footer.
+ *   → PrepQuestions (light-alt card grid) → AboutTheCall (dark, SDP's
+ *   FeeRefund slot) → Contact → Footer.
  *
  * SERVER component — no 'use client', no state, no effects. Every behaviour is a
  * `data-*` hook per MASTER-HANDOFF §5: reveals emit `data-sdp-reveal` + an inline
@@ -17,16 +18,16 @@
  *
  * Copy provenance (§6 — nothing invented):
  * - Hero, timeline and prep copy: funnel-copy/04-thank-you.md:12-49 (verbatim).
- * - Fee rationale: src/lib/content.ts `faqs[0]` ("paid assessment… his eyes on
- *   your case, not for a pitch").
+ * - Call rationale: adapted from src/lib/content.ts `faqs[0]` ("his eyes on your
+ *   case, not a pitch") — the fee half of that claim is gone, see below.
  * - Callout line: funnel-copy/04-thank-you.md:33 ("It was never your discipline").
- * - Fee + brand + routes from src/lib/site.ts.
- * Fee terms and the support address are now confirmed and stated inline (they were
- * <Gap> placeholders; the refund policy and site.supportEmail are the sources).
- * Historic note — this block used to read: the ₹299 refund / credit terms (Q5, matching S10
- * Guarantee) and the support address for reschedules (Q12). SDP's post-booking
- * film has no Kraft counterpart and is dropped outright, not reserved — Q11 is
- * retired here rather than left as a standing placeholder.
+ * - Brand + routes from src/lib/site.ts.
+ *
+ * NO PAYMENT IN THIS FUNNEL. The fee/refund copy that shipped in the paid
+ * variant (₹ terms, credit-toward-programme, refund-policy link) has been
+ * removed, and SDP's FeeRefund slot now answers "why is this free" instead.
+ * The support address for reschedules is unchanged. SDP's post-booking film has
+ * no Kraft counterpart and is dropped outright, not reserved.
  *
  * Route-local CSS (./thank-you.css) — the SDP convention for a non-landing
  * route; every class is namespaced `.ty-…` and scoped under `.ty-page`.
@@ -284,17 +285,23 @@ function BeforeWeSpeak() {
 }
 
 /* ============================================================
-   Section: the assessment fee (SDP `FeeRefund` 351-400)
+   Section: why the call costs nothing (SDP `FeeRefund` 351-400)
+
+   This funnel takes no payment, so the slot SDP used for fee/refund
+   terms answers the question a free call actually raises — "what's
+   the catch?" The card structure and classes are unchanged; only the
+   claim is. The old ₹-fee copy is gone, not commented out: an
+   assessment fee is not charged anywhere in this funnel.
    ============================================================ */
-function AboutTheFee() {
+function AboutTheCall() {
   return (
     <section className="sdp-section sdp-dark ty-dark-grid">
       <div className="sdp-wrap">
         <SdpHead
-          eyebrow={`About the ${site.assessmentFee}`}
+          eyebrow="About the call"
           title={
             <>
-              Why There&rsquo;s An <em>Assessment Fee.</em>
+              Why This Call Costs <em>Nothing.</em>
             </>
           }
           sub="No hidden agenda. Here's the whole of it."
@@ -313,13 +320,15 @@ function AboutTheFee() {
           </div>
 
           <h3>
-            You&rsquo;re Paying For <em>His Eyes On Your Case.</em>
+            You Get <em>His Eyes On Your Case.</em>
           </h3>
           <p className="ty-fee-body">
-            It&rsquo;s a paid assessment, not a sales call. Kunal looks at your history, your
-            schedule and your goals, and tells you straight: a fit or not.{" "}
+            It&rsquo;s an assessment, not a sales call. Kunal looks at your history, your
+            schedule and your goals, and tells you straight: a fit or not. The
+            questions you answered are the filter &mdash; they are what let him keep this
+            free and still keep the numbers small.{" "}
             <strong>
-              You&rsquo;re paying for his eyes on your case, not for a pitch.
+              You get his eyes on your case, not a pitch.
             </strong>
           </p>
 
@@ -340,15 +349,10 @@ function AboutTheFee() {
             </div>
           </div>
 
-          {/* Confirmed terms, quoted from the /refund policy rather than flagged. */}
-          {/* <p className="ty-fee-extra">
-            <span>
-              If Kunal decides on the call that the programme isn&rsquo;t the right fit, your{" "}
-              {site.assessmentFee}{" "}
-              is refunded in full. If you enrol, it&rsquo;s credited toward your programme.
-              Full terms in the <Link href="/refund">refund policy</Link>.
-            </span>
-          </p> */}
+          {/* The dormant refund-terms paragraph that used to sit here has been
+              removed: it quoted the ₹ assessment fee, and nothing is charged in
+              this funnel. Recover it from git history if the paid variant
+              returns. */}
         </div>
       </div>
     </section>
@@ -428,7 +432,7 @@ export default function ThankYouPage() {
         <WhatWeCover />
         <CalloutBand />
         <BeforeWeSpeak />
-        <AboutTheFee />
+        <AboutTheCall />
         <Contact />
       </main>
       <Colophon />

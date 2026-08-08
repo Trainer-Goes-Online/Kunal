@@ -5,8 +5,11 @@ import "@/components/sections/P02BookACall.css";
 
 /**
  * P02 route — /book-a-call. Thin wrapper: it puts the page inside `.sdp-root`
- * (so the brass foundation applies), reads the optional `?name` / `?email`
- * hand-off from /checkout, and mounts the single delegated client file.
+ * (so the brass foundation applies), reads the `?name` / `?email` hand-off
+ * from the CTA qualifier (QualifyModal — this funnel has no checkout), and
+ * mounts the single delegated client file. Both params are optional: with JS
+ * off the CTA links here directly and the page renders ungreeted, unprefilled
+ * and fully usable.
  *
  * SDP ref: `_reference/sdp/app/new-book-a-call/page.tsx`.
  *

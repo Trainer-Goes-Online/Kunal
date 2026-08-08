@@ -36,7 +36,10 @@ export const heroStats = [
   { k: site.successStories, v: "High-Performers Coached" },
   { k: `${site.avgTransformWeeks}wk`, v: "Avg. Transformation" },
   { k: `${site.clientRating} ★`, v: "Client Rating" },
-  { k: site.assessmentFee, v: "To Start" },
+  /* Was `site.assessmentFee` ("₹97 To Start") in the paid funnel. This funnel
+     charges nothing at any step, so a rupee figure here is a price claim with
+     no price behind it. */
+  { k: "₹0", v: "To Start" },
 ] as const;
 
 /* ---- The three CTA reassurance badges — funnel md, repeated under every CTA ---- */

@@ -50,11 +50,16 @@ export function SdpHead({
  * Button label and badges are the funnel md's own. The md prints the badges with
  * emoji; they render here as the repo's line glyphs, because the skin brief bans
  * emoji in chrome.
+ *
+ * NO PAYMENT. This funnel takes none: the button carries `data-qualify-open`,
+ * so QualifyModal intercepts the click and runs the six-step qualifier, then
+ * hands off to /book-a-call. The href IS /book-a-call, which is what makes the
+ * interception safe — with JS off the link books directly.
  */
 export function CtaLockup() {
   return (
     <div className="sdp-lockup">
-      <a className="sdp-cta" href={site.checkoutUrl}>
+      <a className="sdp-cta" href={site.bookUrl} data-qualify-open>
         <span className="sdp-cta-main">
           <span className="cta-label">
             Click Here To Get Your Personalised High-Performer Fitness Roadmap

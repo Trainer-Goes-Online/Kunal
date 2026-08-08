@@ -1,0 +1,189 @@
+/* =====================================================================
+   INSTAGRAM FOLLOW BAND — src/components/np/InstagramFollow.tsx
+   Shared by /thank-you-disqualified and /unsubscribe_emails, so these are
+   scoped to `.sdp-root` rather than to any one route's page class.
+   Token-only off the `.sdp-root` theme block in globals.css.
+   ===================================================================== */
+
+.sdp-root .igf-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  gap: clamp(28px, 4vw, 52px);
+  align-items: start;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* ---- MOBILE: profile card first, reasons under it ----
+   Two columns collapse to one, and in one column the card has to lead. It is
+   the thing being asked for and the only part with a tap target; making
+   someone scroll past three reasons to reach it buries the ask.
+   `order` on grid items, not a DOM change — the desktop two-column layout
+   above is untouched, and the source order stays reasons-then-card so the
+   heading still introduces the list it belongs to. */
+@media (max-width: 900px) {
+  .sdp-root .igf-split {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 480px;
+    gap: 26px;
+  }
+  .sdp-root .igf-phone { order: 1; }
+  .sdp-root .igf-why { order: 2; }
+}
+
+/* ---- reasons ---- */
+.sdp-root .igf-why-title {
+  font-family: var(--fh);
+  font-size: clamp(21px, 2.6vw, 27px);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin: 0 0 18px;
+}
+
+.sdp-root .igf-why-list { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.sdp-root .igf-why-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.58; color: var(--ink-soft); }
+.sdp-root .igf-why-list li em { font-style: normal; font-weight: 700; color: var(--brand-deep); }
+.sdp-root .igf-why-list .ic {
+  flex: 0 0 22px; width: 22px; height: 22px; margin-top: 1px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--grad-brand);
+  box-shadow: 0 2px 8px rgba(var(--brand-rgb), 0.3);
+}
+.sdp-root .igf-why-list .ic svg { width: 12px; height: 12px; }
+
+.sdp-root .igf-why-foot {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--brand);
+  border-radius: 0 var(--r) var(--r) 0;
+}
+.sdp-root .igf-why-foot strong { color: var(--ink); }
+
+/* ---- the profile mock ---- */
+.sdp-root .igf-phone {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 18px 48px rgba(var(--ink-rgb), 0.1), 0 0 0 1px rgba(var(--brand-rgb), 0.12);
+}
+
+.sdp-root .igf-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.sdp-root .igf-back { color: var(--muted); display: grid; place-items: center; }
+.sdp-root .igf-back svg { width: 16px; height: 16px; }
+.sdp-root .igf-bar-handle {
+  flex: 1 1 auto;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.sdp-root .igf-dots { display: flex; flex-direction: column; gap: 3px; }
+.sdp-root .igf-dots i { width: 3px; height: 3px; border-radius: 50%; background: var(--muted); }
+
+.sdp-root .igf-body { padding: 16px 16px 14px; }
+
+.sdp-root .igf-idrow { display: flex; align-items: center; gap: 18px; margin-bottom: 12px; }
+
+.sdp-root .igf-ring {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 78px; height: 78px;
+  border-radius: 50%;
+  padding: 3px;
+  /* The story ring, re-hued brass instead of Instagram's own gradient — this
+     is a mock of a profile, not a copy of their brand. */
+  background: conic-gradient(from 210deg, var(--brand-bright), var(--brand), var(--brand-deep), var(--brand-bright));
+}
+.sdp-root .igf-avatar {
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2.5px solid var(--bg);
+  background: var(--bg-alt);
+}
+.sdp-root .igf-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.sdp-root .igf-stats { display: flex; gap: 18px; margin: 0; flex: 1 1 auto; }
+.sdp-root .igf-stats div { text-align: center; }
+.sdp-root .igf-stats dt { font-size: 16px; font-weight: 800; color: var(--ink); }
+.sdp-root .igf-stats dd { margin: 0; font-size: 12px; color: var(--muted); }
+
+.sdp-root .igf-mark { margin-left: auto; color: rgba(var(--brand-rgb), 0.55); }
+.sdp-root .igf-mark svg { width: 30px; height: 30px; }
+
+.sdp-root .igf-meta { margin-bottom: 14px; }
+.sdp-root .igf-name { display: block; font-size: 14.5px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.sdp-root .igf-bio { margin: 0 0 5px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.sdp-root .igf-bio span { display: block; }
+.sdp-root .igf-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 700; color: var(--brand-deep);
+}
+.sdp-root .igf-link svg { width: 13px; height: 13px; }
+
+.sdp-root .igf-actions { display: flex; gap: 6px; }
+.sdp-root .igf-follow {
+  flex: 1 1 auto;
+  padding: 9px 14px;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--cta-ink);
+  background: var(--grad-cta);
+  border-radius: var(--r-sm);
+  text-decoration: none;
+  box-shadow: var(--inset-hi);
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.22s;
+}
+.sdp-root .igf-follow:hover { transform: translateY(-1px); box-shadow: var(--glow-cta), var(--inset-hi); }
+.sdp-root .igf-ghost {
+  padding: 9px 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+}
+.sdp-root .igf-ghost--sq { display: grid; place-items: center; padding: 9px 10px; }
+.sdp-root .igf-ghost--sq svg { width: 14px; height: 14px; }
+
+.sdp-root .igf-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 15px 18px;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--cta-ink);
+  background: var(--grad-cta);
+  border-top: 1px solid rgba(var(--brand-rgb), 0.4);
+  text-decoration: none;
+  transition: filter 0.22s;
+}
+.sdp-root .igf-cta:hover { filter: brightness(1.05); }
+.sdp-root .igf-cta .ig { width: 18px; height: 18px; flex: 0 0 18px; }
+.sdp-root .igf-cta .arr { width: 17px; height: 17px; flex: 0 0 17px; transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.sdp-root .igf-cta:hover .arr { transform: translateX(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sdp-root .igf-follow:hover { transform: none; }
+  .sdp-root .igf-cta:hover .arr { transform: none; }
+}
