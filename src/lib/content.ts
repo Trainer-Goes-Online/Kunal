@@ -212,12 +212,16 @@ export const phases = [
    The funnel md instructs "[Keep ONLY male transformation photos]". Each card is
    a self-contained plate with the client's name printed on it, so the three
    female clients were identified by inspection and removed:
-     ba-2 Trupti · ba-4 Archana · ba-5 Manpreet   → withdrawn
-     ba-1 Vaibhav · ba-3 Vinayak · ba-6 Ashish    → kept
-   The files stay in /public so nothing is destroyed and a decision to bring any
-   back is a one-line change. Three cards is a short rail — more male
-   transformation plates would fill it out. */
+     ba-2 Trupti · ba-4 Archana · ba-5 Manpreet          → withdrawn
+     ba-1 Vaibhav · ba-3 Vinayak · ba-6 Ashish · ba-7 Kaushabh → kept
+   The withdrawn files stay in /public so nothing is destroyed and a decision to
+   bring any back is a one-line change.
+
+   Order matters: the rail reads left to right and ba-7 is the strongest fit for
+   this funnel's audience (its own caption says corporate job, busy schedule,
+   95kg → 75kg in six months), so it leads. */
 export const baCards = [
+  "/transformations/ba-7.jpg", // Kaushabh — corporate, 95→75kg in 6 months
   "/transformations/ba-1.jpg", // Vaibhav
   "/transformations/ba-3.jpg", // Vinayak
   "/transformations/ba-6.jpg", // Ashish
