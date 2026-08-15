@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pricing, siteOrigin } from "@/lib/config";
+import { pricing, siteOrigin, capiHostAllowed } from "@/lib/config";
 import { sendLeadEvent } from "@/lib/meta-events";
+import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
 
 /**
  * /api/meta/schedule — fired when a lead books the call on /book-a-call.
@@ -27,6 +28,9 @@ export async function POST(req: NextRequest) {
     if (!pricing.trackingEnabled) {
       return NextResponse.json({ ok: true, skipped: "test_mode" });
     }
+    if (!capiHostAllowed(req.headers.get("host"))) {
+      return NextResponse.json({ ok: true, skipped: "non_prod_host" });
+    }
     const pixelId = process.env.META_PIXEL_ID;
     const accessToken = process.env.META_CAPI_ACCESS_TOKEN;
     if (!pixelId || !accessToken) {
@@ -38,8 +42,14 @@ export async function POST(req: NextRequest) {
         ? body.eventSourceUrl
         : `${siteOrigin()}/book-a-call`;
 
-    const fbc = req.cookies.get("_fbc")?.value || undefined;
+    const cookieFbc = req.cookies.get("_fbc")?.value || "";
     const fbp = req.cookies.get("_fbp")?.value || undefined;
+    // L4 — rebuild _fbc from the captured fbclid when the cookie is absent.
+    const resolvedAttr = resolveAttribution({
+      cookieAttr: readAttrCookie(req.cookies.get(ATTR_COOKIE)?.value),
+      fbc: cookieFbc,
+    });
+    const fbc = buildFbc(resolvedAttr, cookieFbc) || undefined;
     const clientIp =
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
       req.headers.get("x-real-ip") ??

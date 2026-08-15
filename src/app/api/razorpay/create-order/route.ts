@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { pricing, canonicalCheckoutUrl } from "@/lib/config";
 import type { CustomerData, UtmData } from "@/lib/meta-capi";
+import { packJsonNote } from "@/lib/attribution";
 
 // Razorpay notes: max 15 keys, ≤256 chars per value. We use 9, leaving 6 spare.
 const NOTE_MAX_VALUE_LEN = 256;
@@ -56,8 +57,11 @@ export async function POST(req: NextRequest) {
 
     const notes: Record<string, string> = {
       kind: FUNNEL_KIND,
-      cust: truncate(
-        JSON.stringify({
+      // L5 — packJsonNote keeps the note VALID JSON under the cap by shortening
+      // the longest value; truncate(JSON.stringify(...)) sliced mid-JSON and the
+      // webhook's JSON.parse then lost every field at once (F6).
+      cust: packJsonNote(
+        {
           fn: customer?.firstName ?? "",
           ln: customer?.lastName ?? "",
           em: customer?.email ?? "",
@@ -66,16 +70,18 @@ export async function POST(req: NextRequest) {
           co: customer?.countryCode ?? "",
           dl: customer?.dialCode ?? "",
           tp: customer?.customerType ?? "",
-        })
+        },
+        NOTE_MAX_VALUE_LEN
       ),
-      utm: truncate(
-        JSON.stringify({
+      utm: packJsonNote(
+        {
           s: utm?.source ?? "",
           m: utm?.medium ?? "",
           c: utm?.campaign ?? "",
           n: utm?.content ?? "",
           t: utm?.term ?? "",
-        })
+        },
+        NOTE_MAX_VALUE_LEN
       ),
       clid: truncate(fbclid ?? ""),
       fbc: truncate(fbc),
