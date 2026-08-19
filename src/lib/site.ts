@@ -76,9 +76,9 @@ export const site = {
 
   /** Three client video testimonials. Vimeo player URLs or direct MP4 both work. */
   testimonialVideos: [
-    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_1 ?? "https://player.vimeo.com/video/1213532473",
-    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_2 ?? "https://player.vimeo.com/video/1213532711",
-    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_3 ?? "https://player.vimeo.com/video/1213532704",
+    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_1 ?? "https://player.vimeo.com/video/1213532473", // Ashish R — unchanged
+    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_2 ?? "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Kunal/Captions_AFF4F3.MP4", // Vaibhav
+    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_3 ?? "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Kunal/Video_Testiomonial_2.mp4", // Ashish
   ],
   /** Optional still for each clip. Empty => derived (MP4) or fetched (Vimeo). */
   testimonialPosters: [
@@ -88,11 +88,19 @@ export const site = {
   ],
 
   /**
-   * Committed copies of the same opening frames, in clip order.
-   * Last line of defence: if Vimeo's oEmbed is unreachable at build time
-   * (blocked egress, outage) the tiles and the trust-strip avatars still show
-   * a real face instead of an empty ring. Regenerate by re-downloading the
-   * oEmbed thumbnail at -d_720x1280 if a clip is ever swapped.
+   * Committed opening frames, in clip order. 720x1280 (9:16) to match the tile.
+   *
+   * These are what the tiles actually render — the poster chain in Proof.tsx is
+   * `testimonialPosters[i] || fetched[i] || testimonialFallbacks[i]`, and for a
+   * DIRECT MP4 the middle term is always null (oEmbed only answers for Vimeo).
+   * So for clips 2 and 3 this is not a fallback at all, it is the poster. Swap
+   * a clip without regenerating its frame here and the tile shows the previous
+   * client's face over the new video — silently, with nothing failing.
+   *
+   * REGENERATE WHEN A CLIP CHANGES:
+   *   Vimeo → re-download the oEmbed thumbnail at -d_720x1280
+   *   MP4   → ffmpeg -ss 1.0 -i <url> -frames:v 1 -vf scale=720:1280 -q:v 4 clip-N.jpg
+   *           (ffmpeg range-requests the remote file; no need to download it)
    */
   testimonialFallbacks: [
     "/testimonials/clip-1.jpg",
