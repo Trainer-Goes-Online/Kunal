@@ -22,8 +22,14 @@ import { vimeoThumbs } from "@/lib/vimeo";
 export default async function S02TrustStrip() {
   /* Ask for the PORTRAIT frame, not a square one: cropping to the face is done
      in CSS below, where it can be tuned, rather than by Vimeo's centre crop. */
-  const fetched = await vimeoThumbs(site.testimonialVideos, "360x640");
-  const avatars = site.testimonialVideos.map(
+  /* Only the clips that have a tuned face-crop become avatars. A direct-MP4
+     testimonial has no server-extractable opening frame (that only works for
+     Vimeo's oEmbed) and no committed still, so it would show an empty brass
+     ring here — the rail still plays it, but it stays out of the cluster until
+     it has a poster + crop. */
+  const avatarVideos = site.testimonialVideos.slice(0, testimonialAvatarCrop.length);
+  const fetched = await vimeoThumbs(avatarVideos, "360x640");
+  const avatars = avatarVideos.map(
     (_, i) => site.testimonialPosters[i] || fetched[i] || site.testimonialFallbacks[i] || ""
   );
 
