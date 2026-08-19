@@ -228,7 +228,7 @@ export const baCards = [
 ] as const;
 
 /* ---- Video testimonials — names confirmed in the funnel md ---- */
-export const testimonialNames = ["Ashish R", "Vaibhav", "Ashish", "Khaushab"] as const;
+export const testimonialNames = ["Ashish R", "Vaibhav", "Ashish", "Kaushabh"] as const;
 
 /**
  * Face framing for the trust-strip avatar circles.
@@ -250,7 +250,7 @@ export const testimonialAvatarCrop = [
   { zoom: "100%", focus: "68%" }, // Ashish R — close-up selfie, face mid-frame
   { zoom: "252%", focus: "26%" }, // Vaibhav  — standing, head ~a third down
   { zoom: "200%", focus: "0%" },  // Ashish   — standing, head near the top
-  { zoom: "150%", focus: "22%" }, // Khaushab — selfie, 464×832; zoomed out to show the whole head
+  { zoom: "150%", focus: "22%" }, // Kaushabh — selfie, 464×832; zoomed out to show the whole head
 ] as const;
 
 /* ---- "Everything Included In Your 12-Week Programme" — funnel md, six items ---- */
