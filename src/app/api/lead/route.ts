@@ -129,7 +129,9 @@ export async function POST(req: NextRequest) {
       q4_role: clean(body.role, 120),
       q5_goal: clean(body.goal, 200),
       q6_income: clean(body.income, 120),
-      q7_investment: investment,
+      q7_deal_breaker: clean(body.dealBreaker, 1000),
+      q8_why_coaching: clean(body.whyCoaching, 1000),
+      q9_investment: investment,
 
       /* --- outcome --- */
       funnel: "free",

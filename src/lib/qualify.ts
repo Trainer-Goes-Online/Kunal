@@ -19,7 +19,7 @@
 export type QualifyStep =
   | {
       id: string;
-      kind: "text" | "email" | "tel";
+      kind: "text" | "email" | "tel" | "longtext";
       question: string;
       hint?: string;
       placeholder?: string;
@@ -89,6 +89,20 @@ export const qualifySteps: readonly QualifyStep[] = [
       "₹50 Lakhs-₹1 Crore",
       "Above ₹1 Crore",
     ],
+  },
+  {
+    id: "dealBreaker",
+    kind: "longtext",
+    question:
+      "If you are accepted into KWK coaching, what would make you say NO to investing in yourself?",
+    placeholder: "Type your answer",
+  },
+  {
+    id: "whyCoaching",
+    kind: "longtext",
+    question:
+      "Why do you believe personalised coaching is what you need rather than continuing to train/diet on your own?",
+    placeholder: "Type your answer",
   },
   {
     id: "investment",
@@ -289,5 +303,15 @@ export function validatePhone(digits: string, country: DialCode): string {
     return "";
   }
   if (d.length < 6 || d.length > 14) return "Please enter a valid mobile number.";
+  return "";
+}
+
+/** The two open-text qualifier questions. Required, but deliberately permissive —
+    a short honest sentence is the whole point. */
+export function validateLongText(v: string): string {
+  const t = v.trim();
+  if (!t) return "Please share a short answer to continue.";
+  if (t.length < 2) return "That looks too short — a sentence or two is perfect.";
+  if (t.length > 1000) return "That answer is a little long — please shorten it.";
   return "";
 }

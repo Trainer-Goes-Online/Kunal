@@ -10,6 +10,7 @@ import {
   validateFirstName,
   validateEmail,
   validatePhone,
+  validateLongText,
   type DialCode,
 } from "@/lib/qualify";
 import { site } from "@/lib/site";
@@ -43,6 +44,7 @@ export function QualifyModal() {
 
   const panelRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
+  const firstAreaRef = useRef<HTMLTextAreaElement>(null);
   const lastFocused = useRef<HTMLElement | null>(null);
 
   const total = qualifySteps.length;
@@ -92,6 +94,7 @@ export function QualifyModal() {
     if (!open) return;
     const t = window.setTimeout(() => {
       if (firstFieldRef.current) firstFieldRef.current.focus();
+      else if (firstAreaRef.current) firstAreaRef.current.focus();
       else panelRef.current?.focus();
     }, 60);
     return () => window.clearTimeout(t);
@@ -116,6 +119,8 @@ export function QualifyModal() {
         role: finalAnswers.role || "",
         goal: finalAnswers.goal || "",
         income: finalAnswers.income || "",
+        dealBreaker: finalAnswers.dealBreaker || "",
+        whyCoaching: finalAnswers.whyCoaching || "",
         investment: finalAnswers.investment || "",
         /* The routing decision travels WITH the lead. Pabbly must not have to
            re-derive it by string-matching the investment answer — that rule
@@ -192,6 +197,10 @@ export function QualifyModal() {
         const msg = validatePhone(next[current.id] || "", country);
         if (msg) return setError(msg);
       }
+      if (current.kind === "longtext") {
+        const msg = validateLongText(next[current.id] || "");
+        if (msg) return setError(msg);
+      }
       if (current.kind === "choice" && !next[current.id]) {
         return setError("Please pick one to continue.");
       }
@@ -220,7 +229,10 @@ export function QualifyModal() {
 
   const pct = Math.round(((step + 1) / total) * 100);
   const typed =
-    current.kind === "text" || current.kind === "email" || current.kind === "tel";
+    current.kind === "text" ||
+    current.kind === "email" ||
+    current.kind === "tel" ||
+    current.kind === "longtext";
   const chosen = answers[current.id] || "";
 
   return (
@@ -299,6 +311,22 @@ export function QualifyModal() {
                   e.preventDefault();
                   advance({ ...answers, [current.id]: e.currentTarget.value });
                 }
+              }}
+            />
+          )}
+
+          {current.kind === "longtext" && (
+            <textarea
+              ref={firstAreaRef}
+              className={`qz-input qz-textarea${error ? " is-error" : ""}`}
+              placeholder={current.placeholder}
+              value={answers[current.id] || ""}
+              aria-label={current.question}
+              aria-invalid={Boolean(error)}
+              rows={4}
+              onChange={(e) => {
+                setAnswer(current.id, e.target.value);
+                if (error) setError("");
               }}
             />
           )}
