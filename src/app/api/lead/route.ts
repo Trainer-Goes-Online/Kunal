@@ -10,6 +10,7 @@ import {
 } from "@/lib/qualify";
 import { sha256 } from "@/lib/meta-capi";
 import { siteOrigin } from "@/lib/config";
+import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
 
 /**
  * /api/lead — the coaching application's answers, forwarded to Pabbly.
@@ -192,6 +193,34 @@ export async function POST(req: NextRequest) {
     const now = new Date();
     const pageUrl = clean(body.pageUrl, 500);
 
+    /* L2–L4 — resolve attribution server-side. The `kwk_attr` cookie (captured
+       at the edge, before any client JS) wins, then the client body, then
+       referrer recovery; fbclid is rebuilt from `_fbc` when the captured value
+       was lost. This only fills the EXISTING utm, fbclid and fbc columns better —
+       no new Pabbly fields (L7 held); provenance is logged, not stored. */
+    const cookieAttr = readAttrCookie(req.cookies.get(ATTR_COOKIE)?.value);
+    const bodyAttr = {
+      source: clean(utm.source, 120),
+      medium: clean(utm.medium, 120),
+      campaign: clean(utm.campaign, 120),
+      content: clean(utm.content, 120),
+      term: clean(utm.term, 120),
+      fbclid: clean(body.fbclid, 255),
+    };
+    const resolved = resolveAttribution({
+      cookieAttr,
+      bodyAttr,
+      referrer: (cookieAttr.referrer as string) || (req.headers.get("referer") ?? ""),
+      landingUrl: (cookieAttr.landing_url as string) || pageUrl,
+      fbc,
+    });
+    const fbcOut = buildFbc(resolved, fbc);
+    if (resolved.utmSource === "none" && resolved.clidSource === "none") {
+      console.error(`[lead] ATTRIBUTION MISSING (${resolved.provenance})`);
+    } else {
+      console.log(`[lead] attribution ${resolved.provenance}`);
+    }
+
     /* Deterministic per applicant, so a resubmission updates one Pabbly row
        instead of creating a second. The paid funnel used the payment id;
        the email is the stable identifier here. */
@@ -238,13 +267,13 @@ export async function POST(req: NextRequest) {
       ...gates,
 
       /* --- attribution, identical field names to the paid payload --- */
-      utm_source: clean(utm.source, 120),
-      utm_medium: clean(utm.medium, 120),
-      utm_campaign: clean(utm.campaign, 120),
-      utm_content: clean(utm.content, 120),
-      utm_term: clean(utm.term, 120),
-      fbclid: clean(body.fbclid, 255),
-      fbc,
+      utm_source: clean(resolved.utm.source, 120),
+      utm_medium: clean(resolved.utm.medium, 120),
+      utm_campaign: clean(resolved.utm.campaign, 120),
+      utm_content: clean(resolved.utm.content, 120),
+      utm_term: clean(resolved.utm.term, 120),
+      fbclid: clean(resolved.fbclid, 255),
+      fbc: fbcOut,
       fbp,
       client_ip_address: clientIp,
       client_user_agent: clientUserAgent,
