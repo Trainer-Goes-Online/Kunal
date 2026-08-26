@@ -93,15 +93,19 @@
   margin-bottom: 14px;
 }
 
+/* Was a numbered circle; now carries the question number ("Q1" … "Q11"), so
+   it is a pill that grows with its label instead of clipping two digits. */
 .dq-page .dq-crit-num {
   flex: 0 0 auto;
-  width: 27px; height: 27px;
+  min-width: 34px;
+  padding: 5px 9px;
   display: grid; place-items: center;
-  border-radius: 50%;
-  font-family: var(--fh);
-  font-size: 15px;
+  border-radius: 999px;
+  font-family: var(--fb);
+  font-size: 11px;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: var(--cta-ink);
   background: var(--grad-cta);
 }
@@ -164,6 +168,20 @@
 }
 .dq-page .dq-crit-resp-val .quo { flex: 0 0 15px; width: 15px; height: 15px; margin-top: 3px; color: var(--brand); }
 .dq-page .dq-crit-resp-val--none { font-weight: 500; font-style: italic; color: var(--muted-dark); }
+
+/* The full explanation, rendered only under a criterion that failed. Indented
+   to the same edge as the quoted answer so the row reads as one block. */
+.dq-page .dq-crit-why {
+  margin: 12px 0 0 40px;
+  padding-left: 13px;
+  border-left: 2px solid var(--danger);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-dark-soft);
+}
+@media (max-width: 560px) {
+  .dq-page .dq-crit-why { margin-left: 0; }
+}
 
 .dq-page p.dq-crit-verdict {
   margin: 0;
