@@ -30,3 +30,22 @@ export function siteOrigin(): string {
 export function canonicalCheckoutUrl(): string {
   return `${siteOrigin()}/checkout`;
 }
+
+/**
+ * F8 host-gate — keep CAPI events out of the live pixel from anywhere that is
+ * not the real site. A denylist (localhost + Vercel preview hosts) rather than
+ * an allowlist, so a mis-set NEXT_PUBLIC_SITE_URL can never silence real
+ * production traffic. `TRACKING_HOST_DENY` can extend it (comma-separated).
+ */
+export function capiHostAllowed(host: string | null | undefined): boolean {
+  if (!host) return false; // no Host header → not a real browser request
+  const h = host.split(":")[0].trim().toLowerCase();
+  if (h === "localhost" || h === "127.0.0.1" || h === "0.0.0.0" || h.endsWith(".local")) return false;
+  if (h.endsWith(".vercel.app")) return false; // preview + branch deploys
+  const extra = (process.env.TRACKING_HOST_DENY ?? "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  if (extra.includes(h)) return false;
+  return true;
+}

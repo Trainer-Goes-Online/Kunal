@@ -1,10 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { pricing, canonicalCheckoutUrl, capiHostAllowed } from "@/lib/config";
-import { sendAddToCartEvent } from "@/lib/meta-events";
+import { pricing, siteOrigin, capiHostAllowed } from "@/lib/config";
+import { sendLeadEvent } from "@/lib/meta-events";
 import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
+
+/**
+ * /api/meta/schedule — fired when a lead books the call on /book-a-call.
+ *
+ * The trigger is Calendly's own `calendly.event_scheduled` message (see
+ * CalendarEmbed), NOT a pageview: this only fires when a slot is actually taken.
+ * PII comes from the qualifier stash the browser still holds, so the Schedule
+ * event matches at the highest EMQ available.
+ */
+type Lead = { email?: string; phone?: string; firstName?: string; countryCode?: string };
 
 export async function POST(req: NextRequest) {
   try {
+    const body = (await req.json().catch(() => ({}))) as {
+      lead?: Lead;
+      eventSourceUrl?: string;
+    };
+    const lead = body.lead ?? {};
+    const email = (lead.email ?? "").trim();
+    if (!email) {
+      return NextResponse.json({ ok: false, error: "email_required" }, { status: 400 });
+    }
+
     if (!pricing.trackingEnabled) {
       return NextResponse.json({ ok: true, skipped: "test_mode" });
     }
@@ -17,11 +37,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: "env_missing" });
     }
 
-    const body = await req.json().catch(() => ({} as { eventSourceUrl?: string }));
     const eventSourceUrl =
       typeof body.eventSourceUrl === "string" && body.eventSourceUrl
         ? body.eventSourceUrl
-        : canonicalCheckoutUrl();
+        : `${siteOrigin()}/book-a-call`;
 
     const cookieFbc = req.cookies.get("_fbc")?.value || "";
     const fbp = req.cookies.get("_fbp")?.value || undefined;
@@ -39,25 +58,29 @@ export async function POST(req: NextRequest) {
 
     let capi: "sent" | "error" = "sent";
     try {
-      await sendAddToCartEvent({
+      await sendLeadEvent({
         pixelId,
         accessToken,
+        eventName: "Schedule",
+        idKey: "sched",
+        email,
+        phone: lead.phone ?? "",
+        firstName: lead.firstName ?? "",
+        countryCode: lead.countryCode ?? "",
         eventSourceUrl,
-        value: pricing.inr,
-        currency: pricing.currency,
         fbc,
         fbp,
         clientIp,
         clientUserAgent,
       });
-      console.log("[atc] AddToCart sent");
+      console.log("[sched] Schedule sent");
     } catch (err) {
       capi = "error";
-      console.error("[atc] error:", err);
+      console.error("[sched] error:", err);
     }
     return NextResponse.json({ ok: true, capi });
   } catch (err) {
-    console.error("[atc] fatal:", err);
+    console.error("[sched] fatal:", err);
     return NextResponse.json({ ok: true, capi: "error" });
   }
 }

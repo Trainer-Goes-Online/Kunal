@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { brand, pricing, canonicalCheckoutUrl } from "@/lib/config";
+import { brand, pricing, canonicalCheckoutUrl, capiHostAllowed } from "@/lib/config";
 import { sendMetaCapiEvent, sha256 } from "@/lib/meta-capi";
+import { resolveAttribution, buildFbc } from "@/lib/attribution";
 
 // ───────────────────────────────────────────────────────────────────
 // Razorpay webhook — server-to-server tracking authority.
@@ -115,12 +116,20 @@ export async function POST(req: NextRequest) {
   const customerType = cust.tp ?? "";
   const fullPhone = `${dialCode}${phoneDigits}`;
 
-  const fbc = notes.fbc || undefined;
   const fbp = notes.fbp || undefined;
   const clientIp = notes.ip || undefined;
   const clientUserAgent = notes.ua || undefined;
   const eventSourceUrl = notes.esu || canonicalCheckoutUrl();
-  const fbclid = notes.clid ?? "";
+  /* L6 — re-resolve over the stored notes so an order created before this
+     shipped is repaired: fbclid derived from _fbc when notes.clid was lost, and
+     _fbc rebuilt from notes.clid when the cookie was absent at order time. */
+  const resolvedAttr = resolveAttribution({
+    cookieAttr: { fbclid: notes.clid ?? "" },
+    bodyAttr: { source: utm.s ?? "", medium: utm.m ?? "", campaign: utm.c ?? "", content: utm.n ?? "", term: utm.t ?? "" },
+    fbc: notes.fbc ?? "",
+  });
+  const fbc = buildFbc(resolvedAttr, notes.fbc || "") || undefined;
+  const fbclid = resolvedAttr.fbclid;
 
   const rawAmount = typeof payment.amount === "string" ? parseInt(payment.amount, 10) : payment.amount;
   const amountInRupees =
@@ -150,11 +159,11 @@ export async function POST(req: NextRequest) {
     payment_date: paymentDate.toLocaleDateString("en-IN", { timeZone: brand.paymentTimezone }),
     payment_time: paymentDate.toLocaleTimeString("en-IN", { timeZone: brand.paymentTimezone }),
     payment_timestamp: paymentDate.toISOString(),
-    utm_source: utm.s ?? "",
-    utm_medium: utm.m ?? "",
-    utm_campaign: utm.c ?? "",
-    utm_content: utm.n ?? "",
-    utm_term: utm.t ?? "",
+    utm_source: resolvedAttr.utm.source,
+    utm_medium: resolvedAttr.utm.medium,
+    utm_campaign: resolvedAttr.utm.campaign,
+    utm_content: resolvedAttr.utm.content,
+    utm_term: resolvedAttr.utm.term,
     lead_id: paymentId,
     created_at: paymentDate.toISOString(),
     fbc: fbc ?? "",
@@ -196,7 +205,7 @@ export async function POST(req: NextRequest) {
   let salesResult: "sent" | "skipped" | "error" = "skipped";
   const metaPixelId = process.env.META_PIXEL_ID;
   const metaAccessToken = process.env.META_CAPI_ACCESS_TOKEN;
-  if (metaPixelId && metaAccessToken && email) {
+  if (metaPixelId && metaAccessToken && email && capiHostAllowed(req.headers.get("host"))) {
     const baseEvent = {
       pixelId: metaPixelId,
       accessToken: metaAccessToken,

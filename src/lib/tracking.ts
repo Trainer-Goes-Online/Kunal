@@ -109,29 +109,64 @@ export function restoreFbclid(): string {
   }
 }
 
-/** AddToCart — first landing CTA click of the browser's lifetime. Meta CAPI + GA4. */
+/**
+ * sendBeacon (fallback: keepalive fetch) to a same-origin path. Best-effort by
+ * design — the caller navigates immediately after, so nothing here is awaited or
+ * retried, and _fbc/_fbp ride along because the path is same-origin.
+ */
+function postBeacon(path: string, payload: unknown): void {
+  if (typeof window === "undefined") return;
+  const body = JSON.stringify(payload);
+  let sent = false;
+  try {
+    const blob = new Blob([body], { type: "application/json" });
+    sent = Boolean(navigator.sendBeacon && navigator.sendBeacon(path, blob));
+  } catch {
+    sent = false;
+  }
+  if (!sent) {
+    fetch(path, {
+      method: "POST",
+      body,
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+    }).catch(() => {});
+  }
+}
+
+/** The qualifier PII carried to the lead-side CAPI events (highest EMQ). */
+export interface LeadPII {
+  firstName: string;
+  email: string;
+  /** Full number including the dial code. */
+  phone: string;
+  /** Two-letter country code, e.g. "IN". */
+  countryCode: string;
+}
+
+/** AddToCart — first CTA click of the browser's lifetime. Meta CAPI + GA4. */
 export function fireAddToCartOnce(): void {
   if (typeof window === "undefined") return;
   if (!firedOnce("atc_fired")) {
     stampOnce("atc_fired"); // optimistic — survives a tab-kill mid-navigation
-    const body = JSON.stringify({ eventSourceUrl: window.location.href });
-    let sent = false;
-    try {
-      const blob = new Blob([body], { type: "application/json" });
-      sent = Boolean(navigator.sendBeacon && navigator.sendBeacon("/api/meta/add-to-cart", blob));
-    } catch {
-      sent = false;
-    }
-    if (!sent) {
-      fetch("/api/meta/add-to-cart", {
-        method: "POST",
-        body,
-        keepalive: true,
-        headers: { "Content-Type": "application/json" },
-      }).catch(() => {});
-    }
+    postBeacon("/api/meta/add-to-cart", { eventSourceUrl: window.location.href });
   }
   trackGa4EventOnce("add_to_cart");
+}
+
+/**
+ * CompleteRegistration (+ QualifiedLead when `qualified`) via Meta CAPI —
+ * fired on qualifier submit. Best-effort; the GA4 counterparts fire separately.
+ */
+export function fireRegistrationEvents(lead: LeadPII, qualified: boolean): void {
+  if (typeof window === "undefined") return;
+  postBeacon("/api/meta/registration", { lead, qualified, eventSourceUrl: window.location.href });
+}
+
+/** Schedule via Meta CAPI — a call was booked on /book-a-call. Best-effort. */
+export function fireScheduleEvent(lead: LeadPII): void {
+  if (typeof window === "undefined") return;
+  postBeacon("/api/meta/schedule", { lead, eventSourceUrl: window.location.href });
 }
 
 /** InitiateCheckout (Meta CAPI) — once per browser, after form validation passes. */
