@@ -109,7 +109,6 @@ export function QualifyModal() {
     const t = window.setTimeout(() => {
       panelRef.current?.querySelector(".qz-body")?.scrollTo({ top: 0 });
       if (firstFieldRef.current) firstFieldRef.current.focus();
-      else if (firstAreaRef.current) firstAreaRef.current.focus();
       else panelRef.current?.focus();
     }, 60);
     return () => window.clearTimeout(t);
@@ -368,22 +367,6 @@ export function QualifyModal() {
                   e.preventDefault();
                   advance({ ...answers, [current.id]: e.currentTarget.value });
                 }
-              }}
-            />
-          )}
-
-          {current.kind === "longtext" && (
-            <textarea
-              ref={firstAreaRef}
-              className={`qz-input qz-textarea${error ? " is-error" : ""}`}
-              placeholder={current.placeholder}
-              value={answers[current.id] || ""}
-              aria-label={current.question}
-              aria-invalid={Boolean(error)}
-              rows={4}
-              onChange={(e) => {
-                setAnswer(current.id, e.target.value);
-                if (error) setError("");
               }}
             />
           )}
