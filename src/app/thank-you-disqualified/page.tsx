@@ -1,6 +1,7 @@
 /**
  * /thank-you-disqualified — where the qualifier sends the one applicant who
- * says they are not ready to invest (`DISQUALIFYING_INVESTMENT`, qualify.ts).
+ * answers Q08 with "looking for free advice" (`DISQUALIFYING_ANSWER`,
+ * qualify.ts). That is the only rule that routes anyone here.
  *
  * COPY IS THE CLIENT'S — "Kunal Disqualify TY page.md", §"No Thank You Page".
  * Section order is theirs too: thank-you → Instagram ("You're Not Left Empty
@@ -133,9 +134,10 @@ function ReApply() {
 }
 
 /* ============================================================
-   4 · Why it wasn't approved — the three criteria, each quoting
-   the applicant's own selection. Copy + criteria from the client's
-   doc; the predicates live on CRITERIA in src/lib/qualify.ts.
+   4 · Why it wasn't approved — the one deciding answer, quoted
+   back. Was three criteria; the client's final PDF cut two of the
+   questions they read and asks for a simple page. Copy from the client's
+   final PDF. The rule lives on isDisqualified in src/lib/qualify.ts.
    ============================================================ */
 function WhyNotApproved() {
   return (

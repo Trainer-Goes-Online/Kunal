@@ -453,3 +453,127 @@
   .sdp-root .qz-option { padding: 10px 14px; font-size: 14px; }
   .sdp-root .qz-legal { display: none; }   /* the foot CTA must stay reachable */
 }
+
+/* =====================================================================
+   APPLICATION FORM ADDITIONS
+   The question set became the client's 12-question coaching application,
+   which brought three input types the original six-step form never had:
+   a long-text answer, a select-all-that-apply, and an optional dropdown.
+   Plus the PDF's section headings, shown above each question.
+   ===================================================================== */
+
+/* ---- section heading above the question ---- */
+.sdp-root .qz-section {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 10px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brand-deep);
+}
+.sdp-root .qz-section::before {
+  content: "";
+  width: 18px;
+  height: 2px;
+  flex: 0 0 18px;
+  background: var(--brand);
+}
+
+/* ---- trust callout, above Q08 only ----
+   Dark band inside a light panel: it is the one block on the form that is
+   selling rather than asking, and it has to read as Kunal talking, not as
+   another question. */
+.sdp-root .qz-callout {
+  margin: 0 0 20px;
+  padding: 18px 20px;
+  border-radius: var(--r);
+  background: var(--bg-dark);
+  border: 1px solid var(--border-dark-strong);
+  border-left: 3px solid var(--brand);
+}
+.sdp-root .qz-callout-title {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand-bright);
+}
+.sdp-root .qz-callout-body {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-dark-soft);
+}
+.sdp-root .qz-callout-body:last-child { margin-bottom: 0; }
+
+/* ---- Q01 "Other": the profession field it reveals ---- */
+.sdp-root .qz-other { margin-top: 14px; }
+.sdp-root .qz-other-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* ---- closing reassurance on the final step ---- */
+.sdp-root .qz-note {
+  margin: 18px 0 0;
+  padding: 13px 15px;
+  border-radius: var(--r);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+/* ---- long-text answer (Q04, Q05) ---- */
+.sdp-root .qz-textarea {
+  width: 100%;
+  min-height: 132px;
+  padding: 15px 17px;
+  font-family: var(--fb);
+  font-size: 16px;                /* 16px minimum — anything less zooms iOS Safari */
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--bg-alt);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  resize: vertical;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.sdp-root .qz-textarea::placeholder { color: var(--muted); font-weight: 400; }
+.sdp-root .qz-textarea:hover { border-color: var(--border-strong); }
+.sdp-root .qz-textarea:focus {
+  outline: none;
+  background: var(--bg);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-ring);
+}
+.sdp-root .qz-textarea.is-error { border-color: var(--danger); }
+
+/* ---- Q09 income: no dropdown ----
+   It was a native <select>. The browser draws that popup outside the page, so
+   it hung past the panel and moved the viewport, and its list is OS chrome no
+   stylesheet can theme. It renders as `.qz-option` rows now — inside the
+   scrollable body, in the brass theme, with the panel's own height respected.
+   Nothing select-specific left here. */
+
+/* ---- select-all-that-apply (Q03) ----
+   Same row as a pick-one, but the marker is a rounded square rather than a
+   circle — the standard shape difference that tells someone, without reading
+   anything, that more than one answer is allowed here. */
+.sdp-root .qz-tick--box { border-radius: 7px; }
+
+@media (max-height: 700px) {
+  .sdp-root .qz-textarea { min-height: 108px; }
+  .sdp-root .qz-section { margin-bottom: 8px; }
+}

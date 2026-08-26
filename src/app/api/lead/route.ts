@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateFirstName, validateEmail, isDisqualified } from "@/lib/qualify";
+import {
+  validateFullName,
+  validateEmail,
+  isDisqualified,
+  failedRules,
+  splitName,
+  GATES_IN_FORM_ORDER,
+  GATE_STYLE,
+} from "@/lib/qualify";
 import { sha256 } from "@/lib/meta-capi";
 import { siteOrigin } from "@/lib/config";
 import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
 
 /**
- * /api/lead — the CTA qualifier's six answers, forwarded to Pabbly.
+ * /api/lead — the coaching application's answers, forwarded to Pabbly.
+ *
+ * ⚠️ COLUMN NAMES CHANGED AGAIN with KWK_Application_Form_Final.pdf. The
+ * answers are now q01_role … q11_decision_maker (plus q01_role_other). Gone:
+ * q10_commitment and q11_attend_call, both questions the client deleted. Every
+ * other q-number SHIFTED by one because Q01 is now professional role. Also new:
+ * last_name / full_name are real values, since the form asks for a full name.
+ * Re-capture the webhook response in Pabbly and re-map, or the answer columns
+ * silently arrive empty.
  *
  * This funnel charges nothing, so there is no Razorpay webhook to carry the
  * applicant onward the way the paid funnel did. This route is its replacement:
@@ -50,23 +66,121 @@ export async function POST(req: NextRequest) {
   try {
     const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
 
-    const firstName = clean(body.firstName, 60);
+    /* The form asks for one full name; split it so Pabbly and the emails get
+       first / last separately, with the untouched original alongside. */
+    const name = splitName(clean(body.fullName, 120) || clean(body.firstName, 120));
     const email = clean(body.email, 120).toLowerCase();
     const whatsapp = clean(body.whatsapp, 20).replace(/[^\d+]/g, "");
     const phoneDigits = whatsapp.replace(/\D/g, "");
 
     // Same rules the modal applies, re-applied here — a POST can arrive
     // without ever having passed through the modal.
-    if (validateFirstName(firstName) || validateEmail(email) || phoneDigits.length < 6) {
+    if (validateFullName(name.full) || validateEmail(email) || phoneDigits.length < 6) {
       return NextResponse.json({ ok: false, error: "invalid" }, { status: 400 });
     }
 
     const utm = (body.utm ?? {}) as Record<string, unknown>;
-    const investment = clean(body.investment, 200);
+
+    /* The eleven application answers. Free text gets a longer cap than the
+       pick-one answers; `tried` is the multi-select, arriving pre-joined by
+       the modal (see MULTI_SEPARATOR in qualify.ts). */
+    const answers = {
+      role: clean(body.role, 200),
+      roleOther: clean(body.roleOther, 200),
+      situation: clean(body.situation, 200),
+      goal90: clean(body.goal90, 200),
+      tried: clean(body.tried, 500),
+      blocker: clean(body.blocker, 2000),
+      urgency: clean(body.urgency, 2000),
+      paidBefore: clean(body.paidBefore, 200),
+      investReady: clean(body.investReady, 300),
+      investLevel: clean(body.investLevel, 300),
+      income: clean(body.income, 120),
+      decisionMaker: clean(body.decisionMaker, 200),
+    };
 
     /* Recomputed server-side rather than trusted from the client. The browser
-       sends `qualified`, but this decides the value Pabbly stores. */
-    const qualified = !isDisqualified({ investment });
+       sends `qualified`, but this decides the value Pabbly stores. Four gates,
+       all from the PDF's routing logic — see FAIL_RULES in qualify.ts. */
+    const failed = failedRules(answers);
+    const qualified = !isDisqualified(answers);
+    /* Which gate tripped, so Pabbly can segment and the disqualified email can
+       print one honest sentence instead of a generic brush-off. `_all` lists
+       every failure when more than one applies. */
+    const primary = failed[0];
+    const reason = {
+      disqualified_reason: primary?.code ?? "",
+      disqualified_reason_all: failed.map((r) => r.code).join(","),
+      disqualified_reason_text: primary?.text ?? "",
+      disqualified_answer: primary ? (answers[primary.from as keyof typeof answers] ?? "") : "",
+    };
+
+    /* ---- The four gates, PRE-RENDERED ------------------------------------
+       An earlier version shipped 28 separate gate1_label … gate4_border
+       fields and expected the email template to assemble them. That is
+       unmappable in Pabbly's UI, and the alternative — four IF/ELSE branches
+       to pick a colour — is worse.
+
+       So the whole checklist is rendered here, colours and ticks already
+       decided, and travels as ONE value. The email maps a single tag,
+       {{gates_html}}, and Pabbly needs no conditions at all. GATE_STYLE in
+       qualify.ts stays the single source, so the email and
+       /thank-you-disqualified cannot drift apart.
+
+       The per-question fields below it are for a Sheet / CRM row, or for
+       anyone who does want to build the conditions by hand. */
+
+    const gateRows = GATES_IN_FORM_ORDER.map((rule) => {
+      const met = !rule.failed(answers);
+      const s = met ? GATE_STYLE.pass : GATE_STYLE.fail;
+      return { rule, met, s, answer: answers[rule.from as keyof typeof answers] ?? "" };
+    });
+
+    /* Answers are fixed option strings today, but a direct POST can put
+       anything in them, and this lands inside an email body. Escape it. */
+    const esc = (v: string) =>
+      v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+    const gates_html = [
+      '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Helvetica,Arial,sans-serif;">',
+      ...gateRows.map(
+        ({ rule, s, answer }) =>
+          `<tr><td style="padding:0 0 8px;">` +
+            `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${s.bg};border:1px solid ${s.border};border-left:3px solid ${s.color};border-radius:0 10px 10px 0;">` +
+              `<tr>` +
+                `<td width="30" valign="top" style="padding:13px 0 13px 14px;font-size:17px;font-weight:bold;line-height:20px;color:${s.color};">${s.mark}</td>` +
+                `<td style="padding:13px 16px 13px 6px;">` +
+                  `<p style="margin:0 0 4px;font-size:14px;line-height:20px;font-weight:bold;color:#161310;">${esc(rule.label)}</p>` +
+                  `<p style="margin:0;font-size:13px;line-height:19px;color:#8A8474;">${s.status} &middot; you answered: <span style="color:#161310;">${esc(answer) || "Not recorded"}</span></p>` +
+                `</td>` +
+              `</tr>` +
+            `</table>` +
+          `</td></tr>`
+      ),
+      "</table>",
+    ].join("");
+
+    const gates_text = gateRows
+      .map(({ rule, s, answer }) => `[${s.mark}] ${rule.label}\n    ${s.status} - you answered: ${answer || "Not recorded"}`)
+      .join("\n\n");
+
+    const gates = {
+      /** One tag, drop straight into the email body. Everything baked in. */
+      gates_html,
+      /** Same thing for the plain-text part. */
+      gates_text,
+      /** "Q8, Q10" — handy for a Sheet column or a filter step. */
+      failed_questions: failed.map((r) => `Q${r.q}`).sort().join(", "),
+      /** Per question, for a Sheet row or hand-built conditions. */
+      gate_q1_answer: answers.role,
+      gate_q1_status: gateRows.find((g) => g.rule.q === 1)?.s.status ?? "",
+      gate_q8_answer: answers.investReady,
+      gate_q8_status: gateRows.find((g) => g.rule.q === 8)?.s.status ?? "",
+      gate_q10_answer: answers.income,
+      gate_q10_status: gateRows.find((g) => g.rule.q === 10)?.s.status ?? "",
+      gate_q11_answer: answers.decisionMaker,
+      gate_q11_status: gateRows.find((g) => g.rule.q === 11)?.s.status ?? "",
+    };
 
     const fbc = req.cookies.get("_fbc")?.value ?? "";
     const fbp = req.cookies.get("_fbp")?.value ?? "";
@@ -113,25 +227,32 @@ export async function POST(req: NextRequest) {
     const leadId = sha256(`${email}|kwk_free_lead`).slice(0, 32);
 
     const pabblyPayload = {
-      /* --- identity (the paid funnel's names, minus what we don't collect) --- */
-      first_name: firstName,
-      last_name: "",
-      full_name: firstName,
+      /* --- identity --- */
+      first_name: name.first,
+      last_name: name.last,
+      full_name: name.full,
       email,
       phone: whatsapp,
       country_code: clean(body.countryCode, 4),
       dial_code: clean(body.dialCode, 6),
 
-      /* --- the seven answers, in the order they are asked --- */
-      q1_first_name: firstName,
-      q2_email: email,
-      q3_whatsapp: whatsapp,
-      q4_role: clean(body.role, 120),
-      q5_goal: clean(body.goal, 200),
-      q6_income: clean(body.income, 120),
-      q7_deal_breaker: clean(body.dealBreaker, 1000),
-      q8_why_coaching: clean(body.whyCoaching, 1000),
-      q9_investment: investment,
+      /* --- the eleven application answers ---
+         Numbered to match the client's application PDF (Q01 to Q11), NOT the
+         modal's step order — the modal asks name/email/WhatsApp first, and
+         those are already above as full_name / email / phone.
+         q01_role_other is only filled when q01_role is "Other". */
+      q01_role: answers.role,
+      q01_role_other: answers.roleOther,
+      q02_situation: answers.situation,
+      q03_goal_90d: answers.goal90,
+      q04_tried: answers.tried,
+      q05_blocker: answers.blocker,
+      q06_urgency: answers.urgency,
+      q07_paid_before: answers.paidBefore,
+      q08_invest_ready: answers.investReady,
+      q09_invest_level: answers.investLevel,
+      q10_income: answers.income,
+      q11_decision_maker: answers.decisionMaker,
 
       /* --- outcome --- */
       funnel: "free",
@@ -141,6 +262,9 @@ export async function POST(req: NextRequest) {
       /* Where this applicant was actually sent, so Pabbly can branch without
          re-implementing the rule. */
       redirected_to: qualified ? "/book-a-call" : "/thank-you-disqualified",
+      /* Empty strings on a qualified lead. */
+      ...reason,
+      ...gates,
 
       /* --- attribution, identical field names to the paid payload --- */
       utm_source: clean(resolved.utm.source, 120),
