@@ -68,7 +68,7 @@ export function DisqualifiedAnswers() {
       </p>
 
       <ol className="dq-crit-list">
-        {GATES_IN_FORM_ORDER.map((rule) => {
+        {GATES_IN_FORM_ORDER.map((rule, i) => {
           /* null while loading and for a visitor with no stored answers: a
              tick or a cross there would be a guess presented as a verdict. */
           const met = answers ? !rule.failed(answers) : null;
@@ -82,8 +82,12 @@ export function DisqualifiedAnswers() {
               data-met={met === null ? undefined : met ? "1" : "0"}
             >
               <div className="dq-crit-head">
+                {/* A plain 1 to 4, NOT rule.q. The q-numbers are stable
+                    Pabbly identifiers from the original PDF and no longer
+                    match the on-screen question order, so showing "Q8" here
+                    would point at a question the applicant never saw. */}
                 <span className="dq-crit-num" aria-hidden="true">
-                  Q{rule.q}
+                  {i + 1}
                 </span>
                 <p className="dq-crit-text">{rule.label}</p>
                 {s && (

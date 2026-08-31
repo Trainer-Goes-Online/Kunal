@@ -89,8 +89,8 @@ export async function POST(req: NextRequest) {
       situation: clean(body.situation, 200),
       goal90: clean(body.goal90, 200),
       tried: clean(body.tried, 500),
-      blocker: clean(body.blocker, 2000),
-      urgency: clean(body.urgency, 2000),
+      urgency: clean(body.urgency, 200),
+      urgencyOther: clean(body.urgencyOther, 500),
       paidBefore: clean(body.paidBefore, 200),
       investReady: clean(body.investReady, 300),
       investLevel: clean(body.investLevel, 300),
@@ -207,18 +207,24 @@ export async function POST(req: NextRequest) {
       country_code: clean(body.countryCode, 4),
       dial_code: clean(body.dialCode, 6),
 
-      /* --- the eleven application answers ---
-         Numbered to match the client's application PDF (Q01 to Q11), NOT the
-         modal's step order — the modal asks name/email/WhatsApp first, and
-         those are already above as full_name / email / phone.
-         q01_role_other is only filled when q01_role is "Other". */
+      /* --- the ten application answers ---
+         ⚠️ THE q-NUMBERS ARE STABLE IDENTIFIERS, NOT THE ON-SCREEN ORDER.
+         They come from the client's application PDF and are deliberately left
+         alone whenever the form is reshuffled, so an existing Pabbly mapping
+         keeps working. Two consequences to expect:
+           · q05 is absent. That was the "what has stopped you" free text, and
+             the client removed the question. The gap is intentional; do not
+             renumber q06+ to close it.
+           · contact is asked LAST on screen but still arrives above as
+             full_name / email / phone.
+         `_other` fields are only filled when their parent answer is "Other". */
       q01_role: answers.role,
       q01_role_other: answers.roleOther,
       q02_situation: answers.situation,
       q03_goal_90d: answers.goal90,
       q04_tried: answers.tried,
-      q05_blocker: answers.blocker,
       q06_urgency: answers.urgency,
+      q06_urgency_other: answers.urgencyOther,
       q07_paid_before: answers.paidBefore,
       q08_invest_ready: answers.investReady,
       q09_invest_level: answers.investLevel,
