@@ -90,7 +90,8 @@ export function QualifyModal() {
       e.preventDefault();
       lastFocused.current = trigger;
       setOpen(true);
-      trackGa4EventOnce("qualify_start");
+      // AddToCart (Meta CAPI) + GA4 add_to_cart fire from CtaTracker on this same
+      // [data-qualify-open] click; the modal just opens here.
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);

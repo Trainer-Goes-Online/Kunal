@@ -192,6 +192,13 @@
 }
 .sdp-root .qz-input.is-error { border-color: var(--danger); }
 
+/* Open-text answers (the two reflective questions) — same field, taller. */
+.sdp-root textarea.qz-textarea {
+  min-height: 112px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
 /* phone: dial-code chip + number, one control */
 .sdp-root .qz-phone { display: flex; gap: 10px; align-items: stretch; }
 .sdp-root .qz-input--phone { flex: 1 1 auto; min-width: 0; }

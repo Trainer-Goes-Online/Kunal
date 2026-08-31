@@ -74,17 +74,23 @@ export const site = {
   /** Hours on the rolling per-visitor offer countdown. "0" disables the timer. */
   offerTimerHours: process.env.NEXT_PUBLIC_OFFER_TIMER_HOURS ?? "5",
 
-  /** Three client video testimonials. Vimeo player URLs or direct MP4 both work. */
+  /** Client video testimonials. Vimeo player URLs or direct MP4 both work. */
   testimonialVideos: [
     process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_1 ?? "https://player.vimeo.com/video/1213532473", // Ashish R — unchanged
     process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_2 ?? "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Kunal/Captions_AFF4F3.MP4", // Vaibhav
     process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_3 ?? "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Kunal/Video_Testiomonial_2.mp4", // Ashish
+    // Kaushabh — direct MP4 on the DO Spaces CDN. Baked as the default, so no env
+    // is required; NEXT_PUBLIC_TESTIMONIAL_VIDEO_4 only overrides it. Its committed
+    // opening frame (clip-4.jpg) is the poster + trust-strip avatar.
+    process.env.NEXT_PUBLIC_TESTIMONIAL_VIDEO_4 ??
+      "https://tgox-production-bucket.nyc3.cdn.digitaloceanspaces.com/client_funnel_videos/Kunal/WhatsApp%20Video%202026-08-13%20at%2018.21.50.mp4",
   ],
   /** Optional still for each clip. Empty => derived (MP4) or fetched (Vimeo). */
   testimonialPosters: [
     process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_1 ?? "",
     process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_2 ?? "",
     process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_3 ?? "",
+    process.env.NEXT_PUBLIC_TESTIMONIAL_POSTER_4 ?? "",
   ],
 
   /**
@@ -106,6 +112,9 @@ export const site = {
     "/testimonials/clip-1.jpg",
     "/testimonials/clip-2.jpg",
     "/testimonials/clip-3.jpg",
+    // Kaushabh — his clip is a direct MP4 (no Vimeo oEmbed), so this committed
+    // opening frame is both the rail's poster and the trust-strip avatar face.
+    "/testimonials/clip-4.jpg",
   ],
 } as const;
 
