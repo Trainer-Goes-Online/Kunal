@@ -23,7 +23,7 @@
  * tags) works either way — only the running order changed.
  */
 
-export type StepKind = "text" | "email" | "tel" | "textarea" | "choice" | "multi";
+export type StepKind = "contact" | "textarea" | "choice" | "multi";
 
 /** A boxed note rendered above the question. Used once, on Q08. */
 export type Callout = { title: string; body: readonly string[] };
@@ -50,7 +50,8 @@ type StepBase = {
 };
 
 export type QualifyStep =
-  | (StepBase & { kind: "text" | "email" | "tel"; placeholder?: string })
+  /** Full name + email + WhatsApp, all three on one screen. Always last. */
+  | (StepBase & { kind: "contact" })
   | (StepBase & { kind: "textarea"; placeholder?: string })
   | (StepBase & { kind: "choice"; options: readonly string[]; other?: OtherField })
   | (StepBase & { kind: "multi"; options: readonly string[] });
@@ -62,32 +63,7 @@ const S_INVESTMENT = "Investment readiness";
 const S_DECISION = "Decision readiness";
 
 export const qualifySteps: readonly QualifyStep[] = [
-  /* ---- contact (moved to the front at the client's request) ---- */
-  {
-    id: "fullName",
-    section: S_YOU,
-    kind: "text",
-    question: "Full Name",
-    placeholder: "First and last name",
-  },
-  {
-    id: "email",
-    section: S_YOU,
-    kind: "email",
-    question: "Email Address",
-    hint: "Your calendar invite and call link are sent here.",
-    placeholder: "you@company.com",
-  },
-  {
-    id: "whatsapp",
-    section: S_YOU,
-    kind: "tel",
-    question: "WhatsApp Number",
-    hint: "We send your call details, prep and reminders here.",
-    placeholder: "98765 43210",
-  },
-
-  /* ---- 1 · YOUR CURRENT SITUATION (PDF Q01 to Q05) ---- */
+  /* ---- 1 · YOUR CURRENT SITUATION (PDF Q01 to Q04) ---- */
   {
     id: "role",
     section: S_SITUATION,
@@ -148,22 +124,27 @@ export const qualifySteps: readonly QualifyStep[] = [
       "Nothing consistently, this would be my first real attempt",
     ],
   },
-  {
-    id: "blocker",
-    section: S_SITUATION,
-    kind: "textarea",
-    question: "In your own words, what has stopped you from achieving this goal until now?",
-    placeholder: "Be honest. This helps us understand whether we can genuinely help you.",
-    hint: "Minimum 2 sentences. Vague answers will result in your application being declined.",
-  },
-
   /* ---- 2 · URGENCY AND INTENT (PDF Q06 to Q07) ---- */
   {
     id: "urgency",
     section: S_URGENCY,
-    kind: "textarea",
+    kind: "choice",
     question: "Why is solving this important to you right now? What is driving your urgency today?",
-    placeholder: "E.g. wedding in 4 months, health scare, event coming up, just tired of feeling this way.",
+    options: [
+      "A doctor’s warning (blood pressure, cholesterol, sugar, or similar)",
+      "A specific event coming up (wedding, trip, reunion, milestone birthday)",
+      "Low energy that’s affecting my work and my family",
+      "I’m done putting this off. This year is different.",
+      "Someone close to me had a health scare and it got me thinking about mine",
+      "No single trigger. I just decided it’s time.",
+      "Other (please specify)",
+    ],
+    other: {
+      option: "Other (please specify)",
+      id: "urgencyOther",
+      label: "Please specify:",
+      placeholder: "What is driving it",
+    },
   },
   {
     id: "paidBefore",
@@ -239,7 +220,20 @@ export const qualifySteps: readonly QualifyStep[] = [
       "I’d like to discuss it with my spouse or family first",
       "Someone else would need to approve the investment",
     ],
-    note: "Almost there. If you’re selected, you’ll be taken to a calendar next. Select your date and time. Do not exit the page before booking your slot.",
+  },
+
+  /* ---- Contact, last and on ONE screen ----
+     The PDF puts these immediately before the booking redirect and the client
+     confirmed that placement. Asking for a name before anything has been
+     invested in the form is the easiest point to abandon; by here they have
+     answered ten questions and the details are the last small step.
+     All three share a step, stacked, because they are one thought. */
+  {
+    id: "contact",
+    section: S_YOU,
+    kind: "contact",
+    question: "Almost there. Where should we send it?",
+    note: "If you’re selected, you’ll be taken to a calendar next. Select your date and time. Do not exit the page before booking your slot.",
   },
 ];
 

@@ -510,7 +510,29 @@
 }
 .sdp-root .qz-callout-body:last-child { margin-bottom: 0; }
 
-/* ---- Q01 "Other": the profession field it reveals ---- */
+/* ---- contact step: three labelled fields on one screen ----
+   Last step, so it is the only one that shows more than a single control.
+   Labels are visible rather than placeholder-only: three stacked inputs with
+   placeholder-only labels lose their meaning the moment someone starts
+   typing, and this is the step that decides whether we can reach them. */
+.sdp-root .qz-contact { display: flex; flex-direction: column; gap: 16px; }
+.sdp-root .qz-field { display: block; }
+.sdp-root .qz-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.sdp-root .qz-field-hint {
+  margin: 7px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* ---- Q01 / urgency "Other": the field it reveals ---- */
 .sdp-root .qz-other { margin-top: 14px; }
 .sdp-root .qz-other-label {
   display: block;

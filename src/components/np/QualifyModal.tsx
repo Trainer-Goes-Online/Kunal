@@ -46,18 +46,35 @@ export function QualifyModal() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [country, setCountry] = useState<DialCode>(dialCodes[0]);
   const [error, setError] = useState("");
+  /* Which field the error belongs to. The contact step shows three inputs at
+     once, so a bare message would not say which one to fix. */
+  const [errorField, setErrorField] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const panelRef = useRef<HTMLDivElement>(null);
-  const firstFieldRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+  const fields = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
   const lastFocused = useRef<HTMLElement | null>(null);
 
-  /* A callback ref, not the ref object: the same slot holds an <input> on some
-     steps and a <textarea> on others, and a RefObject of the union type is
-     assignable to neither element's `ref`. */
-  const setFieldRef = useCallback((el: HTMLInputElement | HTMLTextAreaElement | null) => {
-    firstFieldRef.current = el;
-  }, []);
+  /* Callback refs keyed by answer id: the same step can hold three inputs, and
+     a RefObject of a union element type is assignable to none of them. */
+  const fieldRef = useCallback(
+    (id: string) => (el: HTMLInputElement | HTMLTextAreaElement | null) => {
+      fields.current[id] = el;
+    },
+    []
+  );
+
+  const fail = (msg: string, field: string) => {
+    setError(msg);
+    setErrorField(field);
+    window.setTimeout(() => fields.current[field]?.focus(), 0);
+  };
+  const clearError = () => {
+    if (error) {
+      setError("");
+      setErrorField("");
+    }
+  };
 
   const total = qualifySteps.length;
   const current = qualifySteps[step];
@@ -83,6 +100,7 @@ export function QualifyModal() {
   const close = useCallback(() => {
     setOpen(false);
     setError("");
+    setErrorField("");
     lastFocused.current?.focus?.();
   }, []);
 
@@ -101,21 +119,21 @@ export function QualifyModal() {
     };
   }, [open, submitting, close]);
 
-  /* ---- Focus the field (or the panel) as each step lands. The body also
-          scrolls back to the top: a long option list could otherwise leave it
-          scrolled, hiding the new question. ---- */
+  /* ---- Focus the first field (or the panel) as each step lands. The body
+          also scrolls back to the top: a long option list could otherwise
+          leave it scrolled, hiding the new question. ---- */
   useEffect(() => {
     if (!open) return;
     const t = window.setTimeout(() => {
       panelRef.current?.querySelector(".qz-body")?.scrollTo({ top: 0 });
-      if (firstFieldRef.current) firstFieldRef.current.focus();
+      const first = current.kind === "contact" ? fields.current.fullName : fields.current[current.id];
+      if (first) first.focus();
       else panelRef.current?.focus();
     }, 60);
     return () => window.clearTimeout(t);
-  }, [open, step]);
+  }, [open, step, current]);
 
-  const setAnswer = (id: string, value: string) =>
-    setAnswers((a) => ({ ...a, [id]: value }));
+  const setAnswer = (id: string, value: string) => setAnswers((a) => ({ ...a, [id]: value }));
 
   /* ---- Submit: stash, count, fire-and-forget, hand off ---- */
   const submit = useCallback(
@@ -134,15 +152,15 @@ export function QualifyModal() {
         countryCode: country.code,
         dialCode: country.dial,
 
-        /* The eleven application answers, by step id. /api/lead maps these
-           onto the q01_… Pabbly columns. */
+        /* The ten application answers, by step id. /api/lead maps these onto
+           the q01_… Pabbly columns. */
         role: finalAnswers.role || "",
         roleOther: finalAnswers.roleOther || "",
         situation: finalAnswers.situation || "",
         goal90: finalAnswers.goal90 || "",
         tried: finalAnswers.tried || "",
-        blocker: finalAnswers.blocker || "",
         urgency: finalAnswers.urgency || "",
+        urgencyOther: finalAnswers.urgencyOther || "",
         paidBefore: finalAnswers.paidBefore || "",
         investReady: finalAnswers.investReady || "",
         investLevel: finalAnswers.investLevel || "",
@@ -158,7 +176,7 @@ export function QualifyModal() {
       };
 
       // Kept for the next page — /book-a-call greets by name and
-      // /thank-you-disqualified quotes the deciding answer back.
+      // /thank-you-disqualified quotes the deciding answers back.
       try {
         window.sessionStorage.setItem(QUALIFY_STORAGE_KEY, JSON.stringify(payload));
       } catch {
@@ -170,24 +188,16 @@ export function QualifyModal() {
          GA4: complete_registration for everyone who finishes the form,
          qualified_lead only for the ones who pass all four gates.
          META CAPI: /api/meta/registration sends CompleteRegistration for
-         everyone and QualifiedLead on top when `qualified` is true. It is
-         server-side, so it carries hashed email / phone / first name /
-         country for a decent Event Match Quality, and it reads the _fbc and
-         _fbp cookies off the same-origin request.
+         everyone and QualifiedLead on top when `qualified` is true.
 
-         Both names match what the downstream `free` branch already fires —
-         do not rename one without the other, or the funnel reports two
-         different events for the same action. */
+         Both names match what the downstream `free` branch fires — do not
+         rename one without the other, or the funnel reports two different
+         events for the same action. */
       trackGa4EventOnce("complete_registration");
       if (!disqualified) trackGa4EventOnce("qualified_lead");
 
       fireRegistrationEvents(
-        {
-          firstName: name.first,
-          email,
-          phone: payload.whatsapp,
-          countryCode: country.code,
-        },
+        { firstName: name.first, email, phone: payload.whatsapp, countryCode: country.code },
         !disqualified
       );
 
@@ -210,8 +220,7 @@ export function QualifyModal() {
       }
 
       /* The one fork: everyone reaches the calendar EXCEPT the applicant who
-         answered Q08 with "looking for free advice". `name` + `email` are what
-         /book-a-call reads to prefill Calendly. */
+         trips one of the four gates. `name` + `email` prefill Calendly. */
       window.location.href = disqualified
         ? DISQUALIFIED_PATH
         : `${site.bookUrl}?name=${encodeURIComponent(name.first)}&email=${encodeURIComponent(email)}`;
@@ -223,35 +232,41 @@ export function QualifyModal() {
   const advance = useCallback(
     (next: Record<string, string>) => {
       const value = next[current.id] || "";
-      let msg = "";
 
       switch (current.kind) {
-        case "text":
-          msg = validateFullName(value);
+        case "contact": {
+          // Three fields on one screen: report the first problem and put the
+          // cursor in the field it belongs to.
+          const n = validateFullName(next.fullName || "");
+          if (n) return fail(n, "fullName");
+          const e = validateEmail(next.email || "");
+          if (e) return fail(e, "email");
+          const p = validatePhone(next.whatsapp || "", country);
+          if (p) return fail(p, "whatsapp");
           break;
-        case "email":
-          msg = validateEmail(value);
+        }
+        case "textarea": {
+          const msg = validateLongAnswer(value);
+          if (msg) return fail(msg, current.id);
           break;
-        case "tel":
-          msg = validatePhone(value, country);
+        }
+        case "multi": {
+          const msg = validateMulti(value);
+          if (msg) return fail(msg, current.id);
           break;
-        case "textarea":
-          msg = validateLongAnswer(value);
-          break;
-        case "multi":
-          msg = validateMulti(value);
-          break;
-        case "choice":
-          if (!value) msg = "Please pick one to continue.";
-          // "Other" is only a real answer once the profession is typed in.
-          else if (current.other && value === current.other.option && !(next[current.other.id] || "").trim()) {
-            msg = "Please enter your profession.";
+        }
+        case "choice": {
+          if (!value) return fail("Please pick one to continue.", current.id);
+          // "Other" is only a real answer once the follow-up is filled in.
+          if (current.other && value === current.other.option && !(next[current.other.id] || "").trim()) {
+            return fail("Please add a little detail.", current.other.id);
           }
           break;
+        }
       }
 
-      if (msg) return setError(msg);
       setError("");
+      setErrorField("");
       if (isLast) submit(next);
       else setStep((s) => s + 1);
     },
@@ -260,16 +275,16 @@ export function QualifyModal() {
 
   const back = () => {
     setError("");
+    setErrorField("");
     setStep((s) => Math.max(0, s - 1));
   };
 
-  /* A pick-one moves the form on by itself, except on the last step (the
-     answer is also the submit) and when the choice is "Other" (there is a
-     profession still to type). */
+  /* A pick-one moves the form on by itself, except on the last step and when
+     the choice is "Other" (there is still something to type). */
   const pickChoice = (value: string) => {
     const next = { ...answers, [current.id]: value };
     setAnswers(next);
-    setError("");
+    clearError();
     const opensOther = current.kind === "choice" && current.other?.option === value;
     if (!isLast && !opensOther) window.setTimeout(() => advance(next), 180);
   };
@@ -283,6 +298,7 @@ export function QualifyModal() {
      free text or several answers, so no single click means "done". */
   const needsContinue = current.kind !== "choice" || Boolean(otherOpen);
   const multiChosen = current.kind === "multi" ? parseMulti(value) : [];
+  const err = (field: string) => (errorField === field ? " is-error" : "");
 
   return (
     <div
@@ -342,96 +358,123 @@ export function QualifyModal() {
           </h2>
           {current.hint && <p className="qz-hint">{current.hint}</p>}
 
-          {(current.kind === "text" || current.kind === "email") && (
-            <input
-              ref={setFieldRef}
-              type={current.kind === "email" ? "email" : "text"}
-              inputMode={current.kind === "email" ? "email" : undefined}
-              /* Phone keyboards capitalise and autocorrect the first word of an
-                 address; both are wrong for an email field. */
-              autoCapitalize={current.kind === "email" ? "none" : undefined}
-              autoCorrect={current.kind === "email" ? "off" : undefined}
-              spellCheck={current.kind === "email" ? false : undefined}
-              className={`qz-input${error ? " is-error" : ""}`}
-              placeholder={current.placeholder}
-              value={value}
-              autoComplete={current.kind === "email" ? "email" : "name"}
-              aria-label={current.question}
-              aria-invalid={Boolean(error)}
-              onChange={(e) => {
-                setAnswer(current.id, e.target.value);
-                if (error) setError("");
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  advance({ ...answers, [current.id]: e.currentTarget.value });
-                }
-              }}
-            />
-          )}
-
-          {current.kind === "tel" && (
-            <div className={`qz-phone${error ? " is-error" : ""}`}>
-              <label className="qz-dial">
-                <span aria-hidden="true">{country.flag}</span>
-                <span>{country.dial}</span>
-                <select
-                  aria-label="Country dialling code"
-                  value={country.code}
+          {/* ---- contact: three fields, one screen, always last ---- */}
+          {current.kind === "contact" && (
+            <div className="qz-contact">
+              <div className="qz-field">
+                <label className="qz-label" htmlFor="qz-fullname">
+                  Full Name
+                </label>
+                <input
+                  id="qz-fullname"
+                  ref={fieldRef("fullName")}
+                  type="text"
+                  className={`qz-input${err("fullName")}`}
+                  placeholder="First and last name"
+                  value={answers.fullName || ""}
+                  autoComplete="name"
+                  aria-invalid={errorField === "fullName"}
                   onChange={(e) => {
-                    const found = dialCodes.find((c) => c.code === e.target.value);
-                    if (found) setCountry(found);
-                    if (error) setError("");
+                    setAnswer("fullName", e.target.value);
+                    clearError();
                   }}
-                >
-                  {dialCodes.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.flag} {c.code} {c.dial}
-                    </option>
-                  ))}
-                </select>
-                <svg className="qz-caret" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </label>
-              <input
-                ref={setFieldRef}
-                type="tel"
-                inputMode="numeric"
-                autoComplete="tel-national"
-                className="qz-input qz-input--phone"
-                placeholder={current.placeholder}
-                value={value}
-                aria-label={current.question}
-                aria-invalid={Boolean(error)}
-                onChange={(e) => {
-                  setAnswer(current.id, e.target.value.replace(/\D/g, "").slice(0, 14));
-                  if (error) setError("");
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    advance({ ...answers, [current.id]: e.currentTarget.value });
-                  }
-                }}
-              />
+                />
+              </div>
+
+              <div className="qz-field">
+                <label className="qz-label" htmlFor="qz-email">
+                  Email Address
+                </label>
+                <input
+                  id="qz-email"
+                  ref={fieldRef("email")}
+                  type="email"
+                  inputMode="email"
+                  /* Phone keyboards capitalise and autocorrect the first word
+                     of an address; both are wrong here. */
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  className={`qz-input${err("email")}`}
+                  placeholder="you@company.com"
+                  value={answers.email || ""}
+                  autoComplete="email"
+                  aria-invalid={errorField === "email"}
+                  onChange={(e) => {
+                    setAnswer("email", e.target.value);
+                    clearError();
+                  }}
+                />
+                <p className="qz-field-hint">Your calendar invite and call link are sent here.</p>
+              </div>
+
+              <div className="qz-field">
+                <label className="qz-label" htmlFor="qz-whatsapp">
+                  WhatsApp Number
+                </label>
+                <div className={`qz-phone${err("whatsapp")}`}>
+                  <label className="qz-dial">
+                    <span aria-hidden="true">{country.flag}</span>
+                    <span>{country.dial}</span>
+                    <select
+                      aria-label="Country dialling code"
+                      value={country.code}
+                      onChange={(e) => {
+                        const found = dialCodes.find((c) => c.code === e.target.value);
+                        if (found) setCountry(found);
+                        clearError();
+                      }}
+                    >
+                      {dialCodes.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.flag} {c.code} {c.dial}
+                        </option>
+                      ))}
+                    </select>
+                    <svg className="qz-caret" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </label>
+                  <input
+                    id="qz-whatsapp"
+                    ref={fieldRef("whatsapp")}
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel-national"
+                    className="qz-input qz-input--phone"
+                    placeholder="98765 43210"
+                    value={answers.whatsapp || ""}
+                    aria-invalid={errorField === "whatsapp"}
+                    onChange={(e) => {
+                      setAnswer("whatsapp", e.target.value.replace(/\D/g, "").slice(0, 14));
+                      clearError();
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        advance({ ...answers, whatsapp: e.currentTarget.value });
+                      }
+                    }}
+                  />
+                </div>
+                <p className="qz-field-hint">We send call details, prep and reminders here.</p>
+              </div>
             </div>
           )}
 
           {current.kind === "textarea" && (
             <textarea
-              ref={setFieldRef}
-              className={`qz-textarea${error ? " is-error" : ""}`}
+              ref={fieldRef(current.id)}
+              className={`qz-textarea${err(current.id)}`}
               placeholder={current.placeholder}
               value={value}
               rows={5}
               maxLength={2000}
               aria-label={current.question}
-              aria-invalid={Boolean(error)}
+              aria-invalid={errorField === current.id}
               onChange={(e) => {
                 setAnswer(current.id, e.target.value);
-                if (error) setError("");
+                clearError();
               }}
               onKeyDown={(e) => {
                 /* Enter inserts a newline here. Ctrl/Cmd+Enter is "done". */
@@ -456,7 +499,7 @@ export function QualifyModal() {
                     className={`qz-option${on ? " is-on" : ""}`}
                     onClick={() => {
                       setAnswer(current.id, toggleMulti(value, opt, current.options));
-                      if (error) setError("");
+                      clearError();
                     }}
                     disabled={submitting}
                   >
@@ -495,8 +538,8 @@ export function QualifyModal() {
                 ))}
               </div>
 
-              {/* Q01 only: picking "Other" reveals the profession field and
-                  suppresses auto-advance, so there is time to type it. */}
+              {/* Picking "Other" reveals the follow-up and suppresses
+                  auto-advance, so there is time to type it. */}
               {otherOpen && current.other && (
                 <div className="qz-other">
                   <label className="qz-other-label" htmlFor="qz-other-input">
@@ -504,15 +547,15 @@ export function QualifyModal() {
                   </label>
                   <input
                     id="qz-other-input"
-                    ref={setFieldRef}
+                    ref={fieldRef(current.other.id)}
                     type="text"
-                    className={`qz-input${error ? " is-error" : ""}`}
+                    className={`qz-input${err(current.other.id)}`}
                     placeholder={current.other.placeholder}
                     value={answers[current.other.id] || ""}
-                    aria-invalid={Boolean(error)}
+                    aria-invalid={errorField === current.other.id}
                     onChange={(e) => {
                       setAnswer(current.other!.id, e.target.value);
-                      if (error) setError("");
+                      clearError();
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -552,7 +595,7 @@ export function QualifyModal() {
               type="button"
               className="qz-next"
               onClick={() => advance(answers)}
-              disabled={submitting || (isLast && !value)}
+              disabled={submitting}
             >
               {submitting ? "Submitting…" : isLast ? "Submit My Application" : "Continue"}
               {!submitting && (
