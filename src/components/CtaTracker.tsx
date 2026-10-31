@@ -14,11 +14,10 @@ import { fireAddToCartOnce } from "@/lib/tracking";
  * intercepts). Matching the attribute rather than a destination also means the
  * event fires when the modal opens, not only if the link is followed.
  *
- * ⚠️ The event is still named AddToCart and /api/meta/add-to-cart still stamps
- * it with `pricing.inr` as its value. On a funnel that charges nothing that
- * value is fictional. Renaming it to Lead is a change to the Meta pixel's event
- * history and to whatever the ad sets optimise for, so it is left alone here —
- * decide it on the ads side, then change the route to match.
+ * This is EVENT 1 of the four Meta funnel events (AddToCart → Lead →
+ * QualifiedLead → Schedule). It fires through the Pixel and CAPI with one
+ * shared event id (see src/lib/tracking.ts). It carries no value or currency:
+ * the strategy call is free, so it is sent as a plain event.
  */
 export function CtaTracker() {
   useEffect(() => {

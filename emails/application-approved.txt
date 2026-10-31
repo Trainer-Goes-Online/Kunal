@@ -21,10 +21,10 @@ WHAT YOU TOLD US
   Name               {{full_name}}
   Email              {{email}}
   WhatsApp           {{phone}}
-  Professional role  {{q01_role}}
-  90-day goal        {{q03_goal_90d}}
-  Ready to invest    {{q08_invest_ready}}
-  Coaching tier      {{q09_invest_level}}
+  Current situation  {{q1_physique}}
+  Seriousness (1-10) {{q2_seriousness}}
+  Coaching tier      {{q3_invest_level}}
+  Decision maker     {{q4_decision_maker}}
 
 Something wrong? Reply to this email and we will correct it before the call.
 

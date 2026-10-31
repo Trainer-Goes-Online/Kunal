@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pricing, canonicalCheckoutUrl, capiHostAllowed } from "@/lib/config";
 import { sendAddToCartEvent } from "@/lib/meta-events";
-import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
+import { readCapiSignals, cleanEventId, cleanPII } from "@/lib/meta-request";
 
+/**
+ * /api/meta/add-to-cart — EVENT 1 of 4: landing-page CTA click.
+ *
+ * The browser fires the same AddToCart through the Pixel with the same
+ * `eventId`, so Meta deduplicates the pair into ONE event. This server copy adds
+ * the visitor id and, for a returning applicant, any PII still in their session.
+ */
 export async function POST(req: NextRequest) {
   try {
     if (!pricing.trackingEnabled) {
@@ -17,38 +24,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: "env_missing" });
     }
 
-    const body = await req.json().catch(() => ({} as { eventSourceUrl?: string }));
+    const body = (await req.json().catch(() => ({}))) as {
+      eventSourceUrl?: string;
+      eventId?: string;
+      lead?: unknown;
+    };
     const eventSourceUrl =
       typeof body.eventSourceUrl === "string" && body.eventSourceUrl
         ? body.eventSourceUrl
         : canonicalCheckoutUrl();
-
-    const cookieFbc = req.cookies.get("_fbc")?.value || "";
-    const fbp = req.cookies.get("_fbp")?.value || undefined;
-    // L4 — rebuild _fbc from the captured fbclid when the cookie is absent.
-    const resolvedAttr = resolveAttribution({
-      cookieAttr: readAttrCookie(req.cookies.get(ATTR_COOKIE)?.value),
-      fbc: cookieFbc,
-    });
-    const fbc = buildFbc(resolvedAttr, cookieFbc) || undefined;
-    const clientIp =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      req.headers.get("x-real-ip") ??
-      undefined;
-    const clientUserAgent = req.headers.get("user-agent") ?? undefined;
 
     let capi: "sent" | "error" = "sent";
     try {
       await sendAddToCartEvent({
         pixelId,
         accessToken,
+        eventId: cleanEventId(body.eventId),
         eventSourceUrl,
-        value: pricing.inr,
-        currency: pricing.currency,
-        fbc,
-        fbp,
-        clientIp,
-        clientUserAgent,
+        pii: cleanPII(body.lead),
+        ...readCapiSignals(req),
       });
       console.log("[atc] AddToCart sent");
     } catch (err) {

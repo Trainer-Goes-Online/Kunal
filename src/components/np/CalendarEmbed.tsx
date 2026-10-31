@@ -40,12 +40,14 @@ function readScheduleLead(name: string, email: string): LeadPII {
     if (raw) {
       const d = JSON.parse(raw) as {
         firstName?: string;
+        lastName?: string;
         email?: string;
         whatsapp?: string;
         countryCode?: string;
       };
       return {
         firstName: d.firstName || name,
+        lastName: d.lastName || "",
         email: d.email || email,
         phone: d.whatsapp || "",
         countryCode: d.countryCode || "",

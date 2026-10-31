@@ -161,12 +161,11 @@ export async function Proof() {
             stays drag/swipe-scrollable. Arrows now live on the certificates rail. */}
       </div>
 
-      {/* ---------- Before/after: two rails, opposite directions ----------
-          Per the copy doc: row 1 drifts left→right, row 2 right→left. Both rails
-          share kind "bacar", so they feed ONE lightbox; each card's index is its
-          position in `baCards`, so a plate repeated across rows opens as itself. */}
+      {/* ---------- Before/after: ONE rail, left→right ----------
+          The second (right→left) row was removed at the client's request — with
+          only four plates it just repeated the first row. To bring it back, render
+          another <ImageRail kind="bacar" dir={-1} srcs={baRows[1]} … />. */}
       <ImageRail kind="bacar" dir={1} srcs={baRows[0]} pool={baCards} alt="Client transformation, before and after" />
-      <ImageRail kind="bacar" dir={-1} srcs={baRows[1]} pool={baCards} alt="Client transformation, before and after" />
 
       {/* ---------- Client chat screenshots ----------
           Hidden until the screenshots are supplied (content.ts `chatRows`). */}
@@ -178,10 +177,12 @@ export async function Proof() {
             </h3>
           </div>
           {chatRows[0].length > 0 && (
-            <ImageRail kind="chatcar" dir={1} srcs={chatRows[0]} pool={chatPool} alt="Client chat with Kunal" chat />
+            /* Client asked for the chat rail to run right→left (dir -1),
+               opposite to the before/after rail above it. */
+            <ImageRail kind="chatcar" dir={-1} srcs={chatRows[0]} pool={chatPool} alt="Client chat with Kunal" chat />
           )}
           {chatRows[1].length > 0 && (
-            <ImageRail kind="chatcar" dir={-1} srcs={chatRows[1]} pool={chatPool} alt="Client chat with Kunal" chat />
+            <ImageRail kind="chatcar" dir={1} srcs={chatRows[1]} pool={chatPool} alt="Client chat with Kunal" chat />
           )}
         </>
       )}
@@ -276,8 +277,12 @@ function LightboxShell({ kind, pool, alt }: { kind: string; pool: readonly strin
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
+        {/* No width/height attributes: the lightbox swaps between images of
+            different shapes (square before/afters, tall chat screenshots), so a
+            fixed 1000x1000 hint squashed the tall ones. CSS sizes it from the
+            image's own proportions instead. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="s06-lbox-img" alt={alt} data-lbox-img src={pool[0]} width={1000} height={1000} />
+        <img className="s06-lbox-img" alt={alt} data-lbox-img src={pool[0]} />
         <button className="s06-lbox-nav s06-lbox-next" type="button" aria-label="Next" data-lbox-nav="1">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <polyline points="9 18 15 12 9 6" />

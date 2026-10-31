@@ -2,33 +2,28 @@
  * THE CTA APPLICATION FORM — one source of truth for its questions.
  *
  * This funnel takes NO payment. Every CTA opens this application in a modal;
- * on submit the applicant is handed to /book-a-call, and Calendly's own
- * hand-off carries them to /thank-you. One fork: the applicant who says they
- * are only after free advice goes to /thank-you-disqualified instead.
+ * on submit EVERY applicant is handed to /book-a-call, and Calendly's own
+ * hand-off carries them to /thank-you. There is no disqualification fork any
+ * more: the investment answer (Q3) only decides whether the lead is reported
+ * as QUALIFIED (Meta CAPI QualifiedLead + GA4 qualified_lead + Pabbly
+ * `qualified`), not where the applicant goes.
  *
  * Flow: LP → application modal → /book-a-call → /thank-you
- *                              ↘ /thank-you-disqualified
  *
- * QUESTION COPY IS THE CLIENT'S, VERBATIM, from
- * "KWK_Application_Form_Final.pdf" (Q01–Q11, four sections).
- *
- * ⚠️ NO EM DASHES OR EN DASHES anywhere in question, option or hint copy.
- * That is an explicit instruction in that PDF's implementation notes — the
- * client stripped every one and they must not creep back in. Use commas.
- *
- * ⚠️ CONTACT COMES FIRST, not last. The PDF puts Full Name / Email / WhatsApp
- * immediately before the booking redirect; the client asked for them as the
- * first three steps instead, so that is what this does. Everything downstream
- * (Calendly prefill, /api/lead validation, Pabbly identity, the email merge
- * tags) works either way — only the running order changed.
+ * QUESTION COPY IS THE CLIENT'S, VERBATIM (five steps, supplied 2026-10-31):
+ *   Q1 physique situation (with "Other" follow-up)
+ *   Q2 seriousness, 1 to 10
+ *   Q3 investment level  ← the qualification gate
+ *   Q4 decision maker
+ *   Q5 contact details (unchanged from the previous form's "Your details" step)
  */
 
 export type StepKind = "contact" | "textarea" | "choice" | "multi";
 
-/** A boxed note rendered above the question. Used once, on Q08. */
+/** A boxed note rendered above the question. Not used by the current form. */
 export type Callout = { title: string; body: readonly string[] };
 
-/** Q01's "Other" escape hatch: pick Other, then type the real profession. */
+/** "Other" escape hatch on a pick-one: pick Other, then type the real answer. */
 export type OtherField = {
   /** The option that reveals the input. Must appear in `options`. */
   option: string;
@@ -38,9 +33,12 @@ export type OtherField = {
   placeholder?: string;
 };
 
+/** Renders a pick-one as a compact 1..N number row with end labels. */
+export type ScaleLayout = { low: string; high: string };
+
 type StepBase = {
   id: string;
-  /** Section heading from the PDF, shown above the question. */
+  /** Section heading, shown above the question. */
   section: string;
   question: string;
   hint?: string;
@@ -53,7 +51,12 @@ export type QualifyStep =
   /** Full name + email + WhatsApp, all three on one screen. Always last. */
   | (StepBase & { kind: "contact" })
   | (StepBase & { kind: "textarea"; placeholder?: string })
-  | (StepBase & { kind: "choice"; options: readonly string[]; other?: OtherField })
+  | (StepBase & {
+      kind: "choice";
+      options: readonly string[];
+      other?: OtherField;
+      scale?: ScaleLayout;
+    })
   | (StepBase & { kind: "multi"; options: readonly string[] });
 
 const S_YOU = "Your details";
@@ -62,172 +65,72 @@ const S_URGENCY = "Urgency and intent";
 const S_INVESTMENT = "Investment readiness";
 const S_DECISION = "Decision readiness";
 
+/** The three coaching tiers on Q3. Picking any of them qualifies the lead. */
+export const INVEST_TIERS = [
+  "Rs.5,000 to Rs.7,000/month (Rs.15,000 for 3 months): Standard Coaching, self-guided plan with monthly check-ins",
+  "Rs.7,000 to Rs.9,000/month (Rs.25,000 for 3 months): High-Level Coaching, weekly accountability and personalised adjustments",
+  "Rs.10,000+/month (Rs.35,000 for 3 months): World-Class Coaching, daily access and full accountability. Includes Kunal’s results guarantee.",
+] as const;
+
+/** Q3's fourth option — the only answer that does NOT qualify. */
+export const NOT_READY_OPTION = "I’m really interested, but not ready to invest in my health right now";
+
 export const qualifySteps: readonly QualifyStep[] = [
-  /* ---- 1 · YOUR CURRENT SITUATION (PDF Q01 to Q04) ---- */
+  /* ---- Q1 · physique situation ---- */
   {
-    id: "role",
+    id: "physique",
     section: S_SITUATION,
     kind: "choice",
-    question: "What best describes your current professional role?",
+    question: "What best describes your current physique and fitness situation?",
     options: [
-      "Business owner or entrepreneur",
-      "Corporate executive or senior management",
-      "Lawyer or legal professional",
-      "Doctor or healthcare professional",
-      "Engineer or technical professional",
-      "Not currently working",
+      "I train consistently, but my physique has plateaued.",
+      "I’ve built some muscle, but I’m carrying more body fat than I want.",
+      "I’m relatively lean, but I want significantly more muscle and definition",
+      "I’ve made progress before, but I struggle to maintain momentum and consistency.",
+      "I’m getting back into serious training after some time away.",
       "Other",
     ],
     other: {
       option: "Other",
-      id: "roleOther",
-      label: "If other, enter your actual profession:",
-      placeholder: "Your profession",
+      id: "physiqueOther",
+      label: "Please describe your situation:",
+      placeholder: "Your current situation",
     },
-  },
-  {
-    id: "situation",
-    section: S_SITUATION,
-    kind: "choice",
-    question: "Which best describes where you are right now?",
-    options: [
-      "I’m overweight and struggling to get consistent",
-      "I’ve been training consistently but results have stalled",
-      "I’ve tried multiple approaches and keep falling off",
-      "Nothing has worked so far and I want a real system this time",
-    ],
-  },
-  {
-    id: "goal90",
-    section: S_SITUATION,
-    kind: "choice",
-    question: "What is the single result you want to achieve in the next 90 days?",
-    options: [
-      "Lose significant body fat and look visibly leaner",
-      "Build muscle and look more athletic",
-      "Get lean and visibly defined, the aesthetic look",
-      "Improve energy, health, and overall fitness",
-    ],
-  },
-  {
-    id: "tried",
-    section: S_SITUATION,
-    kind: "multi",
-    question: "What have you tried so far?",
-    hint: "Select all that apply.",
-    options: [
-      "Training at the gym on my own",
-      "Following diet plans or calorie tracking",
-      "Working with a personal trainer in person",
-      "Online coaching or fitness programs",
-      "Multiple programs, nothing has stuck",
-      "Nothing consistently, this would be my first real attempt",
-    ],
-  },
-  /* ---- 2 · URGENCY AND INTENT (PDF Q06 to Q07) ---- */
-  {
-    id: "urgency",
-    section: S_URGENCY,
-    kind: "choice",
-    question: "Why is solving this important to you right now? What is driving your urgency today?",
-    options: [
-      "A doctor’s warning (blood pressure, cholesterol, sugar, or similar)",
-      "A specific event coming up (wedding, trip, reunion, milestone birthday)",
-      "Low energy that’s affecting my work and my family",
-      "I’m done putting this off. This year is different.",
-      "Someone close to me had a health scare and it got me thinking about mine",
-      "No single trigger. I just decided it’s time.",
-      "Other (please specify)",
-    ],
-    other: {
-      option: "Other (please specify)",
-      id: "urgencyOther",
-      label: "Please specify:",
-      placeholder: "What is driving it",
-    },
-  },
-  {
-    id: "paidBefore",
-    section: S_URGENCY,
-    kind: "choice",
-    question: "Have you previously paid for a trainer, nutritionist, or fitness coaching program?",
-    options: [
-      "Yes, and I got results, but I’ve since lost them or want to go further",
-      "Yes, but I didn’t get the results I was promised",
-      "Yes, multiple times, but I couldn’t stay consistent",
-      "No, I’ve never invested in professional coaching",
-    ],
   },
 
-  /* ---- 3 · INVESTMENT READINESS (PDF Q08 to Q10) ---- */
+  /* ---- Q2 · seriousness, 1 to 10 ---- */
   {
-    id: "investReady",
-    section: S_INVESTMENT,
+    id: "seriousness",
+    section: S_URGENCY,
     kind: "choice",
-    callout: {
-      title: "Why this isn’t like your last program",
-      body: [
-        "Kunal is ASCA certified, a former professional cricketer, and has spent 8+ years coaching executives, lawyers, and engineers. He’s trained IPL players including Yashashwit Jaiswal and serves as head judge for Hyrox Delhi. This isn’t a templated PDF or an AI-generated plan. Every program is built directly by Kunal around your body, your schedule, and your constraints.",
-        "Here’s Kunal’s standing promise on every program below. If you follow the plan and don’t reach your goal, he keeps coaching you until you do. No extra charge. No walking away.",
-      ],
-    },
-    question:
-      "Kunal’s promise: if personalised coaching is the right fit and you follow the plan, he’ll work with you until you hit your goal, at no extra charge. Are you prepared to invest in a structured 90-day program?",
-    options: [
-      "Yes, if it’s the right fit, I’m ready to start",
-      "Yes, but I need to understand exactly what’s included first",
-      "Possibly, I haven’t decided yet",
-      "No, I’m looking for free advice or resources",
-    ],
+    question: "On a scale of 1–10, how serious are you about solving this now?",
+    options: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    scale: { low: "1 = Just exploring", high: "10 = Ready to fix this now" },
   },
+
+  /* ---- Q3 · investment level — THE QUALIFICATION GATE ---- */
   {
     id: "investLevel",
     section: S_INVESTMENT,
     kind: "choice",
     question:
-      "What monthly investment level are you currently comfortable making toward your physique goal?",
-    hint: "This helps us recommend the right coaching tier for you.",
-    options: [
-      "Rs.5,000 to Rs.7,000/month (Rs.15,000 for 3 months): Standard Coaching, self-guided plan with monthly check-ins",
-      "Rs.7,000 to Rs.9,000/month (Rs.25,000 for 3 months): High-Level Coaching, weekly accountability and personalised adjustments",
-      "Rs.10,000+/month (Rs.35,000 for 3 months): World-Class Coaching, daily access and full accountability. Includes Kunal’s results guarantee.",
-      "I’m not sure yet, I’d like to understand the program first",
-    ],
-  },
-  {
-    id: "income",
-    section: S_INVESTMENT,
-    kind: "choice",
-    question: "Your approximate monthly income",
-    hint: "Required. Kept strictly confidential. Used only to recommend the right program tier.",
-    options: [
-      "Below Rs.1 lakh",
-      "Rs.1 to Rs.2 lakh",
-      "Rs.2 to Rs.5 lakh",
-      "Rs.5 lakh+",
-    ],
+      "If I show you a clear, personalised plan to transform your physique over the next 90–120 days, with the training, nutrition and accountability needed to remove the guesswork, what would you be willing to invest in achieving that transformation?",
+    options: [...INVEST_TIERS, NOT_READY_OPTION],
   },
 
-  /* ---- 4 · DECISION READINESS (PDF Q11) ---- */
+  /* ---- Q4 · decision maker ---- */
   {
     id: "decisionMaker",
     section: S_DECISION,
     kind: "choice",
-    question:
-      "If the coaching program is a strong fit, will you be able to make the enrollment decision yourself?",
+    question: "How will the decision to start be made?",
     options: [
-      "Yes, I make my own financial decisions",
-      "I’d like to discuss it with my spouse or family first",
-      "Someone else would need to approve the investment",
+      "I am the sole decision maker and can go ahead on my own",
+      "Someone else would need to pay for this, and I have not spoken to them about it yet",
     ],
   },
 
-  /* ---- Contact, last and on ONE screen ----
-     The PDF puts these immediately before the booking redirect and the client
-     confirmed that placement. Asking for a name before anything has been
-     invested in the form is the easiest point to abandon; by here they have
-     answered ten questions and the details are the last small step.
-     All three share a step, stacked, because they are one thought. */
+  /* ---- Q5 · contact, last and on ONE screen (unchanged) ---- */
   {
     id: "contact",
     section: S_YOU,
@@ -236,6 +139,17 @@ export const qualifySteps: readonly QualifyStep[] = [
     note: "If you’re selected, you’ll be taken to a calendar next. Select your date and time. Do not exit the page before booking your slot.",
   },
 ];
+
+/** Every answer key the form can produce, in form order. /api/lead and the
+    modal payload both iterate this, so a new question cannot be silently dropped. */
+export const ANSWER_KEYS = [
+  "physique",
+  "physiqueOther",
+  "seriousness",
+  "investLevel",
+  "decisionMaker",
+] as const;
+export type AnswerKey = (typeof ANSWER_KEYS)[number];
 
 /**
  * Dial codes for the WhatsApp field. India first and default, with the handful
@@ -283,75 +197,65 @@ export function toggleMulti(value: string, option: string, all: readonly string[
 }
 
 /* =====================================================================
-   ROUTING — who reaches the calendar
+   QUALIFICATION — who counts as a qualified lead
    ===================================================================== */
 
 /**
- * Routing — SOFTENED at the client's request. ONE gate only:
+ * ONE gate, set by the client (2026-10-31):
  *
- *     Q08 is "No, I’m looking for free advice or resources"  →  disqualified
- *     anything else                                          →  qualified
+ *   QUALIFIED  ⇔  Q3 (investLevel) is one of the three coaching tiers.
+ *   Not qualified  ⇔  Q3 is "I’m really interested, but not ready to invest…".
  *
- * Role, income and decision-maker used to be gates too (the PDF's original
- * page-5 logic). They were dropped so the call itself does the filtering; the
- * answers still travel to Pabbly as q01_role / q10_income / q11_decision_maker
- * for segmentation, they just never route anyone away.
+ * Qualification decides REPORTING only — Meta CAPI QualifiedLead, GA4
+ * qualified_lead and the Pabbly `qualified` flag. It does NOT decide routing:
+ * every applicant, qualified or not, is sent to /book-a-call.
  *
- * NOT a gate: Q09, the coaching tier — it only tells the closer which tier to
- * open with, and its on-screen hint promises the applicant it won't count
- * against them.
- *
- * The rule carries the copy shown to the applicant and the answer id it reads,
- * so the disqualified page and the email quote the right answer back.
+ * The rule is still expressed as a FailRule so the existing consumers
+ * (/api/lead's gate columns, the dormant /thank-you-disqualified checklist)
+ * keep working off one definition.
  */
 export type FailRule = {
   /** Stable machine value. Goes to Pabbly as `disqualified_reason`. */
-  code: "invest_no";
+  code: "not_ready_to_invest";
   /** Which question on the form this gate reads. Drives display order. */
   q: number;
   /** Which answer it reads — a `qualifySteps` id. */
   from: string;
   /** One-line criterion, for the pass/fail checklist on the page and email. */
   label: string;
-  /** Applicant-facing explanation. No dashes, per the client's copy rule. */
+  /** Applicant-facing explanation. */
   text: string;
   failed: (a: Record<string, string>) => boolean;
 };
 
-/** The exact option string the one rule matches. Verified against qualifySteps below. */
-export const DISQUALIFYING_ANSWER = "No, I’m looking for free advice or resources";
+/** The step that carries the gate, so the guard and the UI agree on one id. */
+export const QUALIFYING_STEP_ID = "investLevel";
 
-/** The step that carries the Q08 rule, so the guard and the UI agree on one id. */
-export const DISQUALIFYING_STEP_ID = "investReady";
-
+/** Kept for the dormant /thank-you-disqualified page; nothing routes there now. */
 export const DISQUALIFIED_PATH = "/thank-you-disqualified";
 
-/** Order matters: the first failure is the one reported as the primary reason. */
 export const FAIL_RULES: readonly FailRule[] = [
   {
-    code: "invest_no",
-    q: 8,
-    from: "investReady",
-    label: "Ready to invest in a structured 90 day program if it is the right fit",
-    text: "We only book calls with people who are prepared to invest in a structured 90-day program if it turns out to be the right fit. It is 1:1 coaching with Kunal and it is paid, so the call ends in an offer. There is no free version to point you at.",
-    failed: (a) => (a.investReady ?? "").trim() === DISQUALIFYING_ANSWER,
+    code: "not_ready_to_invest",
+    q: 3,
+    from: "investLevel",
+    label: "Ready to invest in one of the coaching tiers",
+    text: "The coaching is a paid programme. You said you are not ready to invest in your health right now, so we will share free resources until the timing is right.",
+    failed: (a) => {
+      const v = (a.investLevel ?? "").trim();
+      // Unanswered does not fail: the modal cannot submit without it, and a
+      // partial payload arriving at /api/lead should not invent a reason.
+      return v.length > 0 && !(INVEST_TIERS as readonly string[]).includes(v);
+    },
   },
 ];
 
-/**
- * The gates in FORM order, for display. With the softened routing there is
- * only one, but the page and the email iterate this list, so adding a gate
- * back later is a one-entry change to FAIL_RULES.
- */
+/** The gates in FORM order, which is the order a person reads them. */
 export const GATES_IN_FORM_ORDER: readonly FailRule[] = [...FAIL_RULES].sort((a, b) => a.q - b.q);
 
 /**
- * Presentation tokens for the pass/fail checklist.
- *
- * These live here, not in the email, because an email template cannot branch:
- * Pabbly does plain string substitution, so the colour and the tick have to
- * arrive already decided. The page imports the same values, which is what
- * keeps the email and /thank-you-disqualified visually identical.
+ * Presentation tokens for the pass/fail checklist (email + dormant page).
+ * An email template cannot branch, so colour and tick arrive pre-decided.
  */
 export const GATE_STYLE = {
   pass: { mark: "✓", color: "#3F8F5B", bg: "#F1F7F3", border: "#CFE3D6", status: "Met" },
@@ -363,37 +267,40 @@ export function failedRules(answers: Record<string, string>): FailRule[] {
   return FAIL_RULES.filter((r) => r.failed(answers));
 }
 
+/** True when the lead picked one of the three tiers on Q3. */
+export function isQualified(answers: Record<string, string>): boolean {
+  return failedRules(answers).length === 0;
+}
+
+/** Inverse of isQualified — kept so older call sites read naturally. */
 export function isDisqualified(answers: Record<string, string>): boolean {
-  return failedRules(answers).length > 0;
+  return !isQualified(answers);
 }
 
 /**
  * Guard against the silent failure this design invites: edit an option's text,
- * forget the constant here, and the rule that reads it dies with no error
+ * forget the constant here, and the gate that reads it dies with no error
  * anywhere. Runs at module load, so any mismatch breaks the build.
  */
 function assertQualifyRuleIntact(): void {
-  const optionsOf = (id: string) => {
-    const s = qualifySteps.find((x) => x.id === id);
-    return s && s.kind === "choice" ? s.options : [];
-  };
-
-  const pairs: Array<[string, string]> = [["investReady", DISQUALIFYING_ANSWER]];
-  for (const [id, needle] of pairs) {
-    if (!optionsOf(id).includes(needle)) {
+  const step = qualifySteps.find((x) => x.id === QUALIFYING_STEP_ID);
+  const options = step && step.kind === "choice" ? step.options : [];
+  for (const needle of [...INVEST_TIERS, NOT_READY_OPTION]) {
+    if (!options.includes(needle)) {
       throw new Error(
-        `qualify.ts: "${needle}" is no longer an option on "${id}". The routing rule that ` +
-          "reads it is dead until these agree."
+        `qualify.ts: "${needle}" is no longer an option on "${QUALIFYING_STEP_ID}". The ` +
+          "qualification gate that reads it is dead until these agree."
       );
     }
   }
 
-  const other = qualifySteps.find((s) => s.kind === "choice" && s.other);
-  if (other && other.kind === "choice" && other.other && !other.options.includes(other.other.option)) {
-    throw new Error(
-      `qualify.ts: the "other" trigger on "${other.id}" is not one of its options, so the ` +
-        "follow-up input can never appear."
-    );
+  for (const s of qualifySteps) {
+    if (s.kind === "choice" && s.other && !s.options.includes(s.other.option)) {
+      throw new Error(
+        `qualify.ts: the "other" trigger on "${s.id}" is not one of its options, so the ` +
+          "follow-up input can never appear."
+      );
+    }
   }
 }
 assertQualifyRuleIntact();

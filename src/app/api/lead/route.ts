@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   validateFullName,
   validateEmail,
-  isDisqualified,
+  isQualified,
   failedRules,
   splitName,
   GATES_IN_FORM_ORDER,
@@ -15,13 +15,15 @@ import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib
 /**
  * /api/lead — the coaching application's answers, forwarded to Pabbly.
  *
- * ⚠️ COLUMN NAMES CHANGED AGAIN with KWK_Application_Form_Final.pdf. The
- * answers are now q01_role … q11_decision_maker (plus q01_role_other). Gone:
- * q10_commitment and q11_attend_call, both questions the client deleted. Every
- * other q-number SHIFTED by one because Q01 is now professional role. Also new:
- * last_name / full_name are real values, since the form asks for a full name.
- * Re-capture the webhook response in Pabbly and re-map, or the answer columns
- * silently arrive empty.
+ * ⚠️ COLUMN NAMES CHANGED (2026-10-31) with the five-step form. The answers
+ * are now:
+ *   q1_physique, q1_physique_other, q2_seriousness, q3_invest_level,
+ *   q4_decision_maker
+ * Every old q01_role … q11_decision_maker column is GONE. Also changed:
+ * `status` is now "qualified" / "not_qualified" and `redirected_to` is always
+ * "/book-a-call" (no disqualification route any more). The gate columns are
+ * now gate_q3_answer / gate_q3_status. Re-capture the webhook response in
+ * Pabbly and re-map, or the answer columns silently arrive empty.
  *
  * This funnel charges nothing, so there is no Razorpay webhook to carry the
  * applicant onward the way the paid funnel did. This route is its replacement:
@@ -81,30 +83,21 @@ export async function POST(req: NextRequest) {
 
     const utm = (body.utm ?? {}) as Record<string, unknown>;
 
-    /* The eleven application answers. Free text gets a longer cap than the
-       pick-one answers; `tried` is the multi-select, arriving pre-joined by
-       the modal (see MULTI_SEPARATOR in qualify.ts). */
+    /* The application answers (five-step form). `physiqueOther` is the free
+       text behind Q1's "Other"; `seriousness` is "1".."10". */
     const answers = {
-      role: clean(body.role, 200),
-      roleOther: clean(body.roleOther, 200),
-      situation: clean(body.situation, 200),
-      goal90: clean(body.goal90, 200),
-      tried: clean(body.tried, 500),
-      urgency: clean(body.urgency, 200),
-      urgencyOther: clean(body.urgencyOther, 500),
-      paidBefore: clean(body.paidBefore, 200),
-      investReady: clean(body.investReady, 300),
+      physique: clean(body.physique, 200),
+      physiqueOther: clean(body.physiqueOther, 500),
+      seriousness: clean(body.seriousness, 4),
       investLevel: clean(body.investLevel, 300),
-      income: clean(body.income, 120),
       decisionMaker: clean(body.decisionMaker, 200),
     };
 
     /* Recomputed server-side rather than trusted from the client. The browser
-       sends `qualified`, but this decides the value Pabbly stores. One gate
-       (softened routing): only the "free advice" answer on Q08 disqualifies —
-       see FAIL_RULES in qualify.ts. */
+       sends `qualified`, but this decides the value Pabbly stores. One gate:
+       Q3 is one of the three coaching tiers — see FAIL_RULES in qualify.ts. */
     const failed = failedRules(answers);
-    const qualified = !isDisqualified(answers);
+    const qualified = isQualified(answers);
     /* Which gate tripped, so Pabbly can segment and the disqualified email can
        print one honest sentence instead of a generic brush-off. `_all` lists
        every failure when more than one applies. */
@@ -170,14 +163,11 @@ export async function POST(req: NextRequest) {
       gates_html,
       /** Same thing for the plain-text part. */
       gates_text,
-      /** "Q8" when the one gate failed, "" otherwise. */
+      /** "Q3" when the gate failed, empty when qualified. */
       failed_questions: failed.map((r) => `Q${r.q}`).sort().join(", "),
-      /** The single gate (softened routing), for a Sheet row or a filter step.
-          The old gate_q1 / gate_q10 / gate_q11 keys were dropped with those
-          gates; the raw answers still arrive as q01_role / q10_income /
-          q11_decision_maker. */
-      gate_q8_answer: answers.investReady,
-      gate_q8_status: gateRows.find((g) => g.rule.q === 8)?.s.status ?? "",
+      /** The one gate (Q3 investment), for a Sheet row or hand-built conditions. */
+      gate_q3_answer: answers.investLevel,
+      gate_q3_status: gateRows.find((g) => g.rule.q === 3)?.s.status ?? "",
     };
 
     const fbc = req.cookies.get("_fbc")?.value ?? "";
@@ -234,38 +224,25 @@ export async function POST(req: NextRequest) {
       country_code: clean(body.countryCode, 4),
       dial_code: clean(body.dialCode, 6),
 
-      /* --- the ten application answers ---
-         ⚠️ THE q-NUMBERS ARE STABLE IDENTIFIERS, NOT THE ON-SCREEN ORDER.
-         They come from the client's application PDF and are deliberately left
-         alone whenever the form is reshuffled, so an existing Pabbly mapping
-         keeps working. Two consequences to expect:
-           · q05 is absent. That was the "what has stopped you" free text, and
-             the client removed the question. The gap is intentional; do not
-             renumber q06+ to close it.
-           · contact is asked LAST on screen but still arrives above as
-             full_name / email / phone.
-         `_other` fields are only filled when their parent answer is "Other". */
-      q01_role: answers.role,
-      q01_role_other: answers.roleOther,
-      q02_situation: answers.situation,
-      q03_goal_90d: answers.goal90,
-      q04_tried: answers.tried,
-      q06_urgency: answers.urgency,
-      q06_urgency_other: answers.urgencyOther,
-      q07_paid_before: answers.paidBefore,
-      q08_invest_ready: answers.investReady,
-      q09_invest_level: answers.investLevel,
-      q10_income: answers.income,
-      q11_decision_maker: answers.decisionMaker,
+      /* --- the application answers (five-step form, on-screen order) ---
+         Contact (Q5) is asked LAST on screen but arrives above as
+         full_name / email / phone. `q1_physique_other` is only filled when
+         Q1 is "Other". */
+      q1_physique: answers.physique,
+      q1_physique_other: answers.physiqueOther,
+      q2_seriousness: answers.seriousness,
+      q3_invest_level: answers.investLevel,
+      q4_decision_maker: answers.decisionMaker,
 
       /* --- outcome --- */
       funnel: "free",
       form: "cta_qualifier",
+      /* "true" when Q3 is one of the three coaching tiers. Same decision that
+         sends Meta CAPI QualifiedLead. */
       qualified: qualified ? "true" : "false",
-      status: qualified ? "booking" : "disqualified",
-      /* Where this applicant was actually sent, so Pabbly can branch without
-         re-implementing the rule. */
-      redirected_to: qualified ? "/book-a-call" : "/thank-you-disqualified",
+      status: qualified ? "qualified" : "not_qualified",
+      /* Every applicant goes to the calendar now, qualified or not. */
+      redirected_to: "/book-a-call",
       /* Empty strings on a qualified lead. */
       ...reason,
       ...gates,

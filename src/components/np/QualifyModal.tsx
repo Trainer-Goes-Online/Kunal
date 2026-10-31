@@ -5,8 +5,8 @@ import {
   qualifySteps,
   dialCodes,
   QUALIFY_STORAGE_KEY,
-  DISQUALIFIED_PATH,
-  isDisqualified,
+  ANSWER_KEYS,
+  isQualified,
   parseMulti,
   toggleMulti,
   splitName,
@@ -19,7 +19,7 @@ import {
 } from "@/lib/qualify";
 import { site } from "@/lib/site";
 import { trackGa4EventOnce } from "@/lib/ga4";
-import { restoreUtm, restoreFbclid, fireRegistrationEvents } from "@/lib/tracking";
+import { restoreUtm, restoreFbclid, fireLeadEvents } from "@/lib/tracking";
 
 /**
  * THE CTA MODAL — the 1:1 coaching application, one question per screen.
@@ -141,7 +141,12 @@ export function QualifyModal() {
       setSubmitting(true);
       const name = splitName(finalAnswers.fullName || "");
       const email = (finalAnswers.email || "").trim().toLowerCase();
-      const disqualified = isDisqualified(finalAnswers);
+      /* Qualified = picked one of the three coaching tiers on Q3. Reporting
+         only (Meta CAPI / GA4 / Pabbly) — everyone goes to the calendar. */
+      const qualified = isQualified(finalAnswers);
+      const answerFields = Object.fromEntries(
+        ANSWER_KEYS.map((k) => [k, finalAnswers[k] || ""])
+      ) as Record<(typeof ANSWER_KEYS)[number], string>;
 
       const payload = {
         fullName: name.full,
@@ -152,31 +157,20 @@ export function QualifyModal() {
         countryCode: country.code,
         dialCode: country.dial,
 
-        /* The ten application answers, by step id. /api/lead maps these onto
-           the q01_… Pabbly columns. */
-        role: finalAnswers.role || "",
-        roleOther: finalAnswers.roleOther || "",
-        situation: finalAnswers.situation || "",
-        goal90: finalAnswers.goal90 || "",
-        tried: finalAnswers.tried || "",
-        urgency: finalAnswers.urgency || "",
-        urgencyOther: finalAnswers.urgencyOther || "",
-        paidBefore: finalAnswers.paidBefore || "",
-        investReady: finalAnswers.investReady || "",
-        investLevel: finalAnswers.investLevel || "",
-        income: finalAnswers.income || "",
-        decisionMaker: finalAnswers.decisionMaker || "",
+        /* The application answers, by step id (physique, physiqueOther,
+           seriousness, investLevel, decisionMaker). /api/lead maps these onto
+           the q1_… Pabbly columns. */
+        ...answerFields,
 
-        /* The routing decision travels WITH the lead, so Pabbly never has to
-           re-derive it by string-matching an answer. */
-        qualified: !disqualified,
+        /* The qualification decision travels WITH the lead, so Pabbly never
+           has to re-derive it by string-matching an answer. */
+        qualified,
         utm: restoreUtm(),
         fbclid: restoreFbclid(),
         pageUrl: window.location.href,
       };
 
-      // Kept for the next page — /book-a-call greets by name and
-      // /thank-you-disqualified quotes the deciding answers back.
+      // Kept for the next page — /book-a-call greets by name.
       try {
         window.sessionStorage.setItem(QUALIFY_STORAGE_KEY, JSON.stringify(payload));
       } catch {
@@ -186,19 +180,22 @@ export function QualifyModal() {
 
       /* ---- Conversion events ------------------------------------------
          GA4: complete_registration for everyone who finishes the form,
-         qualified_lead only for the ones who pass the investment gate.
-         META CAPI: /api/meta/registration sends CompleteRegistration for
-         everyone and QualifiedLead on top when `qualified` is true.
-
-         Both names match what the downstream `free` branch fires — do not
-         rename one without the other, or the funnel reports two different
-         events for the same action. */
+         qualified_lead only for those who picked a coaching tier on Q3.
+         META (Pixel + CAPI, deduped by a shared event id): Lead for
+         everyone, plus the custom QualifiedLead when Q3 is one of the three
+         coaching tiers. Full name is split so last name is sent too (EMQ). */
       trackGa4EventOnce("complete_registration");
-      if (!disqualified) trackGa4EventOnce("qualified_lead");
+      if (qualified) trackGa4EventOnce("qualified_lead");
 
-      fireRegistrationEvents(
-        { firstName: name.first, email, phone: payload.whatsapp, countryCode: country.code },
-        !disqualified
+      fireLeadEvents(
+        {
+          firstName: name.first,
+          lastName: name.last,
+          email,
+          phone: payload.whatsapp,
+          countryCode: country.code,
+        },
+        qualified
       );
 
       const body = JSON.stringify(payload);
@@ -219,11 +216,9 @@ export function QualifyModal() {
         }).catch(() => {});
       }
 
-      /* The one fork: everyone reaches the calendar EXCEPT the applicant who
-         trips the investment gate. `name` + `email` prefill Calendly. */
-      window.location.href = disqualified
-        ? DISQUALIFIED_PATH
-        : `${site.bookUrl}?name=${encodeURIComponent(name.first)}&email=${encodeURIComponent(email)}`;
+      /* No fork: EVERY applicant reaches the calendar, qualified or not.
+         `name` + `email` prefill Calendly. */
+      window.location.href = `${site.bookUrl}?name=${encodeURIComponent(name.first)}&email=${encodeURIComponent(email)}`;
     },
     [country]
   );
@@ -515,7 +510,32 @@ export function QualifyModal() {
             </div>
           )}
 
-          {current.kind === "choice" && (
+          {/* ---- scale: a 1..N pick-one as a compact number row ---- */}
+          {current.kind === "choice" && current.scale && (
+            <div className="qz-scale">
+              <div className="qz-scale-row" role="radiogroup" aria-labelledby="qz-question">
+                {current.options.map((opt) => (
+                  <button
+                    key={opt}
+                    type="button"
+                    role="radio"
+                    aria-checked={value === opt}
+                    className={`qz-scale-btn${value === opt ? " is-on" : ""}`}
+                    onClick={() => pickChoice(opt)}
+                    disabled={submitting}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              <div className="qz-scale-ends">
+                <span>{current.scale.low}</span>
+                <span>{current.scale.high}</span>
+              </div>
+            </div>
+          )}
+
+          {current.kind === "choice" && !current.scale && (
             <>
               <div className="qz-options" role="radiogroup" aria-labelledby="qz-question">
                 {current.options.map((opt) => (

@@ -1,27 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pricing, siteOrigin, capiHostAllowed } from "@/lib/config";
 import { sendLeadEvent } from "@/lib/meta-events";
-import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
+import { readCapiSignals, cleanEventId, cleanPII } from "@/lib/meta-request";
 
 /**
- * /api/meta/schedule — fired when a lead books the call on /book-a-call.
+ * /api/meta/schedule — EVENT 4 of 4: a call was successfully booked on
+ * /book-a-call.
  *
  * The trigger is Calendly's own `calendly.event_scheduled` message (see
  * CalendarEmbed), NOT a pageview: this only fires when a slot is actually taken.
- * PII comes from the qualifier stash the browser still holds, so the Schedule
- * event matches at the highest EMQ available.
+ * The browser fires the same Schedule through the Pixel with the same
+ * `eventId`, so Meta deduplicates the pair. PII comes from the qualifier stash
+ * the browser still holds, for the highest EMQ.
  */
-type Lead = { email?: string; phone?: string; firstName?: string; countryCode?: string };
-
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json().catch(() => ({}))) as {
-      lead?: Lead;
+      lead?: unknown;
       eventSourceUrl?: string;
+      eventId?: string;
     };
-    const lead = body.lead ?? {};
-    const email = (lead.email ?? "").trim();
-    if (!email) {
+    const lead = cleanPII(body.lead);
+    if (!lead.email) {
       return NextResponse.json({ ok: false, error: "email_required" }, { status: 400 });
     }
 
@@ -42,20 +42,6 @@ export async function POST(req: NextRequest) {
         ? body.eventSourceUrl
         : `${siteOrigin()}/book-a-call`;
 
-    const cookieFbc = req.cookies.get("_fbc")?.value || "";
-    const fbp = req.cookies.get("_fbp")?.value || undefined;
-    // L4 — rebuild _fbc from the captured fbclid when the cookie is absent.
-    const resolvedAttr = resolveAttribution({
-      cookieAttr: readAttrCookie(req.cookies.get(ATTR_COOKIE)?.value),
-      fbc: cookieFbc,
-    });
-    const fbc = buildFbc(resolvedAttr, cookieFbc) || undefined;
-    const clientIp =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      req.headers.get("x-real-ip") ??
-      undefined;
-    const clientUserAgent = req.headers.get("user-agent") ?? undefined;
-
     let capi: "sent" | "error" = "sent";
     try {
       await sendLeadEvent({
@@ -63,15 +49,14 @@ export async function POST(req: NextRequest) {
         accessToken,
         eventName: "Schedule",
         idKey: "sched",
-        email,
+        eventId: cleanEventId(body.eventId),
+        email: lead.email,
         phone: lead.phone ?? "",
         firstName: lead.firstName ?? "",
+        lastName: lead.lastName ?? "",
         countryCode: lead.countryCode ?? "",
         eventSourceUrl,
-        fbc,
-        fbp,
-        clientIp,
-        clientUserAgent,
+        ...readCapiSignals(req),
       });
       console.log("[sched] Schedule sent");
     } catch (err) {

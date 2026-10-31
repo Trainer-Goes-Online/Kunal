@@ -2,13 +2,22 @@
 
 import Script from "next/script";
 import { useEffect } from "react";
-import { captureLandingParams } from "@/lib/tracking";
+import { captureLandingParams, ensureVisitorId } from "@/lib/tracking";
+import { QUALIFY_STORAGE_KEY } from "@/lib/qualify";
 
 /**
- * Base analytics tags — GA4, Meta Pixel (PageView only), and MS Clarity.
- * Each renders only when its env id is set. All the CONVERSION events (Purchase,
- * AddToCart, InitiateCheckout) are server-side CAPI; the browser Pixel fires only
- * PageView. First-touch UTM/fbclid capture runs on mount.
+ * Base analytics tags — GA4, Meta Pixel and MS Clarity. Each renders only when
+ * its env id is set. First-touch UTM/fbclid capture + the kwk_vid visitor id
+ * run on mount.
+ *
+ * META: the Pixel fires PageView here; the four conversion events (AddToCart,
+ * Lead, QualifiedLead, Schedule) are fired from src/lib/tracking.ts through
+ * BOTH the Pixel and CAPI with a shared event id, so Meta dedupes each pair.
+ *
+ * Advanced matching: when this session has already submitted the opt-in form
+ * (the kwk_qualify stash — e.g. on /book-a-call, where Schedule fires), the
+ * Pixel is initialised with the applicant's email, phone, first/last name and
+ * country. The Pixel hashes these itself before sending; nothing new is stored.
  */
 export function Analytics() {
   const ga4 = process.env.NEXT_PUBLIC_GA4_ID;
@@ -17,6 +26,7 @@ export function Analytics() {
 
   useEffect(() => {
     captureLandingParams();
+    ensureVisitorId();
   }, []);
 
   return (
@@ -32,7 +42,7 @@ export function Analytics() {
 
       {pixel && (
         <Script id="fb-pixel" strategy="afterInteractive">
-          {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${pixel}');fbq('track','PageView');`}
+          {`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');var am={};try{var d=JSON.parse(sessionStorage.getItem('${QUALIFY_STORAGE_KEY}')||'null');if(d&&d.email){am.em=String(d.email).trim().toLowerCase();if(d.whatsapp)am.ph=String(d.whatsapp).replace(/\\D/g,'');if(d.firstName)am.fn=String(d.firstName).trim().toLowerCase();if(d.lastName)am.ln=String(d.lastName).trim().toLowerCase();if(d.countryCode)am.country=String(d.countryCode).trim().toLowerCase();}}catch(e){}fbq('init','${pixel}',am);fbq('track','PageView');`}
         </Script>
       )}
 

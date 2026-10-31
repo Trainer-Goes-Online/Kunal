@@ -916,9 +916,22 @@
 .sdp-root .s06-bacar-wrap + .s06-bacar-wrap { margin-top: 18px; }
 .sdp-root .s06-tcar-wrap + .s06-bacar-wrap { margin-top: 44px; }
 .sdp-root .s06-chat-head { margin-top: 56px; }
-.sdp-root .s06-chat-card { width: 240px; }
-.sdp-root .s06-chat-card .s06-ba-img { aspect-ratio: 9 / 16; }
+.sdp-root .s06-chat-card { width: 260px; }
+/* WhatsApp screenshots are 738x1600 — keep the native ratio so the whole
+   message reads; no crop. */
+.sdp-root .s06-chat-card .s06-ba-img { aspect-ratio: 738 / 1600; }
 .sdp-root .s06-chat-card .s06-ba-img img { object-fit: cover; object-position: top; height: 100%; }
+@media (max-width: 640px) { .sdp-root .s06-chat-card { width: 220px; } }
+
+/* Lightbox: always show the image at its true proportions — fit inside the
+   viewport (86vh tall / container wide) without stretching either axis. */
+.sdp-root .s06-lbox-img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 86vh;
+  object-fit: contain;
+}
 
 /* ---- S05: closing line ---- */
 .sdp-root .s05-who-close {

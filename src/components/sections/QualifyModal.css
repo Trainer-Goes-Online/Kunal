@@ -599,3 +599,56 @@
   .sdp-root .qz-textarea { min-height: 108px; }
   .sdp-root .qz-section { margin-bottom: 8px; }
 }
+
+/* ---- 1..10 scale (Q2 seriousness): one compact row of numbered tiles,
+        end labels underneath. Same border/brand language as .qz-option. ---- */
+.sdp-root .qz-scale { margin-top: 6px; }
+.sdp-root .qz-scale-row {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+.sdp-root .qz-scale-btn {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--fb);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sdp-root .qz-scale-btn:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  transform: translateY(-1px);
+}
+.sdp-root .qz-scale-btn:focus-visible { outline: none; border-color: var(--brand); }
+.sdp-root .qz-scale-btn.is-on {
+  background: var(--grad-brand);
+  border-color: transparent;
+  color: #fff;
+}
+.sdp-root .qz-scale-btn:disabled { opacity: 0.55; cursor: default; transform: none; }
+.sdp-root .qz-scale-ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  font-family: var(--fb);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+@media (max-width: 480px) {
+  /* Ten tiles in one row get too small on a phone: two rows of five. */
+  .sdp-root .qz-scale-row { grid-template-columns: repeat(5, 1fr); }
+  .sdp-root .qz-scale-btn { aspect-ratio: auto; height: 46px; }
+}

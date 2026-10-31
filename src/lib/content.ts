@@ -210,11 +210,22 @@ export const baRows = [
 ] as const;
 
 /* ---- Client chat screenshots ("Here's A Glimpse Into Our Clients' Journeys") ----
-   Two rows of five in the doc. NO SCREENSHOTS HAVE BEEN SUPPLIED YET, so both
-   rows are empty and the whole block stays hidden. Drop the files in
-   /public/chats (e.g. chat-1.jpg … chat-10.jpg) and list them here — the block
-   renders as soon as either row has an entry. */
-export const chatRows: readonly [readonly string[], readonly string[]] = [[], []];
+   WhatsApp messages from clients, with the contact name + profile photo in the
+   chat header blurred out (privacy). Four supplied so far, so they run as ONE
+   auto-scrolling rail; the set repeats twice so a single set is wider than the
+   viewport and the infinite loop never shows a gap. The lightbox de-duplicates.
+   TO ADD MORE: drop chat-5.jpg … in /public/chats and list them here. A second
+   row (right→left) appears as soon as chatRows[1] has entries. */
+const chatShots = [
+  "/chats/chat-1.jpg",
+  "/chats/chat-2.jpg",
+  "/chats/chat-3.jpg",
+  "/chats/chat-4.jpg",
+] as const;
+export const chatRows: readonly [readonly string[], readonly string[]] = [
+  [...chatShots, ...chatShots],
+  [],
+];
 
 /* ---- Video testimonials — names confirmed in the funnel md ---- */
 export const testimonialNames = ["Ashish R", "Vaibhav", "Ashish", "Kaushabh"] as const;

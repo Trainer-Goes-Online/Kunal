@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pricing, siteOrigin, capiHostAllowed } from "@/lib/config";
 import { sendLeadEvent } from "@/lib/meta-events";
-import { ATTR_COOKIE, readAttrCookie, resolveAttribution, buildFbc } from "@/lib/attribution";
+import { readCapiSignals, cleanEventId, cleanPII } from "@/lib/meta-request";
 
 /**
- * /api/meta/registration — fired once the qualifier form is submitted.
+ * /api/meta/registration — fired once the opt-in (qualifier) form is submitted.
  *
- * CompleteRegistration fires for EVERY completed form, qualified or not.
- * QualifiedLead (a custom event) fires only when the client sends
- * `qualified: true` — i.e. the investment answer was one of the top three
- * options. The browser POSTs both in one request (sendBeacon during the
- * hand-off navigation), so the server fires them together off the same PII.
+ *   EVENT 2 of 4  Lead           — EVERY completed form, qualified or not.
+ *   EVENT 3 of 4  QualifiedLead  — custom event, only when the client sends
+ *                                  `qualified: true`, i.e. Q3 was one of the
+ *                                  three coaching tiers.
  *
- * Highest-EMQ: the qualifier's email/phone/first-name/country are hashed here,
- * plus raw _fbc/_fbp/IP/UA the same-origin request carries.
+ * The browser fires both through the Pixel too, with the same event ids
+ * (`leadEventId`, `qualifiedEventId`), so Meta deduplicates each pair and
+ * merges the user data. Highest EMQ: email, phone, first + last name, country,
+ * external_id (email + visitor id), _fbc, _fbp, IP and UA.
  */
-type Lead = { email?: string; phone?: string; firstName?: string; countryCode?: string };
-
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json().catch(() => ({}))) as {
-      lead?: Lead;
+      lead?: unknown;
       qualified?: boolean;
       eventSourceUrl?: string;
+      leadEventId?: string;
+      qualifiedEventId?: string;
     };
-    const lead = body.lead ?? {};
-    const email = (lead.email ?? "").trim();
-    if (!email) {
+    const lead = cleanPII(body.lead);
+    if (!lead.email) {
       return NextResponse.json({ ok: false, error: "email_required" }, { status: 400 });
     }
 
@@ -47,51 +47,39 @@ export async function POST(req: NextRequest) {
         ? body.eventSourceUrl
         : siteOrigin();
 
-    const cookieFbc = req.cookies.get("_fbc")?.value || "";
-    const fbp = req.cookies.get("_fbp")?.value || undefined;
-    // L4 — rebuild _fbc from the captured fbclid when the cookie is absent, so
-    // Meta still matches on a strong click id (raises EMQ).
-    const resolvedAttr = resolveAttribution({
-      cookieAttr: readAttrCookie(req.cookies.get(ATTR_COOKIE)?.value),
-      fbc: cookieFbc,
-    });
-    const fbc = buildFbc(resolvedAttr, cookieFbc) || undefined;
-    const clientIp =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-      req.headers.get("x-real-ip") ??
-      undefined;
-    const clientUserAgent = req.headers.get("user-agent") ?? undefined;
-
     const base = {
       pixelId,
       accessToken,
-      email,
+      email: lead.email,
       phone: lead.phone ?? "",
       firstName: lead.firstName ?? "",
+      lastName: lead.lastName ?? "",
       countryCode: lead.countryCode ?? "",
       eventSourceUrl,
-      fbc,
-      fbp,
-      clientIp,
-      clientUserAgent,
+      ...readCapiSignals(req),
     };
 
     const out: Record<string, string> = {};
 
-    // CompleteRegistration — every completed form, qualified or not.
+    // Lead — every completed opt-in form, qualified or not.
     try {
-      await sendLeadEvent({ ...base, eventName: "CompleteRegistration", idKey: "cr" });
-      out.cr = "sent";
-      console.log("[reg] CompleteRegistration sent");
+      await sendLeadEvent({ ...base, eventName: "Lead", idKey: "lead", eventId: cleanEventId(body.leadEventId) });
+      out.lead = "sent";
+      console.log("[reg] Lead sent");
     } catch (err) {
-      out.cr = "error";
-      console.error("[reg] CompleteRegistration error:", err);
+      out.lead = "error";
+      console.error("[reg] Lead error:", err);
     }
 
-    // QualifiedLead — custom event, only when the investment answer qualifies.
+    // QualifiedLead — custom event, only when Q3 is one of the three tiers.
     if (body.qualified === true) {
       try {
-        await sendLeadEvent({ ...base, eventName: "QualifiedLead", idKey: "ql" });
+        await sendLeadEvent({
+          ...base,
+          eventName: "QualifiedLead",
+          idKey: "ql",
+          eventId: cleanEventId(body.qualifiedEventId),
+        });
         out.ql = "sent";
         console.log("[reg] QualifiedLead sent");
       } catch (err) {
